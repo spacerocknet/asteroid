@@ -21,6 +21,9 @@ public class AttackSystem : MonoBehaviour {
 
 		List<int> destroyIndex = new List<int>();
 
+		GameObject expT = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,target,Quaternion.identity);
+		Destroy(expT,2);
+
 		for(int i=0;i<currentAsteroids.Count;i++)
 		{
 			Vector3 p1 = target;

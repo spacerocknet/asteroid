@@ -100,4 +100,48 @@ public class Asteroids : MonoBehaviour {
 			yield return 0;
 		}
 	}
+
+	public bool CheckIfAnyExists()
+	{
+		if(currentAsteroids.Count==0)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	public bool CheckIfAnyCrossesTheLine()
+	{
+		for(int i=0;i<currentAsteroids.Count;i++)
+		{
+			Asteroid asteroid = (Asteroid) currentAsteroids[i];
+
+			if(asteroid.obj.transform.position.y<-2.0f)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public Vector3 GetPositionToNierestEnemy()
+	{
+		float lastDist = 1000000.0f;
+		Vector3 pos = Vector3.zero;
+
+		for(int i=0;i<currentAsteroids.Count;i++)
+		{
+			float distance = Vector3.Distance(currentAsteroids[i].obj.transform.position,new Vector3(0,-2.83305f,-1.4f));
+
+			if(distance<lastDist)
+			{
+				lastDist = distance;
+				pos = currentAsteroids[i].obj.transform.position;
+			}
+		}
+
+		return pos;
+	}
 }

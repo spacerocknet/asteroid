@@ -79,6 +79,11 @@ public class Questions : MonoBehaviour {
 		return ls;
 	}
 
+	public void AttackNierest()
+	{
+		BATTLE_ENGINE.SetAttackToNierestEnemy();
+	}
+
 	private Question GetQuestionByCategory(CategorySelect.CategoryTypes cat)
 	{
 		for(int i=0;i<AllQuestions.Count;i++)
@@ -96,8 +101,13 @@ public class Questions : MonoBehaviour {
 		return AllQuestions[0]; //returning first question if not found
 	}
 
-	private IEnumerator ShowFadeBG(bool isHide=false)
+	public IEnumerator ShowFadeBG(bool isHide=false, bool popupCloser=false)
 	{
+		if(popupCloser)
+		{
+			fadeBG.transform.position = new Vector3(fadeBG.transform.position.x,fadeBG.transform.position.y,-3.5f);
+		}
+
 		SpriteRenderer sr = (SpriteRenderer) fadeBG.GetComponent<SpriteRenderer>();
 		Color cl = sr.color;
 

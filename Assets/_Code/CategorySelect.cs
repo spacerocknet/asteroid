@@ -12,7 +12,8 @@ public class CategorySelect : MonoBehaviour {
 	private bool canSelect;
 	[HideInInspector]
 	public bool targetSelect;
-	private Questions QE;
+	[HideInInspector]
+	public Questions QE;
 
 	public enum CategoryTypes
 	{
@@ -191,7 +192,7 @@ public class CategorySelect : MonoBehaviour {
 
 	private void Update()
 	{
-		if(canSelect&&targetSelect)
+		if(canSelect)
 		{
 			if(Input.GetMouseButtonDown(0))
 			{
@@ -201,6 +202,11 @@ public class CategorySelect : MonoBehaviour {
 				{
 					if(hit.collider.gameObject.tag.Equals("Category"))
 					{
+						if(!targetSelect)
+						{
+							QE.AttackNierest();
+						}
+						
 					    int index = (int) System.Convert.ToInt32(hit.collider.gameObject.name);
 					    Category cat = (Category) GetCategoryByIndex(index);
 					    

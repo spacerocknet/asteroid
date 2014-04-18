@@ -5,33 +5,49 @@ public class BattleEngine : MonoBehaviour {
 
 	private CategorySelect categorySelect;
 	private Asteroids asteroids;
+	private LevelManager levels;
 	[HideInInspector]
 	public bool canTarget;
 	private bool isMouseDown;
 	private GameObject AtkTarget;
 	private AttackSystem AtkSystem;
 	private Characters character;
+	private GameObject WinLoseTextAsset;
+	private bool isEndGame;
 
 	private void Awake()
 	{
+		isEndGame = false;
 		AtkTarget = (GameObject) GameObject.Find("ATTACK_TARGET");
+		WinLoseTextAsset = (GameObject) GameObject.Find("WinLoseText");
 		isMouseDown = false;
 		canTarget = false;
 		categorySelect = (CategorySelect) this.gameObject.AddComponent<CategorySelect>();
 		asteroids = (Asteroids) this.gameObject.AddComponent<Asteroids>();
 		AtkSystem = (AttackSystem) this.gameObject.AddComponent<AttackSystem>();
 		character = (Characters) this.gameObject.AddComponent<Characters>();
+		levels = (LevelManager) this.gameObject.AddComponent<LevelManager>();
+
+		levels.currentLevel = 0;
+		levels.currentINC = 0;
 	}
 
 	private IEnumerator Start()
 	{	
-		yield return StartCoroutine(asteroids.SpawnAsteroids(8,1.0f));
+		yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
 
 		categorySelect.PlaceCategories(0);
 
 		canTarget = true;
 
 		yield return 0;
+	}
+
+	public void SetAttackToNierestEnemy()
+	{
+		Vector3 pos = asteroids.GetPositionToNierestEnemy();
+		Vector3 fixedPos = new Vector3(pos.x,pos.y,-1.9f);
+		AtkTarget.transform.position = fixedPos;
 	}
 
 	public IEnumerator NextRound(bool isHitTarget)
@@ -52,13 +68,76 @@ public class BattleEngine : MonoBehaviour {
 			yield return StartCoroutine(AtkSystem.MissTarget());
 		}
 
-		yield return StartCoroutine(asteroids.MoveAsteroids());
+		bool isAnyLeft = asteroids.CheckIfAnyExists();
 
-		yield return new WaitForSeconds(0.1f);
+		if(!isAnyLeft)
+		{
+			WinBattle();
+		}
+		else
+		{
+			yield return StartCoroutine(asteroids.MoveAsteroids());
 
-		StartCoroutine(asteroids.SpawnAsteroids(Random.Range(2,6),1.0f));
+			yield return new WaitForSeconds(0.1f);
+
+			StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
+
+			bool isAnyCrossingTheLine = asteroids.CheckIfAnyCrossesTheLine();
+
+			if(isAnyCrossingTheLine)
+			{
+				LoseBattle();
+			}
+		}
 
 		yield return 0;
+	}
+
+	private void WinBattle()
+	{
+		isEndGame = true;
+		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
+		StartCoroutine(ShowEndBattleText("YOU WIN!",true));
+	}
+
+	private void LoseBattle()
+	{
+		isEndGame = true;
+		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
+		StartCoroutine(ShowEndBattleText("YOU LOSE!",false));
+	}
+
+	private IEnumerator ShowEndBattleText(string str, bool isItWin)
+	{
+		WinLoseTextAsset.GetComponent<TextMesh>().text = str;
+
+		if(isItWin)
+		{
+			WinLoseTextAsset.GetComponent<TextMesh>().color = Color.green;
+		}
+		else
+		{
+			WinLoseTextAsset.GetComponent<TextMesh>().color = Color.red;
+		}
+
+		for(int i=0;i<10;i++)
+		{
+			WinLoseTextAsset.transform.localScale += new Vector3(0.1f,0.1f,0.1f);
+			yield return 0;
+		}
+
+		yield return 0;
+	}
+
+	private void OnGUI()
+	{
+		if(isEndGame)
+		{
+			if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2,200,50),"Restart"))
+			{
+				Application.LoadLevel("MainScene");
+			}
+		}
 	}
 
 	private void Update()
