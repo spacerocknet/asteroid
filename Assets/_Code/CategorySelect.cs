@@ -31,6 +31,7 @@ public class CategorySelect : MonoBehaviour {
 		Science = 11,
 		Religion = 12,
 		Computers = 13,
+		Cars = 14
 	}
 
 	public enum ColorTypes
@@ -150,7 +151,7 @@ public class CategorySelect : MonoBehaviour {
 			newCatObj.name = i.ToString();
 			newCatObj.transform.parent = INIT.transform;
 
-			currentCategories.Add(new Category(i,(CategoryTypes)Random.Range(0,14),(ColorTypes)i,newCatObj));
+			currentCategories.Add(new Category(i,(CategoryTypes)Random.Range(0,15),(ColorTypes)i,newCatObj));
 
 			StartCoroutine(PlaceCategoryToPlace(i,newCatObj));
 		}
@@ -210,7 +211,6 @@ public class CategorySelect : MonoBehaviour {
 					    int index = (int) System.Convert.ToInt32(hit.collider.gameObject.name);
 					    Category cat = (Category) GetCategoryByIndex(index);
 					    
-					    Debug.Log("Selected: ("+cat.id+") "+cat.categoryType+", "+cat.colorType+", "+cat.obj);
 						canSelect = false;
 						StartCoroutine(HideCategories());
 						QE.ShowAnswersByCategory(cat.categoryType);

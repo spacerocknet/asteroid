@@ -65,6 +65,7 @@ public class Questions : MonoBehaviour {
 		AllQuestions.Add(new Question(11,CategorySelect.CategoryTypes.Science,"What is H2O?",GenerateAnswerList("a Banana","a Batman","Water","a CAT"),3));
 		AllQuestions.Add(new Question(12,CategorySelect.CategoryTypes.Religion,"Where is GOD?",GenerateAnswerList("In the sky","In hell","In bathroom","I'm an atheist"),4));
 		AllQuestions.Add(new Question(13,CategorySelect.CategoryTypes.Computers,"Which is the best?",GenerateAnswerList("OSX","Windows","Linux","Batman"),4));
+		AllQuestions.Add(new Question(14,CategorySelect.CategoryTypes.Cars,"Which is a car?",GenerateAnswerList("Boeing 737","Titanic","Toyota","Samsung"),3));
 	}
 
 	//temp
