@@ -8,6 +8,7 @@ public class Asteroids : MonoBehaviour {
 	[HideInInspector]
 	public List<Asteroid> currentAsteroids = new List<Asteroid>();
 	private GameObject INIT;
+	private static int ASTEROID_LIMIT = 8;
 
 	public class Asteroid
 	{
@@ -79,6 +80,14 @@ public class Asteroids : MonoBehaviour {
 
 	public IEnumerator SpawnAsteroids(int count, float diff)
 	{
+		if(currentAsteroids.Count+count>ASTEROID_LIMIT)
+		{
+			while(currentAsteroids.Count+count>ASTEROID_LIMIT)
+			{
+				--count;
+			}
+		}
+
 		for(int i=0;i<count;i++)
 		{
 			GameObject asteroid = (GameObject) Instantiate(asteroidRef,new Vector3(Random.Range(-1.8f,2.0f),Random.Range(3.4f,3.6f),-1.0f),Quaternion.identity);

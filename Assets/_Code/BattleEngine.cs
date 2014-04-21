@@ -79,7 +79,7 @@ public class BattleEngine : MonoBehaviour {
 			yield return StartCoroutine(asteroids.MoveAsteroids());
 
 			yield return new WaitForSeconds(0.1f);
-
+			
 			StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
 
 			bool isAnyCrossingTheLine = asteroids.CheckIfAnyCrossesTheLine();
