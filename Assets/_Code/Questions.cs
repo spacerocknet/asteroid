@@ -162,11 +162,11 @@ public class Questions : MonoBehaviour {
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
 			tm.text = currentQuestion.title;
 		
-			questionBoxRef.transform.position = new Vector3(0.01865721f,2.344059f,-2f);
+			questionBoxRef.transform.position = new Vector3(0.01865721f,2.044059f,-2f);
 			questionBoxRef.transform.localScale = new Vector3(0,0,0.1f);
 		}
 
-		for(int i=0;i<7;i++)
+		for(int i=0;i<6;i++)
 		{
 			if(!isHide)
 			{
@@ -241,7 +241,7 @@ public class Questions : MonoBehaviour {
 
 		for(int i=0;i<4;i++)
 		{	
-			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,0.2f-(1.1f*i),-2.1f),answerObjRef.transform.rotation);
+			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,-3.2f+(0.7f*i),-2.1f),answerObjRef.transform.rotation);
 			obj.name = i.ToString();
 			currentAnswers.Add(obj);
 			TextMesh tm = (TextMesh) obj.GetComponentInChildren<TextMesh>();
