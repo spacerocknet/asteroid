@@ -35,18 +35,25 @@ public class Questions : MonoBehaviour {
 	private List<Question> AllQuestions = new List<Question>();
 	private GameObject answerObjRef;
 	private GameObject questionBoxRef;
+	private GameObject indicatorBG;
+	private GameObject indicatorColor;
 	private Question currentQuestion;
 	private GameObject fadeBG;
 	private bool canAnswer;
 	private List<GameObject> currentAnswers = new List<GameObject>();
 	private BattleEngine BATTLE_ENGINE;
+	private static float TIME_FOR_ANSWER = 5.0f;
+	private bool cancelIndicator;
 
 	private void Awake()
 	{
+		cancelIndicator = false;
 		canAnswer = false;
 		fadeBG = (GameObject) GameObject.Find("GFX/FadeBG");
 		answerObjRef = (GameObject) GameObject.Find("REFERENCES/answer_bg");
 		questionBoxRef = (GameObject) GameObject.Find("REFERENCES/question_box");
+		indicatorBG = (GameObject) GameObject.Find("indicator_bg");
+		indicatorColor = (GameObject) GameObject.Find("indicator_bg/blank_color");
 		BATTLE_ENGINE = (BattleEngine) GameObject.Find("MAIN").GetComponent<BattleEngine>();
 
 		// temporary for testing
@@ -83,6 +90,50 @@ public class Questions : MonoBehaviour {
 	public void AttackNierest()
 	{
 		BATTLE_ENGINE.SetAttackToNierestEnemy();
+	}
+
+	private IEnumerator TimerForAnswer(float t)
+	{
+		cancelIndicator = false;
+		float cDur = t;
+		float cSize = 8f;
+		float cTime = Time.timeSinceLevelLoad;
+
+		bool timeFalse = false;
+
+		for(;;)
+		{
+			float timeLapse = Time.timeSinceLevelLoad-cTime;
+			UpdateIndicator(timeLapse,cDur);
+
+			if(cancelIndicator)
+			{
+				UpdateIndicator(cDur,cDur);
+				timeFalse = false;
+				break;
+			}
+
+			if(timeLapse>=cDur)
+			{
+				timeFalse = true;
+				break;
+			}
+
+			yield return 0;
+		}
+
+		if(timeFalse)
+		{
+			StartCoroutine(UserAnswer(false,-1));
+		}
+
+		yield return 0;
+	}
+
+	private void UpdateIndicator(float timeLapse, float duration)
+	{
+		float barXSize = (timeLapse/duration) * 8.0f;
+		indicatorColor.transform.localScale = new Vector3(8.0f-barXSize,1,1);
 	}
 
 	private Question GetQuestionByCategory(CategorySelect.CategoryTypes cat)
@@ -155,6 +206,37 @@ public class Questions : MonoBehaviour {
 		yield return 0;
 	}
 
+	public IEnumerator ShowIndicator(bool isHide=false)
+	{
+		if(!isHide)
+		{
+			indicatorColor.transform.localScale = new Vector3(8,1,1);
+			indicatorBG.transform.position = new Vector3(0f,0f,-2f);
+			indicatorBG.transform.localScale = new Vector3(0,0.73655f,1);
+		}
+
+		for(int i=0;i<8;i++)
+		{
+			if(!isHide)
+			{
+				indicatorBG.transform.localScale += new Vector3(0.1f,0,0);
+			}
+			else
+			{
+				indicatorBG.transform.localScale -= new Vector3(0.1f,0,0);
+			}
+
+			yield return 0;
+		}
+
+		if(isHide)
+		{
+			indicatorBG.transform.position = new Vector3(-7,0,0);
+		}
+
+		yield return 0;
+	}
+
 	public IEnumerator ShowQuestionBox(bool isHide=false)
 	{
 		if(!isHide)
@@ -193,16 +275,28 @@ public class Questions : MonoBehaviour {
 			currentAnswers[i].GetComponent<BoxCollider2D>().enabled = false;
 		}
 
-		SpriteRenderer sr = (SpriteRenderer) currentAnswers[index].GetComponent<SpriteRenderer>();
+		int sIndex = index;
+
+		if(index.Equals(-1))
+		{
+			sIndex = 0;
+		}
+
+		SpriteRenderer sr = (SpriteRenderer) currentAnswers[sIndex].GetComponent<SpriteRenderer>();
 		Color cl = sr.color;
 
 		for(int i=0;i<32;i++)
 		{
 			for(int j=0;j<currentAnswers.Count;j++)
 			{
-				if(i<20&&j!=index)
+				if(i<22&&j!=index)
 				{
 					currentAnswers[j].transform.localScale -= new Vector3(0.025f,0.025f,0);
+
+					if(currentAnswers[j].transform.localScale.x<0)
+					{
+						currentAnswers[j].transform.localScale = new Vector3(0,0,0);
+					}
 				}
 				
 				if(j==index&&i>2)
@@ -236,6 +330,8 @@ public class Questions : MonoBehaviour {
 
 		StartCoroutine(ShowFadeBG());
 		StartCoroutine(ShowQuestionBox());
+		StartCoroutine(ShowIndicator());
+		StartCoroutine(TimerForAnswer(TIME_FOR_ANSWER));
 
 		currentAnswers.Clear();
 
@@ -273,6 +369,8 @@ public class Questions : MonoBehaviour {
 
 		StartCoroutine(ShowQuestionBox(true));
 		StartCoroutine(ShowFadeBG(true));
+		StartCoroutine(ShowIndicator(true));
+
 		yield return StartCoroutine(DiscardAnswers(index));
 
 		StartCoroutine(BATTLE_ENGINE.NextRound(isCorrect));
@@ -292,6 +390,7 @@ public class Questions : MonoBehaviour {
 				{
 					if(hit.collider.gameObject.tag.Equals("AnswerButton"))
 					{
+						cancelIndicator = true;
 					    int answerIndex = (int) System.Convert.ToInt32(hit.collider.gameObject.name);
 					   	bool isCorrectAnswer = currentQuestion.CheckAnswer(answerIndex+1);
 					   	StartCoroutine(UserAnswer(isCorrectAnswer,answerIndex));
