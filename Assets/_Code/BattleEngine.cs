@@ -61,7 +61,7 @@ public class BattleEngine : MonoBehaviour {
 		
 		if(isHitTarget)
 		{
-			yield return StartCoroutine(AtkSystem.AttackTarget(target,asteroids.currentAsteroids));
+			yield return StartCoroutine(AtkSystem.AttackTarget(target,asteroids.currentAsteroids,levels));
 		}
 		else
 		{
@@ -69,8 +69,9 @@ public class BattleEngine : MonoBehaviour {
 		}
 
 		bool isAnyLeft = asteroids.CheckIfAnyExists();
+		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
 
-		if(!isAnyLeft)
+		if(!isAnyLeft||isLevelProgressFull)
 		{
 			WinBattle();
 		}

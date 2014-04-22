@@ -15,7 +15,7 @@ public class AttackSystem : MonoBehaviour {
 		currentWeapon = 0;
 	}
 
-	public IEnumerator AttackTarget(Vector3 target, List<Asteroids.Asteroid> currentAsteroids)
+	public IEnumerator AttackTarget(Vector3 target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef)
 	{
 		Debug.Log("Attack!");
 
@@ -32,6 +32,7 @@ public class AttackSystem : MonoBehaviour {
 
 			if(dist<0.7f)
 			{
+				StartCoroutine(levelMRef.UpdateLevelProgressBar());
 				//Instantiate(GameObject.Find("CUBETEST"),p1,Quaternion.identity);	
 				
 				GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);

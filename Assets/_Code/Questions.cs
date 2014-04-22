@@ -337,7 +337,7 @@ public class Questions : MonoBehaviour {
 
 		for(int i=0;i<4;i++)
 		{	
-			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,-3.2f+(0.7f*i),-2.1f),answerObjRef.transform.rotation);
+			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,-1.2f+(-0.7f*i),-2.1f),answerObjRef.transform.rotation);
 			obj.name = i.ToString();
 			currentAnswers.Add(obj);
 			TextMesh tm = (TextMesh) obj.GetComponentInChildren<TextMesh>();
