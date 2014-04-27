@@ -58,7 +58,9 @@ public class BattleEngine : MonoBehaviour {
 		categorySelect.PlaceCategories(0);
 		canTarget = true;
 		isMouseDown = false;
-		
+
+		GA.API.Business.NewEvent("New Round", "round", 1);
+
 		if(isHitTarget)
 		{
 			yield return StartCoroutine(AtkSystem.AttackTarget(target,asteroids.currentAsteroids,levels));

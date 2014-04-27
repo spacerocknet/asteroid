@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CategorySelect : MonoBehaviour {
 
 	private GameObject catRef;
-	private const int catCount = 3;
+	private int catCount = 4;
 	private GameObject INIT;
 	[HideInInspector]
 	public List<Category> currentCategories = new List<Category>();
@@ -14,24 +14,14 @@ public class CategorySelect : MonoBehaviour {
 	public bool targetSelect;
 	[HideInInspector]
 	public Questions QE;
+	private int [] catBitmap = new int[4]  { 14,  13, 11, 7}; //different num categories have different bitmap list. It is 4 now
 
 	public enum CategoryTypes
 	{
-		History = 0,
-		Math = 1,
-		Food = 2,
-		Pets = 3,
-		Sports = 4,
-		Movies = 5,
-		Music = 6,
-		People = 7,
-		General = 8,
-		Geography = 9,
-		Art = 10,
-		Science = 11,
-		Religion = 12,
-		Computers = 13,
-		Cars = 14
+		Sports = 0,
+		Movies = 1,
+		Music = 2,
+		Geography = 3
 	}
 
 	public enum ColorTypes
@@ -131,6 +121,7 @@ public class CategorySelect : MonoBehaviour {
 
 	private void Awake()
 	{
+		catCount = System.Enum.GetNames(typeof(CategoryTypes)).Length;
 		canSelect = false;
 		targetSelect = false;
 		catRef = (GameObject) GameObject.Find("REFERENCES/category_bg");
@@ -145,16 +136,24 @@ public class CategorySelect : MonoBehaviour {
 			currentCategories.Clear();
 		}
 
-		for(int i=0;i<catCount;i++)
-		{
-			GameObject newCatObj = (GameObject) Instantiate(catRef,new Vector3(-10,0,-1),Quaternion.identity);
-			newCatObj.name = i.ToString();
-			newCatObj.transform.parent = INIT.transform;
-
-			currentCategories.Add(new Category(i,(CategoryTypes)Random.Range(0,15),(ColorTypes)i,newCatObj));
-
-			StartCoroutine(PlaceCategoryToPlace(i,newCatObj));
+	
+		int bitmap = catBitmap [Random.Range(0, catCount)];
+		int index = 0;
+		for (int i=0; i<catCount; i++) {
+			bool flag = (0x1 & bitmap) == 1;
+			bitmap = bitmap >> 1;
+	
+			if (flag) {
+   			  GameObject newCatObj = (GameObject) Instantiate(catRef,new Vector3(-10,0,-1),Quaternion.identity);
+			  newCatObj.name = index.ToString();
+			  newCatObj.transform.parent = INIT.transform;
+				
+			  currentCategories.Add(new Category(index,(CategoryTypes)i,(ColorTypes)index,newCatObj));
+			  StartCoroutine(PlaceCategoryToPlace(index,newCatObj));
+			  index++;
+			}
 		}
+
 	}
 
 	private IEnumerator PlaceCategoryToPlace(int index, GameObject go)
@@ -167,10 +166,10 @@ public class CategorySelect : MonoBehaviour {
 			yield return 0;
 		}
 
-		if(index==2)
-		{
-			canSelect = true;
-		}
+		//if(index==2)
+		//{
+		canSelect = true;
+		//}
 
 		yield return 0;
 	}
@@ -209,6 +208,7 @@ public class CategorySelect : MonoBehaviour {
 						}
 						
 					    int index = (int) System.Convert.ToInt32(hit.collider.gameObject.name);
+
 					    Category cat = (Category) GetCategoryByIndex(index);
 					    
 						canSelect = false;
