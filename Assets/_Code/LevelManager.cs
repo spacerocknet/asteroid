@@ -84,8 +84,6 @@ public class LevelManager : MonoBehaviour {
 
 	public int GetSpawnCountAutoINC()
 	{
-		StartCoroutine(UpdateLevelProgressBar());
-
 		int spawnCount = AllLevels[currentLevel].spawns[currentINC];
 
 		if(currentINC < AllLevels[currentLevel].spawns.Count-1)

@@ -83,6 +83,8 @@ public class BattleEngine : MonoBehaviour {
 			
 			StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
 
+			StartCoroutine(levels.UpdateLevelProgressBar());
+
 			bool isAnyCrossingTheLine = asteroids.CheckIfAnyCrossesTheLine();
 
 			if(isAnyCrossingTheLine)
