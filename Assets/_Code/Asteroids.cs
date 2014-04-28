@@ -40,7 +40,7 @@ public class Asteroids : MonoBehaviour {
 					this.color = Color.green;
 					break;
 				case AsteroidColorTypes.Blue:
-					this.color = Color.cyan;
+					this.color = Color.blue;
 					break;
 				default: break;
 			}

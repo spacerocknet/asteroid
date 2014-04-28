@@ -64,7 +64,7 @@ public class CategorySelect : MonoBehaviour {
 					this.color = Color.green;
 					break;
 				case ColorTypes.Blue:
-					this.color = Color.cyan;
+					this.color = Color.blue;
 					break;
 				default: break;
 			}
