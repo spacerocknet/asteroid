@@ -46,6 +46,7 @@ public class Questions : MonoBehaviour {
 	private bool cancelIndicator;
 	private bool testMode = true; //should use isDebugBuild()?
 	private int maxWordsPerLine = 35;
+	private CategorySelect.ColorTypes currentColorType;
 
 	private void Awake()
 	{
@@ -419,10 +420,10 @@ public class Questions : MonoBehaviour {
 		return result.Substring(1,result.Length-1);
 	}
 	
-	public void ShowAnswersByCategory(CategorySelect.CategoryTypes cat)
+	public void ShowAnswersByCategory(CategorySelect.CategoryTypes cat, CategorySelect.ColorTypes colorType)
 	{
+		currentColorType = (CategorySelect.ColorTypes) colorType;
 		BATTLE_ENGINE.canTarget = false;
-		
 		currentQuestion = (Question) GetQuestionByCategory(cat);
 
 		StartCoroutine(ShowFadeBG());
@@ -471,7 +472,7 @@ public class Questions : MonoBehaviour {
 
 		yield return StartCoroutine(DiscardAnswers(index));
 
-		StartCoroutine(BATTLE_ENGINE.NextRound(isCorrect));
+		StartCoroutine(BATTLE_ENGINE.NextRound(isCorrect,currentColorType));
 
 		yield return 0;
 	}

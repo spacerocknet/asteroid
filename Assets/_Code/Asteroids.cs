@@ -9,16 +9,19 @@ public class Asteroids : MonoBehaviour {
 	public List<Asteroid> currentAsteroids = new List<Asteroid>();
 	private GameObject INIT;
 	private static int ASTEROID_LIMIT = 8;
+	private List<float> lifeList = new List<float>();
 
 	public class Asteroid
 	{
 		public AsteroidColorTypes colorType;
-		public float life;
+		public int life;
 		public Color color;
 		public GameObject obj;
+		public bool isDead;
 
-		public Asteroid(AsteroidColorTypes _colorType, float _life, GameObject _obj)
+		public Asteroid(AsteroidColorTypes _colorType, int _life, GameObject _obj)
 		{
+			isDead = false;
 			colorType = _colorType;
 			life = _life;
 			obj = _obj;
@@ -33,9 +36,6 @@ public class Asteroids : MonoBehaviour {
 				case AsteroidColorTypes.Red:
 					this.color = Color.red;
 					break;
-				case AsteroidColorTypes.Yellow:
-					this.color = Color.yellow;
-					break;
 				case AsteroidColorTypes.Green:
 					this.color = Color.green;
 					break;
@@ -47,20 +47,47 @@ public class Asteroids : MonoBehaviour {
 
 			obj.GetComponent<SpriteRenderer>().color = this.color;
 		}
+
+		public IEnumerator DoDamage(int hitPoints)
+		{
+			if(life<hitPoints)
+			{
+				hitPoints = life;
+			}
+
+			life -= hitPoints;
+
+			if(life<=0)
+			{
+				isDead = true;
+			}
+
+			for(int i=0;i<hitPoints;i++)
+			{
+				for(int j=0;j<5;j++)
+				{
+					obj.transform.localScale -= new Vector3(0.1f,0.1f,0);
+					yield return 0;
+				}
+			}
+		}
 	}
 
 	public enum AsteroidColorTypes
 	{
-		Red = 0,
-		Yellow = 1,
-		Green = 2,
-		Blue = 3
+		Green = 0,
+		Red = 1,
+		Blue = 2
 	}
 
 	private void Awake()
 	{
 		asteroidRef = (GameObject) GameObject.Find("REFERENCES/Asteroid");
 		INIT = (GameObject) GameObject.Find("RUNTIME_INIT");
+
+		lifeList.Add(0.6f);
+		lifeList.Add(1.0f);
+		lifeList.Add(1.5f);
 	}
 
 	public IEnumerator MoveAsteroids()
@@ -92,18 +119,23 @@ public class Asteroids : MonoBehaviour {
 		{
 			GameObject asteroid = (GameObject) Instantiate(asteroidRef,new Vector3(Random.Range(-1.8f,2.0f),Random.Range(3.4f,3.6f),-1.0f),Quaternion.identity);
 
-			currentAsteroids.Add(new Asteroid((AsteroidColorTypes)Random.Range(0,4),1.0f*diff,asteroid));
+			int lifeHits = Random.Range(1,4);
 
-			asteroid.transform.localScale = new Vector3(0,0,0);
+			currentAsteroids.Add(new Asteroid((AsteroidColorTypes)Random.Range(0,3),lifeHits,asteroid));
+
+			asteroid.transform.localScale = new Vector3(0,0,1);
 			asteroid.transform.Rotate(new Vector3(0,0,Random.Range(0,361)));
 
-			for(int j=0;j<10;j++)
+			for(int j=0;j<lifeHits;j++)
 			{
-				asteroid.transform.localScale += new Vector3(0.1f,0.1f,0.1f);
-				yield return 0;
+				for(int k=0;k<5;k++)
+				{
+					asteroid.transform.localScale += new Vector3(0.1f,0.1f,0);
+					yield return 0;
+				}
 			}
-
 			
+			asteroid.transform.localScale = new Vector3(0.5f*lifeHits,0.5f*lifeHits,1);
 			asteroid.transform.parent = INIT.transform;
 
 			yield return 0;

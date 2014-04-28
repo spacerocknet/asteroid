@@ -51,8 +51,9 @@ public class BattleEngine : MonoBehaviour {
 		AtkTarget.transform.position = fixedPos;
 	}
 
-	public IEnumerator NextRound(bool isHitTarget)
+	public IEnumerator NextRound(bool isHitTarget, CategorySelect.ColorTypes currentColorType)
 	{
+		categorySelect.animationIsPlaying = true;
 		Vector3 target = AtkTarget.transform.position;
 		categorySelect.targetSelect = false;
 		AtkTarget.transform.position = new Vector3(-100,0,0);
@@ -64,7 +65,7 @@ public class BattleEngine : MonoBehaviour {
 
 		if(isHitTarget)
 		{
-			yield return StartCoroutine(AtkSystem.AttackTarget(target,asteroids.currentAsteroids,levels));
+			yield return StartCoroutine(AtkSystem.AttackTarget(target,asteroids.currentAsteroids,levels,currentColorType));
 		}
 		else
 		{
@@ -84,9 +85,10 @@ public class BattleEngine : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.1f);
 			
-			StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
+			int spawnINC = levels.GetSpawnCountAutoINC();
+			StartCoroutine(asteroids.SpawnAsteroids(spawnINC,1.0f));
 
-			if(!LastHitMiss)
+			if(!LastHitMiss&&spawnINC!=0)
 			{
 				StartCoroutine(levels.UpdateLevelProgressBar());
 			}
@@ -98,6 +100,8 @@ public class BattleEngine : MonoBehaviour {
 				LoseBattle();
 			}
 		}
+
+		categorySelect.animationIsPlaying = false;
 
 		yield return 0;
 	}

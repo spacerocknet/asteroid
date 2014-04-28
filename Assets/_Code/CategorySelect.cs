@@ -15,6 +15,7 @@ public class CategorySelect : MonoBehaviour {
 	[HideInInspector]
 	public Questions QE;
 	private int [] catBitmap = new int[4]  { 14,  13, 11, 7}; //different num categories have different bitmap list. It is 4 now
+	public bool animationIsPlaying;
 
 	public enum CategoryTypes
 	{
@@ -26,10 +27,9 @@ public class CategorySelect : MonoBehaviour {
 
 	public enum ColorTypes
 	{
-		Red = 0,
-		Yellow = 1,
-		Green = 2,
-		Blue = 3
+		Green = 0,
+		Red = 1,
+		Blue = 2
 	}
 
 	public class Category
@@ -59,9 +59,6 @@ public class CategorySelect : MonoBehaviour {
 			{
 				case ColorTypes.Red:
 					this.color = Color.red;
-					break;
-				case ColorTypes.Yellow:
-					this.color = Color.yellow;
 					break;
 				case ColorTypes.Green:
 					this.color = Color.green;
@@ -121,6 +118,7 @@ public class CategorySelect : MonoBehaviour {
 
 	private void Awake()
 	{
+		animationIsPlaying = false;
 		catCount = System.Enum.GetNames(typeof(CategoryTypes)).Length;
 		canSelect = false;
 		targetSelect = false;
@@ -135,7 +133,6 @@ public class CategorySelect : MonoBehaviour {
 		{
 			currentCategories.Clear();
 		}
-
 	
 		int bitmap = catBitmap [Random.Range(0, catCount)];
 		int index = 0;
@@ -166,11 +163,8 @@ public class CategorySelect : MonoBehaviour {
 			yield return 0;
 		}
 
-		//if(index==2)
-		//{
 		canSelect = true;
-		//}
-
+		
 		yield return 0;
 	}
 
@@ -192,7 +186,7 @@ public class CategorySelect : MonoBehaviour {
 
 	private void Update()
 	{
-		if(canSelect)
+		if(canSelect&&!animationIsPlaying)
 		{
 			if(Input.GetMouseButtonDown(0))
 			{
@@ -213,7 +207,7 @@ public class CategorySelect : MonoBehaviour {
 					    
 						canSelect = false;
 						StartCoroutine(HideCategories());
-						QE.ShowAnswersByCategory(cat.categoryType);
+						QE.ShowAnswersByCategory(cat.categoryType,cat.colorType);
 					}
 				}
 			}

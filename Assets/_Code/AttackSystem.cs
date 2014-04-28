@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,8 +17,8 @@ public class AttackSystem : MonoBehaviour {
 		currentWeapon = 0;
 	}
 
-	public IEnumerator AttackTarget(Vector3 target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef)
-	{
+	public IEnumerator AttackTarget(Vector3 target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
+	{		
 		BATTLE_ENGINE.LastHitMiss = false;
 		
 		Debug.Log("Attack!");
@@ -36,9 +36,6 @@ public class AttackSystem : MonoBehaviour {
 
 			if(dist<0.7f)
 			{
-				StartCoroutine(levelMRef.UpdateLevelProgressBar());
-				//Instantiate(GameObject.Find("CUBETEST"),p1,Quaternion.identity);	
-				
 				GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
 				Destroy(exp,2);
 				destroyIndex.Add(i);
@@ -47,11 +44,55 @@ public class AttackSystem : MonoBehaviour {
 		
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
-			Destroy(currentAsteroids[destroyIndex[i]].obj);
-			currentAsteroids.RemoveAt(destroyIndex[i]);
+	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)		
+			StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(DamageCalcByColor(currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType)));
+
+			if(currentAsteroids[destroyIndex[i]].isDead)
+			{
+				StartCoroutine(levelMRef.UpdateLevelProgressBar());
+				Destroy(currentAsteroids[destroyIndex[i]].obj,2);
+				currentAsteroids.RemoveAt(destroyIndex[i]);
+			}
 		}
 
 		yield return 0;
+	}
+
+	private int DamageCalcByColor(CategorySelect.ColorTypes c1, Asteroids.AsteroidColorTypes c2)
+	{
+	//	float tempDmg = 6.0f;
+		int cDistance = ColorDistance((int)c1,(int)c2);
+
+		if(cDistance==0)
+		{
+			return 2;
+		}
+		else if(cDistance==1)
+		{
+			return 3;
+		}
+		else if(cDistance==2)
+		{
+			return 1;
+		}
+
+		return 0;
+	}
+
+	private int ColorDistance(int c1, int c2)
+	{
+		int dist = c1-c2;
+
+		if(dist.Equals(-1))
+		{
+			dist = 2;
+		}
+		else if(dist.Equals(-2))
+		{
+			dist = 1;
+		}
+
+		return dist;
 	}
 
 	public IEnumerator MissTarget()
