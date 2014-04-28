@@ -14,6 +14,7 @@ public class BattleEngine : MonoBehaviour {
 	private Characters character;
 	private GameObject WinLoseTextAsset;
 	private bool isEndGame;
+	public bool LastHitMiss;
 
 	private void Awake()
 	{
@@ -58,7 +59,9 @@ public class BattleEngine : MonoBehaviour {
 		categorySelect.PlaceCategories(0);
 		canTarget = true;
 		isMouseDown = false;
-		
+
+		GA.API.Business.NewEvent("New Round", "round", 1);
+
 		if(isHitTarget)
 		{
 			yield return StartCoroutine(AtkSystem.AttackTarget(target,asteroids.currentAsteroids,levels));
@@ -83,7 +86,10 @@ public class BattleEngine : MonoBehaviour {
 			
 			StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
 
-			StartCoroutine(levels.UpdateLevelProgressBar());
+			if(!LastHitMiss)
+			{
+				StartCoroutine(levels.UpdateLevelProgressBar());
+			}
 
 			bool isAnyCrossingTheLine = asteroids.CheckIfAnyCrossesTheLine();
 

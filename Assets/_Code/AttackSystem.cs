@@ -7,16 +7,20 @@ public class AttackSystem : MonoBehaviour {
 	private Weapons weapons;
 	private int currentWeapon;
 	private GameObject label_ref;
+	private BattleEngine BATTLE_ENGINE;
 
 	private void Awake()
 	{
 		weapons = (Weapons) this.gameObject.AddComponent<Weapons>();
 		label_ref = (GameObject) GameObject.Find("REFERENCES/label_ref");
+		BATTLE_ENGINE = (BattleEngine) GameObject.Find("MAIN").GetComponent<BattleEngine>();
 		currentWeapon = 0;
 	}
 
 	public IEnumerator AttackTarget(Vector3 target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef)
 	{
+		BATTLE_ENGINE.LastHitMiss = false;
+		
 		Debug.Log("Attack!");
 
 		List<int> destroyIndex = new List<int>();
@@ -52,6 +56,8 @@ public class AttackSystem : MonoBehaviour {
 
 	public IEnumerator MissTarget()
 	{
+		BATTLE_ENGINE.LastHitMiss = true;
+
 		GameObject missInit = (GameObject) Instantiate(label_ref,new Vector3(0f,0f,-1.45f),label_ref.transform.rotation);
 		TextMesh tm = (TextMesh) missInit.GetComponent<TextMesh>();
 		tm.text = "Miss!";
