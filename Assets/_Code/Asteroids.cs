@@ -158,7 +158,7 @@ public class Asteroids : MonoBehaviour {
 		{
 			Asteroid asteroid = (Asteroid) currentAsteroids[i];
 
-			if(asteroid.obj.transform.position.y<-2.0f)
+			if(asteroid.obj.transform.position.y<-1.85f)
 			{
 				return true;
 			}
