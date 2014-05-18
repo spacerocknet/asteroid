@@ -105,38 +105,38 @@ public class Questions : MonoBehaviour {
 		sports.Add(new Question(119,CategorySelect.CategoryTypes.Sports,"Goal Shooter and Goal Attack are the only players that can score in which sport",GenerateAnswerList("Lacrosse","Ice Hockey","Netball","Aussie Rules Football"),3));
 
 		//Musics
-		AllQuestions.Add(CategorySelect.CategoryTypes.Music, new List<Question> ());
-		List<Question> musics = AllQuestions[CategorySelect.CategoryTypes.Music];
-		musics.Add(new Question(200,CategorySelect.CategoryTypes.Music,"Who was nominated as one of the three 'men of the decade' on a special UK television production in 1069",GenerateAnswerList("George","Paul","John","Ringo"),3));
-		musics.Add(new Question(201,CategorySelect.CategoryTypes.Music,"Who was the final Beatle to be married",GenerateAnswerList("Paul","John","Ringo","George"),1));
-		musics.Add(new Question(202,CategorySelect.CategoryTypes.Music,"Who did Dana Carvey regularly impersonate on Saturday Night Live",GenerateAnswerList("John","Ringo","George","Paul"),4));
-		musics.Add(new Question(203,CategorySelect.CategoryTypes.Music,"John Lennon said The Beatles were 'more popular than Jesus' in which newspaper",GenerateAnswerList("London Evening Standard","London Chronical","Daily Mail","Liverpool Daily Post And Echo"),1));
-		musics.Add(new Question(204,CategorySelect.CategoryTypes.Music,"Which band had a 2004 hit with 'She will be loved'",GenerateAnswerList("Maroon 5","Creed","Los Lonely Boys","The Killers"),1));
-		musics.Add(new Question(205,CategorySelect.CategoryTypes.Music,"Black Eyed Peas retooled their song 'let's Get Retarded' for commercials. What did they rename it",GenerateAnswerList("Let's Get Rebounded","Let's Go Rebound It","Let's Get It Started","Let's Get Rewarded"),3));
-		musics.Add(new Question(206,CategorySelect.CategoryTypes.Music,"Who released the 2008 album 'I Am Sasha Fierce'",GenerateAnswerList("Lady Gaga","Madonna","Gwen Stefani","Beyonce"),4));
-		musics.Add(new Question(207,CategorySelect.CategoryTypes.Music,"'Disturbia' was a 2008 No.1 hit for which female popstar",GenerateAnswerList("Rihanna","Lady Gaga","Leona Lewis","Kelly Clarkson"),1));
-		musics.Add(new Question(208,CategorySelect.CategoryTypes.Music,"Which 2002 film starred Eminem",GenerateAnswerList("Meet The Fockers","Signs","8 Mile","The Footbal Factory"),3));
-		musics.Add(new Question(209,CategorySelect.CategoryTypes.Music,"With which band is Adam Levine the lead singer",GenerateAnswerList("Maroon 5","Los Lonely Boys","The Killers","Creed"),1));
-		musics.Add(new Question(210,CategorySelect.CategoryTypes.Music,"Good Riddance (Time of Your Life) was a 90s release by which band",GenerateAnswerList("The Offspring","Green Day","Blink 182","Bloodhound Gang"),2));
-		musics.Add(new Question(211,CategorySelect.CategoryTypes.Music,"Which kind of love did Tupac Shakur have a hit with 1996",GenerateAnswerList("Florida","New York","Vegas","California"),4));
-		musics.Add(new Question(212,CategorySelect.CategoryTypes.Music,"Complete the title of the Grammy wining Seal song 'Kiss From A ....",GenerateAnswerList("Sun","Love","God","Rose"),4));
-		musics.Add(new Question(213,CategorySelect.CategoryTypes.Music,"Who had a 1999 hit with 'Man! I Feel Like a Woman'",GenerateAnswerList("Jennifer Rush","Shania Twain","Madonna","Sheryl Crow"),2));
-		musics.Add(new Question(214,CategorySelect.CategoryTypes.Music,"'Unbreak My Heart' was a No.1 hit for which star in 1997",GenerateAnswerList("Toni Braxton","Brandy","Beyonce","Mariah Carey"),1));
-		musics.Add(new Question(215,CategorySelect.CategoryTypes.Music,"Which band sang the theme tune to the TV Sitcom Friends",GenerateAnswerList("The Remembrance","The Rembrants","The Remembers","The Remingtons"),2));
+		AllQuestions.Add(CategorySelect.CategoryTypes.Musics, new List<Question> ());
+		List<Question> musics = AllQuestions[CategorySelect.CategoryTypes.Musics];
+		musics.Add(new Question(200,CategorySelect.CategoryTypes.Musics,"Who was nominated as one of the three 'men of the decade' on a special UK television production in 1069",GenerateAnswerList("George","Paul","John","Ringo"),3));
+		musics.Add(new Question(201,CategorySelect.CategoryTypes.Musics,"Who was the final Beatle to be married",GenerateAnswerList("Paul","John","Ringo","George"),1));
+		musics.Add(new Question(202,CategorySelect.CategoryTypes.Musics,"Who did Dana Carvey regularly impersonate on Saturday Night Live",GenerateAnswerList("John","Ringo","George","Paul"),4));
+		musics.Add(new Question(203,CategorySelect.CategoryTypes.Musics,"John Lennon said The Beatles were 'more popular than Jesus' in which newspaper",GenerateAnswerList("London Evening Standard","London Chronical","Daily Mail","Liverpool Daily Post And Echo"),1));
+		musics.Add(new Question(204,CategorySelect.CategoryTypes.Musics,"Which band had a 2004 hit with 'She will be loved'",GenerateAnswerList("Maroon 5","Creed","Los Lonely Boys","The Killers"),1));
+		musics.Add(new Question(205,CategorySelect.CategoryTypes.Musics,"Black Eyed Peas retooled their song 'let's Get Retarded' for commercials. What did they rename it",GenerateAnswerList("Let's Get Rebounded","Let's Go Rebound It","Let's Get It Started","Let's Get Rewarded"),3));
+		musics.Add(new Question(206,CategorySelect.CategoryTypes.Musics,"Who released the 2008 album 'I Am Sasha Fierce'",GenerateAnswerList("Lady Gaga","Madonna","Gwen Stefani","Beyonce"),4));
+		musics.Add(new Question(207,CategorySelect.CategoryTypes.Musics,"'Disturbia' was a 2008 No.1 hit for which female popstar",GenerateAnswerList("Rihanna","Lady Gaga","Leona Lewis","Kelly Clarkson"),1));
+		musics.Add(new Question(208,CategorySelect.CategoryTypes.Musics,"Which 2002 film starred Eminem",GenerateAnswerList("Meet The Fockers","Signs","8 Mile","The Footbal Factory"),3));
+		musics.Add(new Question(209,CategorySelect.CategoryTypes.Musics,"With which band is Adam Levine the lead singer",GenerateAnswerList("Maroon 5","Los Lonely Boys","The Killers","Creed"),1));
+		musics.Add(new Question(210,CategorySelect.CategoryTypes.Musics,"Good Riddance (Time of Your Life) was a 90s release by which band",GenerateAnswerList("The Offspring","Green Day","Blink 182","Bloodhound Gang"),2));
+		musics.Add(new Question(211,CategorySelect.CategoryTypes.Musics,"Which kind of love did Tupac Shakur have a hit with 1996",GenerateAnswerList("Florida","New York","Vegas","California"),4));
+		musics.Add(new Question(212,CategorySelect.CategoryTypes.Musics,"Complete the title of the Grammy wining Seal song 'Kiss From A ....",GenerateAnswerList("Sun","Love","God","Rose"),4));
+		musics.Add(new Question(213,CategorySelect.CategoryTypes.Musics,"Who had a 1999 hit with 'Man! I Feel Like a Woman'",GenerateAnswerList("Jennifer Rush","Shania Twain","Madonna","Sheryl Crow"),2));
+		musics.Add(new Question(214,CategorySelect.CategoryTypes.Musics,"'Unbreak My Heart' was a No.1 hit for which star in 1997",GenerateAnswerList("Toni Braxton","Brandy","Beyonce","Mariah Carey"),1));
+		musics.Add(new Question(215,CategorySelect.CategoryTypes.Musics,"Which band sang the theme tune to the TV Sitcom Friends",GenerateAnswerList("The Remembrance","The Rembrants","The Remembers","The Remingtons"),2));
 		
 		//Geography
-		AllQuestions.Add(CategorySelect.CategoryTypes.Geography, new List<Question> ());
-		List<Question> geography = AllQuestions[CategorySelect.CategoryTypes.Geography];
-		geography.Add(new Question(300,CategorySelect.CategoryTypes.Geography,"Where is Lithuania",GenerateAnswerList("In US","In EU","In Asia","In Australia"),2));
-		geography.Add(new Question(301,CategorySelect.CategoryTypes.Geography,"Milan is a city in which Italian Region",GenerateAnswerList("Tuscany","Piedmonth","Lombardy","Sicilia"),3));
-		geography.Add(new Question(302,CategorySelect.CategoryTypes.Geography,"Which of these is a city in Switzerland",GenerateAnswerList("InnsBruck","Geneva","LilyHammer","Hesse"),2));
-		geography.Add(new Question(303,CategorySelect.CategoryTypes.Geography,"The largest ancient castle in the world is located in this city",GenerateAnswerList("Prague","Memphis","Bejing","Cairo"),1));
-		geography.Add(new Question(304,CategorySelect.CategoryTypes.Geography,"Which of these is a city in Paraguay",GenerateAnswerList("Oruro","San Lorenzo","Saltao","La Plato"),2));
-		geography.Add(new Question(305,CategorySelect.CategoryTypes.Geography,"Genoa is a major city in which Eurupean country",GenerateAnswerList("Bulgari","France","Italy","Russia"),3));
-		geography.Add(new Question(306,CategorySelect.CategoryTypes.Geography,"Mount Catherine has been the highest point in two different countries.  Where is it",GenerateAnswerList("Sinai Peninsula","Kurdistan","Kuwait","Golan Heights"),1));
-		geography.Add(new Question(307,CategorySelect.CategoryTypes.Geography,"Which of these countries does Oman NOT share a border with",GenerateAnswerList("Yemen","Kuwait","United Arab Emirates","Saudi Arabia"),2));
-		geography.Add(new Question(308,CategorySelect.CategoryTypes.Geography,"What Arab nation has the highest percentage of Christian",GenerateAnswerList("Egypt","Syria","Iraq","Lebanon"),4));
-		geography.Add(new Question(309,CategorySelect.CategoryTypes.Geography,"What was the only country ever to have archdukes, although it doesn't anymore",GenerateAnswerList("Germany","Netherlands","Austria","Sweden"),3));
+		AllQuestions.Add(CategorySelect.CategoryTypes.Geographies, new List<Question> ());
+		List<Question> geography = AllQuestions[CategorySelect.CategoryTypes.Geographies];
+		geography.Add(new Question(300,CategorySelect.CategoryTypes.Geographies,"Where is Lithuania",GenerateAnswerList("In US","In EU","In Asia","In Australia"),2));
+		geography.Add(new Question(301,CategorySelect.CategoryTypes.Geographies,"Milan is a city in which Italian Region",GenerateAnswerList("Tuscany","Piedmonth","Lombardy","Sicilia"),3));
+		geography.Add(new Question(302,CategorySelect.CategoryTypes.Geographies,"Which of these is a city in Switzerland",GenerateAnswerList("InnsBruck","Geneva","LilyHammer","Hesse"),2));
+		geography.Add(new Question(303,CategorySelect.CategoryTypes.Geographies,"The largest ancient castle in the world is located in this city",GenerateAnswerList("Prague","Memphis","Bejing","Cairo"),1));
+		geography.Add(new Question(304,CategorySelect.CategoryTypes.Geographies,"Which of these is a city in Paraguay",GenerateAnswerList("Oruro","San Lorenzo","Saltao","La Plato"),2));
+		geography.Add(new Question(305,CategorySelect.CategoryTypes.Geographies,"Genoa is a major city in which Eurupean country",GenerateAnswerList("Bulgari","France","Italy","Russia"),3));
+		geography.Add(new Question(306,CategorySelect.CategoryTypes.Geographies,"Mount Catherine has been the highest point in two different countries.  Where is it",GenerateAnswerList("Sinai Peninsula","Kurdistan","Kuwait","Golan Heights"),1));
+		geography.Add(new Question(307,CategorySelect.CategoryTypes.Geographies,"Which of these countries does Oman NOT share a border with",GenerateAnswerList("Yemen","Kuwait","United Arab Emirates","Saudi Arabia"),2));
+		geography.Add(new Question(308,CategorySelect.CategoryTypes.Geographies,"What Arab nation has the highest percentage of Christian",GenerateAnswerList("Egypt","Syria","Iraq","Lebanon"),4));
+		geography.Add(new Question(309,CategorySelect.CategoryTypes.Geographies,"What was the only country ever to have archdukes, although it doesn't anymore",GenerateAnswerList("Germany","Netherlands","Austria","Sweden"),3));
 
 
 	}
@@ -216,6 +216,11 @@ public class Questions : MonoBehaviour {
 
 	private Question GetQuestionByCategoryLocal(CategorySelect.CategoryTypes cat)
 	{
+	    GameResource gameResource = new GameResource ();
+		string catName = cat.ToString ();
+		Debug.Log("Cat ::::::::::: " + catName); 
+		Debug.Log (gameResource.GetQuizzes (catName, 1));
+
 		List<Question> questions = AllQuestions[cat];
 
 		if (questions != null) {

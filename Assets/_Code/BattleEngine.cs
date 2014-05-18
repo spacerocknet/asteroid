@@ -15,6 +15,7 @@ public class BattleEngine : MonoBehaviour {
 	private GameObject WinLoseTextAsset;
 	private bool isEndGame;
 	public bool LastHitMiss;
+	private GameResource gameResource = new GameResource ();
 
 	private void Awake()
 	{
@@ -31,6 +32,8 @@ public class BattleEngine : MonoBehaviour {
 
 		levels.currentLevel = 0;
 		levels.currentINC = 0;
+
+		Debug.Log (gameResource.GetGameConfig ());
 	}
 
 	private IEnumerator Start()

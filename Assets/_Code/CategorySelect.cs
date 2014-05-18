@@ -17,12 +17,13 @@ public class CategorySelect : MonoBehaviour {
 	private int [] catBitmap = new int[4]  { 14,  13, 11, 7}; //different num categories have different bitmap list. It is 4 now
 	public bool animationIsPlaying;
 
+
 	public enum CategoryTypes
 	{
 		Sports = 0,
 		Movies = 1,
-		Music = 2,
-		Geography = 3
+		Musics = 2,
+		Geographies = 3
 	}
 
 	public enum ColorTypes
@@ -125,6 +126,15 @@ public class CategorySelect : MonoBehaviour {
 		catRef = (GameObject) GameObject.Find("REFERENCES/category_bg");
 		INIT = (GameObject) GameObject.Find("RUNTIME_INIT");
 		QE = (Questions) GameObject.Find("MAIN").AddComponent<Questions>();
+
+		//RestClient rc = new RestClient ();
+		//StartCoroutine (RC.SomeRoutine ());
+		//rc.GetCategories ();
+
+		//RC = (RestClient)GameObject.Find("MAIN").AddComponent<RestClient>();
+		//Action<string> printout = (arg) => { Debug.Log(arg); };
+		//StartCoroutine (RC.DownloadCategories ((arg) => { Debug.Log(arg); }));
+		//StartCoroutine (RC.SomeRoutine ());
 	}
 
 	public void PlaceCategories(int diff)
