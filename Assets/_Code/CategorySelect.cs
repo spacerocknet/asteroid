@@ -38,6 +38,7 @@ public class CategorySelect : MonoBehaviour {
 		public CategoryTypes categoryType;
 		public ColorTypes colorType;
 		public Color color;
+		public Sprite colorsprite;
 		public GameObject obj;
 
 		public Category(int _id, CategoryTypes _categoryType, ColorTypes _colorType, GameObject _obj)
@@ -58,18 +59,19 @@ public class CategorySelect : MonoBehaviour {
 			switch(colorType)
 			{
 				case ColorTypes.Red:
-					this.color = Color.red;
+					this.colorsprite=Resources.Load("Category/button_red",typeof(Sprite)) as Sprite;
 					break;
 				case ColorTypes.Green:
+					this.colorsprite=Resources.Load("Category/button_green",typeof(Sprite)) as Sprite;
 					this.color = Color.green;
 					break;
 				case ColorTypes.Blue:
-					this.color = Color.blue;
+					this.colorsprite=Resources.Load("Category/button_blue",typeof(Sprite)) as Sprite;
 					break;
 				default: break;
 			}
 
-			obj.GetComponent<SpriteRenderer>().color = this.color;
+			obj.GetComponent<SpriteRenderer>().sprite=this.colorsprite;
 		}
 
 		private void DefineLabel()

@@ -11,12 +11,23 @@ public class LevelManager : MonoBehaviour {
 		public int progressNeed;
 		public float progressBarPartSize;
 
+		//New Changes *** Used below in the constructor
+		public float progressBarPartSizePerAsteriodSpawn;
+		public float totalsizeprogressbar;
+		public int totalnumberofasteriods;
+		//
+
+
 		public Level(string _spawns, int _progressNeed)
 		{
+			totalsizeprogressbar=1.0f;
 			attackCount = 0;
-			progressNeed = _progressNeed;
+			progressNeed =_progressNeed;
+			totalnumberofasteriods=0;
+			_totalnumberofasteriods=0;
 
-			progressBarPartSize = (8.0f/(float)progressNeed);
+			//progressBarPartSize = (8/(float)progressNeed);
+
 
 			for(int i=0;i<_spawns.Length;i++)
 			{
@@ -30,6 +41,20 @@ public class LevelManager : MonoBehaviour {
 					spawns.Add(System.Convert.ToInt32(str.ToString()));
 				}
 			}
+
+			//New Changes ***
+			//Below code is used to calculate part size requried to increase in progress bar when each asteriod instantiates
+
+			foreach(int integer in spawns)
+			{
+				totalnumberofasteriods += integer;
+			}
+		
+
+			progressBarPartSizePerAsteriodSpawn=(totalsizeprogressbar/2)/totalnumberofasteriods;
+			_partsizeperasteriodspawn=progressBarPartSizePerAsteriodSpawn;
+			_totalnumberofasteriods=totalnumberofasteriods;
+			//
 		}
 	}
 
@@ -37,18 +62,27 @@ public class LevelManager : MonoBehaviour {
 	public int currentLevel;
 	public int currentINC;
 	private GameObject levelProgressBar;
-	private int currentProgress;
+	//private int currentProgress;
+
+	//New Changes ***
+	public static float _partsizeperasteriodspawn;
+	
+	//
 
 	private void Awake()
 	{
-		currentProgress = 0;
-		AllLevels.Add(new Level("5 2 3 3 2 1 1 3 1 3 2",30));
+		//currentProgress = 0;
+		AllLevels.Add(new Level("2 2",30));
 		levelProgressBar = (GameObject) GameObject.Find("level_progress/blank_color");
+		levelProgressBar.transform.localScale=new Vector3(1.01f,0f,0f);
 	}
 
 	public bool CheckIfProgressIfFull()
 	{
-		if(currentProgress>=AllLevels[currentLevel].progressNeed)
+		// New Changes ***
+		// Enter Method Modified
+
+		if(levelProgressBar.transform.localScale.y>0.98f)
 		{
 			return true;
 		}
@@ -58,29 +92,41 @@ public class LevelManager : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator UpdateLevelProgressBar()
+	public static int _totalnumberofasteriods;
+
+
+	public IEnumerator UpdateLevelProgressBarForAsteriodsSpawned(int numberOfAsteriodsSpawned)
 	{
-		currentProgress++;
-
-		float plusPart = AllLevels[currentLevel].progressBarPartSize / 10.0f;
-
-		for(int i=0;i<10;i++)
-		{	
-			if(levelProgressBar.transform.localScale.y<8.0f)
-			{
-				levelProgressBar.transform.localScale += new Vector3(0,plusPart,0);
-			}
-
-			yield return 0;
-		}
-
-		if(levelProgressBar.transform.localScale.y>8.0f)
+		float pluspart=(_partsizeperasteriodspawn*numberOfAsteriodsSpawned)/7;
+		for(int i=0;i<7;i++)
 		{
-			levelProgressBar.transform.localScale = new Vector3(0.9761209f,8.0f,1f);
-		}
-
-		yield return 0;
+			if(levelProgressBar.transform.localScale.y<0.99f)
+			{
+				yield return new WaitForSeconds(0.01f);
+				levelProgressBar.transform.localScale +=new Vector3(0f,pluspart,0f);
+			}
+		}	
+		yield return null;
 	}
+
+		
+
+
+	public IEnumerator UpdateLevelProgressBarForAsteroidsDestroyed()
+	{
+		float pluspart=_partsizeperasteriodspawn/7;
+		for(int i=0;i<7;i++)
+		{
+			if(levelProgressBar.transform.localScale.y<0.99f)
+			{
+				yield return new WaitForSeconds(0.01f);
+				levelProgressBar.transform.localScale +=new Vector3(0f,pluspart,0f);
+			}
+		}
+		yield return null;
+	}
+	
+
 
 	public int GetSpawnCountAutoINC()
 	{
@@ -97,4 +143,5 @@ public class LevelManager : MonoBehaviour {
 
 		return spawnCount;
 	}
+
 }

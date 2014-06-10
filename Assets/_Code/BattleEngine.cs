@@ -75,10 +75,12 @@ public class BattleEngine : MonoBehaviour {
 		bool isAnyLeft = asteroids.CheckIfAnyExists();
 		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
 
-		if(!isAnyLeft||isLevelProgressFull)
+		//New Changes ***
+		if(isLevelProgressFull)
 		{
 			WinBattle();
 		}
+		//
 		else
 		{
 			yield return StartCoroutine(asteroids.MoveAsteroids());
@@ -90,7 +92,9 @@ public class BattleEngine : MonoBehaviour {
 
 			if(!LastHitMiss&&spawnINC!=0)
 			{
-				StartCoroutine(levels.UpdateLevelProgressBar());
+				//New
+				StartCoroutine(levels.UpdateLevelProgressBarForAsteriodsSpawned(1));
+				//
 			}
 
 			bool isAnyCrossingTheLine = asteroids.CheckIfAnyCrossesTheLine();

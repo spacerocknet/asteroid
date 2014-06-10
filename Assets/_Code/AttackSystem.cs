@@ -21,7 +21,7 @@ public class AttackSystem : MonoBehaviour {
 	{		
 		BATTLE_ENGINE.LastHitMiss = false;
 		
-		Debug.Log("Attack!");
+//		Debug.Log("Attack!");
 
 		List<int> destroyIndex = new List<int>();
 
@@ -49,9 +49,11 @@ public class AttackSystem : MonoBehaviour {
 
 			if(currentAsteroids[destroyIndex[i]].isDead)
 			{
-				StartCoroutine(levelMRef.UpdateLevelProgressBar());
 				Destroy(currentAsteroids[destroyIndex[i]].obj,2);
 				currentAsteroids.RemoveAt(destroyIndex[i]);
+				//New Changes ***
+				GameObject.Find("MAIN").GetComponent<LevelManager>().StartCoroutine("UpdateLevelProgressBarForAsteroidsDestroyed");
+				//
 			}
 		}
 
@@ -129,7 +131,7 @@ public class AttackSystem : MonoBehaviour {
 		}
 
 		Destroy(missInit);
-		Debug.Log("Miss!");
+//		Debug.Log("Miss!");
 
 		yield return 0;
 	}

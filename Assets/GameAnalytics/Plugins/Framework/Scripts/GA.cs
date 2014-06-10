@@ -179,18 +179,18 @@ public class GA {
 	
 	public static void Log(object msg)
 	{
-		if (GA.SettingsGA.DebugMode)
-			Debug.Log(msg);
+		//if (GA.SettingsGA.DebugMode)
+			//Debug.Log(msg);
 	}
 	
 	public static void LogWarning(object msg)
 	{
-		Debug.LogWarning(msg);
+		//Debug.LogWarning(msg);
 	}
 	
 	public static void LogError(object msg)
 	{
-		Debug.LogError(msg);
+		//Debug.LogError(msg);
 	}
 	
 	#if UNITY_EDITOR
