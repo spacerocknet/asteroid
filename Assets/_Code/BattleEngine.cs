@@ -115,6 +115,7 @@ public class BattleEngine : MonoBehaviour {
 		isEndGame = true;
 		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
 		StartCoroutine(ShowEndBattleText("YOU WIN!",true));
+		Invoke("GoToMainMenu",1.5f);
 	}
 
 	private void LoseBattle()
@@ -190,5 +191,10 @@ public class BattleEngine : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	private void GoToMainMenu()
+	{
+		Application.LoadLevel(0);
 	}
 }

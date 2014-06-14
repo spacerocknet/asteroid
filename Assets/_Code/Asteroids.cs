@@ -125,7 +125,7 @@ public class Asteroids : MonoBehaviour {
 
 		for(int i=0;i<count;i++)
 		{
-			GameObject asteroid = (GameObject) Instantiate(asteroidRef,new Vector3(Random.Range(-1.8f,2.0f),Random.Range(3.4f,3.6f),-1.0f),Quaternion.identity);
+			GameObject asteroid = (GameObject) Instantiate(asteroidRef,new Vector3(Random.Range(-1.8f,2.0f),Random.Range(2.6f,2.8f),-1.0f),Quaternion.identity);
 
 			int lifeHits = Random.Range(1,4);
 

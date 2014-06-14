@@ -1,27 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class mainmenu : MonoBehaviour {
 
-		
+			
 	private Vector2 touchposition;
 	private RaycastHit2D hit;
-
+	
 	public enum state{settings,store,facebook,mainmenu};
 	public state gamestate;
 	public GameObject coinstore;
 	public GameObject settings;
+	public GameObject powerups;
 	public GameObject fadebg;
-
 	public Sprite button_off;
 	public Sprite button_on;
+	public GameObject lives_textmesh;
+	
+	public static int totalgold;
+	public static int levelselected;
+	public static int playcount;
 
-	private int totalgold;
+
+	//Related to life time management
+
+	public GameObject newlifetimer;
+	public static bool timerstarted;
+	public static int totaltimefornewlife=60;
+	public static float cachetotaltimefornewlife=60;
+	public static TimeSpan ts;
+	public static int totallives;
+
 
 	void Start()
 	{
+		managetimerfornewlife(true);
+		PlayerPrefs.DeleteAll();
+		levelselected=0;
 		gamestate=state.mainmenu;
 		totalgold=PlayerPrefs.GetInt("totalgold");
+		totallives=PlayerPrefs.GetInt("totallives",5);
+		lives_textmesh.GetComponent<TextMesh>().text=totallives.ToString();
 	}
 
 	void Update()
@@ -45,13 +65,35 @@ public class mainmenu : MonoBehaviour {
 				touchended();
 				}
 
-			if(Input.GetKey(KeyCode.Escape))
+			if(Input.GetKeyUp(KeyCode.Escape))
 				{
+				PlayerPrefs.SetInt("totallives",totallives);
 				Application.Quit();
 				}
 
+			if(timerstarted)
+			{
+			cachetotaltimefornewlife -=Time.deltaTime;
+			ts=TimeSpan.FromSeconds(cachetotaltimefornewlife);
+			newlifetimer.GetComponent<TextMesh>().text=ts.ToString().Substring(3,5);
 			}
+			
+			if(ts.TotalSeconds<=0)
+			{
+			totallives++;
+			//resettimer();
 
+				if(totallives<5)
+				{
+				managetimerfornewlife(false);
+				}
+				else
+				{
+				managetimerfornewlife(true);
+				}
+			
+		}
+	}
 
 	void touchended()
 			{
@@ -76,22 +118,41 @@ public class mainmenu : MonoBehaviour {
 									}
 						else if(hit.collider.gameObject.name=="Location_01_Level1")
 									{
-										Debug.Log("Location 1 works");
-										Application.LoadLevel(1);
+										Debug.Log("Location 1 works");		
+										StartCoroutine("showpowerupswindow");
+										levelselected=1;
+										fadebg.renderer.enabled=true;
 									}
 						else if(hit.collider.gameObject.name=="Location_01_Level2")
 									{
-										Debug.Log("Location 2 works");
+										StartCoroutine("showpowerupswindow");
+										StartCoroutine("showpowerupswindow");
+										levelselected=2;
+										fadebg.renderer.enabled=true;
 									}
 						else if(hit.collider.gameObject.name=="Location_01_Level3")
 									{
-										Debug.Log("Location 3 works");
+										StartCoroutine("showpowerupswindow");
+										levelselected=3;
+										fadebg.renderer.enabled=true;
 									}
 						else if(hit.collider.gameObject.name=="Location_01_Level4")
 									{
-									Debug.Log("Location 4 works");
+										StartCoroutine("showpowerupswindow");
+										levelselected=4;
+										fadebg.renderer.enabled=true;
 									}
-					}
+
+						else if(hit.collider.gameObject.name=="button_hidepowerups")
+									{
+										StartCoroutine("hidepowerupwindow");
+										fadebg.renderer.enabled=false;
+									}
+						else if(hit.collider.gameObject.name=="button_play")
+									{
+										loadnewlevel(levelselected);
+									}
+							}
 					else if(gamestate==state.store)
 					{
 						if(hit.collider.gameObject.name=="button_buy_pileofgold")
@@ -129,7 +190,11 @@ public class mainmenu : MonoBehaviour {
 							StartCoroutine("hidecoinstore");
 							fadebg.renderer.enabled=false;
 							}
-					}
+						else if(hit.collider.gameObject.name=="Play_button")
+							{
+							loadnewlevel(levelselected);
+							}
+						}
 			
 					else if(gamestate==state.settings)
 					{
@@ -241,6 +306,44 @@ public class mainmenu : MonoBehaviour {
 				gamestate=state.mainmenu;
 			}
 
+			IEnumerator showpowerupswindow()
+			{
+			for(int i=0;i<20;i++)
+				{
+				Vector3 oldposition=powerups.transform.position;
+				float newposition=Mathf.Lerp(oldposition.y,0f,0.15f);
+				powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,0f);
+				yield return null;
+				}
+			yield return new WaitForEndOfFrame();
+			gamestate=state.mainmenu;
+			}
+	
+			IEnumerator hidepowerupwindow()
+				{
+				for(int i=0;i<20;i++)
+				{
+					Vector3 oldposition=powerups.transform.position;
+					float newposition=Mathf.Lerp(oldposition.y,9.50314f,0.15f);
+					powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,0f);
+					yield return null;
+				}
+			yield return new WaitForEndOfFrame();
+			gamestate=state.mainmenu;
+			}
+
+		void loadnewlevel(int loadlevelindex)
+		{
+		Application.LoadLevel(loadlevelindex);
 		}
+	
+		public static void managetimerfornewlife(bool start)
+		{
+		timerstarted=start;	
+		}
+		
+
+}
+
 
 

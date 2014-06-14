@@ -98,6 +98,7 @@
      <Compile Include="Assets\_Code\Asteroids.cs" />
      <Compile Include="Assets\_Code\AttackSystem.cs" />
      <Compile Include="Assets\_Code\BattleEngine.cs" />
+     <Compile Include="Assets\_Code\ButtonManager.cs" />
      <Compile Include="Assets\_Code\CategorySelect.cs" />
      <Compile Include="Assets\_Code\Characters.cs" />
      <Compile Include="Assets\_Code\LevelManager.cs" />
