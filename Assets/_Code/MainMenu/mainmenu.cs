@@ -8,7 +8,7 @@ public class mainmenu : MonoBehaviour {
 	private Vector2 touchposition;
 	private RaycastHit2D hit;
 	
-	public enum state{settings,store,facebook,mainmenu};
+	public enum state{settings,store,facebook,mainmenu,powerups};
 	public state gamestate;
 	public GameObject coinstore;
 	public GameObject settings;
@@ -27,21 +27,40 @@ public class mainmenu : MonoBehaviour {
 
 	public GameObject newlifetimer;
 	public static bool timerstarted;
-	public static int totaltimefornewlife=60;
-	public static float cachetotaltimefornewlife=60;
+	public static int totaltimefornewlife=20;
+	public static float cachetotaltimefornewlife=20;
 	public static TimeSpan ts;
 	public static int totallives;
 
+	public static int launchcount;
+
+
+	//Related to powerups
+	public static int bombpowerupcount;
+	public static int doublebastradiuspowerupcount;
+	public static int reversetimepowerupcount;
+	public static int changequestioncategorypowerupcount;
 
 	void Start()
 	{
-		managetimerfornewlife(true);
-		PlayerPrefs.DeleteAll();
 		levelselected=0;
 		gamestate=state.mainmenu;
 		totalgold=PlayerPrefs.GetInt("totalgold");
 		totallives=PlayerPrefs.GetInt("totallives",5);
+		bombpowerupcount=PlayerPrefs.GetInt("bombpowerupcount",10);
+		doublebastradiuspowerupcount=PlayerPrefs.GetInt("doubleblastradiuspowerupcount",10);
+		reversetimepowerupcount=PlayerPrefs.GetInt("reversetimepowerupcount",10);
+		changequestioncategorypowerupcount=PlayerPrefs.GetInt("changequestioncategorypowerupcount",10);
 		lives_textmesh.GetComponent<TextMesh>().text=totallives.ToString();
+
+		if(launchcount==0 && totallives<5)
+		{
+			managetimerfornewlife(true);
+		}
+
+		//PowerUps Count
+
+		launchcount++;
 	}
 
 	void Update()
@@ -79,20 +98,27 @@ public class mainmenu : MonoBehaviour {
 			}
 			
 			if(ts.TotalSeconds<=0)
-			{
-			totallives++;
-			//resettimer();
-
-				if(totallives<5)
+			{	
+				if(timerstarted==true)
 				{
+				totallives++;
 				managetimerfornewlife(false);
+				lives_textmesh.GetComponent<TextMesh>().text=totallives.ToString();
+				PlayerPrefs.SetInt("totalives",totallives);
+				Debug.Log("Calling this");
+				//resettimer();
+					if(totallives<5)
+					{
+					managetimerfornewlife(true);
+					}
+					else
+					{
+					managetimerfornewlife(false);
+					newlifetimer.GetComponent<MeshRenderer>().enabled=false;
+					}
 				}
-				else
-				{
-				managetimerfornewlife(true);
-				}
-			
-		}
+				resettimerfornewlife();
+			}
 	}
 
 	void touchended()
@@ -152,6 +178,27 @@ public class mainmenu : MonoBehaviour {
 									{
 										loadnewlevel(levelselected);
 									}
+						else if(hit.collider.gameObject.name=="button_plus_bomb")
+									{
+									bombpowerupcount++;
+									PlayerPrefs.SetInt("bombpowerupcount",bombpowerupcount);
+									}
+						else if(hit.collider.gameObject.name=="button_plus_doubleblast")
+									{
+									doublebastradiuspowerupcount++;
+									PlayerPrefs.SetInt("doubleblastradiuspowerupcount",doublebastradiuspowerupcount);
+									}
+						else if(hit.collider.gameObject.name=="button_plus_reversetime")
+									{
+									reversetimepowerupcount++;
+									PlayerPrefs.SetInt("reversetimepowerupcount",reversetimepowerupcount);
+									}
+						else if(hit.collider.gameObject.name=="button_plus_changequestioncategory")
+								{
+									Debug.Log("bomb3");
+									changequestioncategorypowerupcount++;
+									PlayerPrefs.SetInt("changequestioncategorypowerupcount",changequestioncategorypowerupcount);
+								}
 							}
 					else if(gamestate==state.store)
 					{
@@ -341,8 +388,12 @@ public class mainmenu : MonoBehaviour {
 		{
 		timerstarted=start;	
 		}
-		
 
+		public static void resettimerfornewlife()
+		{
+		cachetotaltimefornewlife=totaltimefornewlife;
+		}
+		
 }
 
 

@@ -106,6 +106,29 @@ public class Asteroids : MonoBehaviour {
 
 		yield return 0;
 	}
+	
+	public IEnumerator ReverseTimePowerUp()
+	{
+		for(int j=0;j<20;j++)
+		{
+			for(int i=0;i<currentAsteroids.Count;i++)
+			{
+				currentAsteroids[i].obj.transform.position -=new Vector3(0,-0.03f,0);
+			}
+			yield return 0;
+		}
+		yield return new WaitForSeconds(0.35f);
+
+		for(int j=0;j<20;j++)
+		{
+			for(int i=0;i<currentAsteroids.Count;i++)
+			{
+				currentAsteroids[i].obj.transform.position -=new Vector3(0,-0.03f,0);
+			}
+			yield return 0;
+		}
+	}
+
 
 	public IEnumerator SpawnAsteroids(int count, float diff)
 	{
@@ -206,6 +229,7 @@ public class Asteroids : MonoBehaviour {
 		yield return new WaitForSeconds (0.15f);
 		StartCoroutine(GameObject.Find("MAIN").GetComponent<LevelManager>().UpdateLevelProgressBarForAsteriodsSpawned(numberOfAsteriodsSpawned));
 	}
+
 
 	//
 }

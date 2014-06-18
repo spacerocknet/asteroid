@@ -72,7 +72,7 @@ public class LevelManager : MonoBehaviour {
 	private void Awake()
 	{
 		//currentProgress = 0;
-		AllLevels.Add(new Level("2 2",30));
+		AllLevels.Add(new Level("3 3",30));
 		levelProgressBar = (GameObject) GameObject.Find("level_progress/blank_color");
 		levelProgressBar.transform.localScale=new Vector3(1.01f,0f,0f);
 	}
@@ -108,9 +108,7 @@ public class LevelManager : MonoBehaviour {
 		}	
 		yield return null;
 	}
-
-		
-
+	
 
 	public IEnumerator UpdateLevelProgressBarForAsteroidsDestroyed()
 	{

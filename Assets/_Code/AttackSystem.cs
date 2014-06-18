@@ -30,17 +30,37 @@ public class AttackSystem : MonoBehaviour {
 
 		for(int i=0;i<currentAsteroids.Count;i++)
 		{
+			//Normal Distance without powerup
+			float normalpowerupdistance=0.7f;
+
+			//Double up the distance
+			float powerupdoubleblast=normalpowerupdistance*2.0f;
+
 			Vector3 p1 = target;
 			Vector3 p2 = new Vector3(currentAsteroids[i].obj.transform.position.x,currentAsteroids[i].obj.transform.position.y,p1.z);
 			float dist = Vector3.Distance(p1,p2);
 
-			if(dist<0.7f)
+			if(ButtonManager.powerupselected=="double_blast_radius")
 			{
-				GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
-				Destroy(exp,2);
-				destroyIndex.Add(i);
+				if(dist<powerupdoubleblast)
+				{
+					ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+					ButtonManager.attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+					GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
+					Destroy(exp,2);
+					destroyIndex.Add(i);
+				}
 			}
-		}
+			else
+				{
+				if(dist<normalpowerupdistance)
+					{
+						GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
+						Destroy(exp,2);
+						destroyIndex.Add(i);
+					}
+				}
+			}
 		
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
@@ -62,20 +82,44 @@ public class AttackSystem : MonoBehaviour {
 
 	private int DamageCalcByColor(CategorySelect.ColorTypes c1, Asteroids.AsteroidColorTypes c2)
 	{
-	//	float tempDmg = 6.0f;
 		int cDistance = ColorDistance((int)c1,(int)c2);
-
 		if(cDistance==0)
 		{
-			return 2;
+			if(ButtonManager.powerupselected=="bomb")
+			{
+				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+				return 2+2;
+			}
+			else
+			{
+				return 2;
+			}
 		}
+
 		else if(cDistance==1)
 		{
-			return 3;
+			if(ButtonManager.powerupselected=="bomb")
+			{
+				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+				return 3+3;
+			}
+			else
+			{
+				return 3;
+			}
 		}
+
 		else if(cDistance==2)
 		{
-			return 1;
+			if(ButtonManager.powerupselected=="bomb")
+			{
+				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+				return 1+1; 
+			}
+			else
+			{
+				return 1;
+			}
 		}
 
 		return 0;
