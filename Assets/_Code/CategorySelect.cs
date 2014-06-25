@@ -152,8 +152,47 @@ public class CategorySelect : MonoBehaviour {
 			  index++;
 			}
 		}
-
 	}
+
+	//The Code for the powerup change color category.. This code changes colortype and color of all the categories
+
+	public void PlaceCategoriesByCategoryChangePowerup(string color)
+	{
+		if(color=="red")
+		{
+			for(int i=0;i<currentCategories.Count;i++)
+			{
+			Category tempcategory=currentCategories[i];
+			tempcategory.colorType=ColorTypes.Red;
+			tempcategory.colorsprite=Resources.Load("Category/button_red",typeof(Sprite)) as Sprite;
+			tempcategory.obj.GetComponent<SpriteRenderer>().sprite=Resources.Load("Category/button_red",typeof(Sprite)) as Sprite;
+			currentCategories[i]=tempcategory;
+			}
+		}
+		else if(color=="blue")
+		{
+			for(int i=0;i<currentCategories.Count;i++)
+			{
+				Category tempcategory=currentCategories[i];
+				tempcategory.colorType=ColorTypes.Blue;
+				tempcategory.colorsprite=Resources.Load("Category/button_blue",typeof(Sprite)) as Sprite;
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite=Resources.Load("Category/button_blue",typeof(Sprite)) as Sprite;
+				currentCategories[i]=tempcategory;
+			}
+		}
+		else if(color=="green")
+		{
+			for(int i=0;i<currentCategories.Count;i++)
+			{
+				Category tempcategory=currentCategories[i];
+				tempcategory.colorType=ColorTypes.Green;
+				tempcategory.colorsprite=Resources.Load("Category/button_green",typeof(Sprite)) as Sprite;
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite=Resources.Load("Category/button_green",typeof(Sprite)) as Sprite;
+				currentCategories[i]=tempcategory;
+			}
+		}
+	}
+
 
 	private IEnumerator PlaceCategoryToPlace(int index, GameObject go)
 	{

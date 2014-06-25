@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BattleEngine : MonoBehaviour {
 
-	private CategorySelect categorySelect;
+	public CategorySelect categorySelect;
 	public Asteroids asteroids;
 	private LevelManager levels;
 	[HideInInspector]
@@ -16,6 +16,7 @@ public class BattleEngine : MonoBehaviour {
 	private bool isEndGame;
 	public bool LastHitMiss;
 	public bool isgamewon;
+
 
 	private void Awake()
 	{

@@ -19,10 +19,26 @@ public class ButtonManager : MonoBehaviour {
 	public static GameObject changequestioncategoriestextmesh;
 
 	public GameObject topwall;
+	public GameObject changequestioncategorycolor;
+	public GameObject fadebg;
+	Color fadebgcolor;
 
+	//For toggling the color of the powerups
+	Color powerupselectedcolor;
+	Color powerupnormalcolor;
+	public GameObject double_hitpowerup_gameobject;
+	public GameObject double_blastpowerup_gameobject;
+	public GameObject changequestioncategory_gameobject;
+	public static GameObject rewardsscreen;
+
+	
+	
 	void Awake()
 	{
+		powerupselectedcolor=new Color(139f,142f,142f,0.5f);
+		powerupnormalcolor=new Color(255f,255f,255f,1f);
 		bombtextmesh=GameObject.Find("bomb_textmesh");
+		rewardsscreen=GameObject.Find("rewardsscreen");
 		doubleblastradiustextmesh=GameObject.Find("doubleblastradius_textmesh");
 		reversetimetextmesh=GameObject.Find("reversetime_textmesh");
 		changequestioncategoriestextmesh=GameObject.Find("changecategory_textmesh");
@@ -36,7 +52,7 @@ public class ButtonManager : MonoBehaviour {
 		doubleblastradiustextmesh.GetComponent<TextMesh>().text=mainmenu.doublebastradiuspowerupcount.ToString();
 		reversetimetextmesh.GetComponent<TextMesh>().text=mainmenu.reversetimepowerupcount.ToString();
 		changequestioncategoriestextmesh.GetComponent<TextMesh>().text=mainmenu.changequestioncategorypowerupcount.ToString();
-		Invoke("removetopwallcollider",1.65f);
+		//Invoke("removetopwallcollider",1.65f);
 	}
 
 	void Update () {
@@ -52,7 +68,6 @@ public class ButtonManager : MonoBehaviour {
 			}
 		}
 
-		
 		//For testing with the mouse
 		if(Input.GetMouseButtonUp(0))
 		{
@@ -107,30 +122,54 @@ public class ButtonManager : MonoBehaviour {
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_02")
 					{
-						if(mainmenu.bombpowerupcount>0)
+					if(powerupselected!="bomb")
 						{
-							if(powerupselected=="double_blast_radius")
+							if(mainmenu.bombpowerupcount>0)
+							{
+								if(powerupselected=="double_blast_radius")
+									{
+									attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+									double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+									}
+								powerupselected="bomb";
+								//ToggleHere	
+								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+							}
+							else
 								{
-								attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+								Debug.Log("Bomb powerup is finished");
 								}
-							powerupselected="bomb";
 							}
 						else
-							{
-							Debug.Log("Bomb powerup is finished");
-							}
+						{
+						//This will toggle if it already selected
+						double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+						powerupselected=string.Empty;
 						}
+					}
 					else if(hit.collider.gameObject.name=="button_power_up_03")
 					{
+					if(powerupselected!="double_blast_radius")
+						{
 						if(mainmenu.doublebastradiuspowerupcount>0)
 							{
 							powerupselected="double_blast_radius";
 							attack_target.transform.localScale=new Vector3(2.4f,2.4f,0f);
+							//ToggleHere
+							hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+							double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							}
 						else
 							{
 							Debug.Log("Double Blast radius powerup is finished");
 							}
+						}
+					else 
+						{
+						//This will toggle if already selected
+						double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+						powerupselected=string.Empty;
+						}
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_04")
 					{
@@ -139,7 +178,9 @@ public class ButtonManager : MonoBehaviour {
 							if(powerupselected=="double_blast_radius")
 							{
 							attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+							double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							}
+							double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							powerupselected="reverse_time";
 							MAIN.GetComponent<BattleEngine>().asteroids.StartCoroutine("ReverseTimePowerUp");
 							reducepowerupcount(powerupselected);
@@ -151,19 +192,54 @@ public class ButtonManager : MonoBehaviour {
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_05")
 					{
-						if(mainmenu.changequestioncategorypowerupcount>0)
+						if(powerupselected!="change_question_category")
 						{
-							if(powerupselected=="double_blast_radius")
+							if(mainmenu.changequestioncategorypowerupcount>0)
 							{
-							attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+								if(powerupselected=="double_blast_radius")
+								{
+								attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+								}
+								powerupselected="change_question_category";
+								StartCoroutine("showquestionchangecatwindow");
+								fadebgcolor=fadebg.GetComponent<SpriteRenderer>().color;
+								fadebgcolor.a=1;
+								fadebg.GetComponent<SpriteRenderer>().color=fadebgcolor;
+								//state=gamestate.changequestioncategory;
+								double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+								double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
 							}
-							powerupselected="change_question_category";
+							else
+							{
+								Debug.Log("Change question powerup is finished");
+							}
 						}
 						else
 						{
-							Debug.Log("Change question powerup is finished");
+						//It is already toggled so hideitup
+						StartCoroutine("hidequestionchangecatwindow");
+					powerupselected=string.Empty;
 						}
-
+						
+					}
+					else if(hit.collider.gameObject.name=="button_bluecolor")
+					{	
+					StartCoroutine("hidequestionchangecatwindow");	
+					reducepowerupcount(powerupselected);
+					MAIN.GetComponent<BattleEngine>().categorySelect.PlaceCategoriesByCategoryChangePowerup("blue");
+					}
+					else if(hit.collider.gameObject.name=="button_greencolor")
+					{
+					StartCoroutine("hidequestionchangecatwindow");
+					reducepowerupcount(powerupselected);
+					MAIN.GetComponent<BattleEngine>().categorySelect.PlaceCategoriesByCategoryChangePowerup("green");
+					}
+					else if(hit.collider.gameObject.name=="button_redcolor")
+					{
+					StartCoroutine("hidequestionchangecatwindow");
+					reducepowerupcount(powerupselected);
+					MAIN.GetComponent<BattleEngine>().categorySelect.PlaceCategoriesByCategoryChangePowerup("red");
 					}
 				}
 	}
@@ -197,11 +273,46 @@ public class ButtonManager : MonoBehaviour {
 			mainmenu.changequestioncategorypowerupcount--;
 			changequestioncategoriestextmesh.GetComponent<TextMesh>().text=mainmenu.changequestioncategorypowerupcount.ToString();
 			PlayerPrefs.SetInt("changequestioncategorypowerupcount",mainmenu.changequestioncategorypowerupcount);
+			//Change Question Cat disable
 			}
 	}
 
 	private void removetopwallcollider()
 	{
 		topwall.GetComponent<BoxCollider2D>().enabled=false;
+	}
+
+
+	IEnumerator showquestionchangecatwindow()
+	{
+		for(int i=0;i<26;i++)
+		{
+			Vector3 oldposition=changequestioncategorycolor.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,-0.10f,0.15f);
+			changequestioncategorycolor.transform.position=new Vector3(newposition,changequestioncategorycolor.transform.position.y,changequestioncategorycolor.transform.position.z);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+		
+	IEnumerator hidequestionchangecatwindow()
+	{
+		for(int i=0;i<26;i++)
+		{
+			Vector3 oldposition=changequestioncategorycolor.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,5.21f,0.15f);
+			changequestioncategorycolor.transform.position=new Vector3(newposition,changequestioncategorycolor.transform.position.y,changequestioncategorycolor.transform.position.z);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+		fadebgcolor=fadebg.GetComponent<SpriteRenderer>().color;
+		fadebgcolor.a=0;
+		changequestioncategory_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+		fadebg.GetComponent<SpriteRenderer>().color=fadebgcolor;
+	}
+
+	public static IEnumerator showrewardsscreen()
+	{
+		yield return null;
 	}
 }

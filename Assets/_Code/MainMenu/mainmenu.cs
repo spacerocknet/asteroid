@@ -27,8 +27,8 @@ public class mainmenu : MonoBehaviour {
 
 	public GameObject newlifetimer;
 	public static bool timerstarted;
-	public static int totaltimefornewlife=20;
-	public static float cachetotaltimefornewlife=20;
+	public static int totaltimefornewlife=1800;
+	public static float cachetotaltimefornewlife=1800;
 	public static TimeSpan ts;
 	public static int totallives;
 
@@ -43,6 +43,7 @@ public class mainmenu : MonoBehaviour {
 
 	void Start()
 	{
+		//PlayerPrefs.DeleteAll();
 		levelselected=0;
 		gamestate=state.mainmenu;
 		totalgold=PlayerPrefs.GetInt("totalgold");
@@ -59,7 +60,6 @@ public class mainmenu : MonoBehaviour {
 		}
 
 		//PowerUps Count
-
 		launchcount++;
 	}
 
