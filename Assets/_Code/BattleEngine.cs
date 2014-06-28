@@ -30,10 +30,8 @@ public class BattleEngine : MonoBehaviour {
 		AtkSystem = (AttackSystem) this.gameObject.AddComponent<AttackSystem>();
 		character = (Characters) this.gameObject.AddComponent<Characters>();
 		levels = (LevelManager) this.gameObject.AddComponent<LevelManager>();
-
 		levels.currentLevel = 0;
 		levels.currentINC = 0;
-
 	}
 
 	private IEnumerator Start()
@@ -206,7 +204,7 @@ public class BattleEngine : MonoBehaviour {
 		}
 	}
 
-	private void Update()
+	private void LateUpdate()
 	{
 		if(canTarget)
 		{
@@ -222,6 +220,8 @@ public class BattleEngine : MonoBehaviour {
 
 			if(isMouseDown)
 			{
+				if(ButtonManager.canmovemarker)
+				{
 				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
 				if(hit.collider)
@@ -238,6 +238,7 @@ public class BattleEngine : MonoBehaviour {
 					}
 				}
 			}
+				}
 		}
 	}
 

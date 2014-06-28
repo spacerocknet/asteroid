@@ -48,6 +48,15 @@ public class Questions : MonoBehaviour {
 	private int maxWordsPerLine = 35;
 	private CategorySelect.ColorTypes currentColorType;
 
+
+	//GameObject PowerUp References
+	private GameObject powerup1;
+	private GameObject powerup2;
+	private GameObject powerup3;
+	private GameObject powerup4;
+
+
+
 	private void Awake()
 	{
 		cancelIndicator = false;
@@ -58,6 +67,14 @@ public class Questions : MonoBehaviour {
 		indicatorBG = (GameObject) GameObject.Find("indicator_bg");
 		indicatorColor = (GameObject) GameObject.Find("indicator_bg/blank_color");
 		BATTLE_ENGINE = (BattleEngine) GameObject.Find("MAIN").GetComponent<BattleEngine>();
+
+
+		//PowerupRefrences
+		powerup1=GameObject.Find("button_power_up_02");
+		powerup2=GameObject.Find("button_power_up_03");
+		powerup3=GameObject.Find("button_power_up_04");
+		powerup4=GameObject.Find("button_power_up_05");
+
 
 		// temporary for testing
 		//Movies
@@ -433,6 +450,13 @@ public class Questions : MonoBehaviour {
 		StartCoroutine(ShowIndicator());
 		StartCoroutine(TimerForAnswer(TIME_FOR_ANSWER));
 
+
+		//Disable the powerup buttonss
+		powerup1.GetComponent<BoxCollider2D>().enabled=false;
+		powerup2.GetComponent<BoxCollider2D>().enabled=false;
+		powerup3.GetComponent<BoxCollider2D>().enabled=false;
+		powerup4.GetComponent<BoxCollider2D>().enabled=false;
+
 		currentAnswers.Clear();
 
 		for(int i=0;i<4;i++)
@@ -473,6 +497,11 @@ public class Questions : MonoBehaviour {
 		StartCoroutine(ShowIndicator(true));
 
 		yield return StartCoroutine(DiscardAnswers(index));
+
+		powerup1.GetComponent<BoxCollider2D>().enabled=true;
+		powerup2.GetComponent<BoxCollider2D>().enabled=true;
+		powerup3.GetComponent<BoxCollider2D>().enabled=true;
+		powerup4.GetComponent<BoxCollider2D>().enabled=true;
 
 		StartCoroutine(BATTLE_ENGINE.NextRound(isCorrect,currentColorType));
 

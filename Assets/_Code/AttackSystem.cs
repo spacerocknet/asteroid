@@ -45,7 +45,7 @@ public class AttackSystem : MonoBehaviour {
 				if(dist<powerupdoubleblast)
 				{
 					ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
-					ButtonManager.attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+					ButtonManager.attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
 					GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
 					Destroy(exp,2);
 					destroyIndex.Add(i);

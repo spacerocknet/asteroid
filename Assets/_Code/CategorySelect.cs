@@ -194,6 +194,28 @@ public class CategorySelect : MonoBehaviour {
 	}
 
 
+	//Below is code to disable the question togglebutton while the powerup deactivated
+	public void disablequestioncollidersandtriggers()
+	{
+		for(int i=0;i<currentCategories.Count;i++)
+		{
+			Category tempcategory=currentCategories[i];
+			tempcategory.obj.GetComponent<BoxCollider2D>().enabled=false;
+			currentCategories[i]=tempcategory;
+		}
+	}
+
+	//Below is code to enable the question button colliders and triggers while the powerup is activated
+	public void enablequestioncollidersandtriggers()
+	{
+		for(int i=0;i<currentCategories.Count;i++)
+		{
+			Category tempcategory=currentCategories[i];
+			tempcategory.obj.GetComponent<BoxCollider2D>().enabled=true;
+			currentCategories[i]=tempcategory;
+		}
+	}
+
 	private IEnumerator PlaceCategoryToPlace(int index, GameObject go)
 	{
 		yield return new WaitForSeconds((float)index * 0.1f);
