@@ -39,7 +39,8 @@ public class ButtonManager : MonoBehaviour {
 	public static GameObject changequestioncategory_Static_gameobject;
 
 	public static bool canmovemarker;
-	
+	GameObject character;
+
 	void Awake()
 	{
 		canmovemarker=true;
@@ -66,6 +67,7 @@ public class ButtonManager : MonoBehaviour {
 		reversetimetextmesh.GetComponent<TextMesh>().text=mainmenu.reversetimepowerupcount.ToString();
 		changequestioncategoriestextmesh.GetComponent<TextMesh>().text=mainmenu.changequestioncategorypowerupcount.ToString();
 		//Invoke("removetopwallcollider",1.65f);
+		Invoke("getcharacter",0.10f);
 	}
 
 	void Update () {
@@ -117,11 +119,7 @@ public class ButtonManager : MonoBehaviour {
 
 
 	}
-
-
-
-	
-	
+		
 	void touchended()
 	{
 			hit=Physics2D.Raycast(camera.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero,Mathf.Infinity,layermask);
@@ -213,6 +211,8 @@ public class ButtonManager : MonoBehaviour {
 								{
 								attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
 								}
+								character.GetComponent<SpriteRenderer>().enabled=false;
+								character.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled=false;
 								MAIN.GetComponent<BattleEngine>().categorySelect.disablequestioncollidersandtriggers();
 								powerupselected="change_question_category";
 								fadebg.GetComponent<BoxCollider2D>().enabled=true;
@@ -225,7 +225,7 @@ public class ButtonManager : MonoBehaviour {
 								double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
 										
-					}
+							}
 							else
 							{
 								Debug.Log("Change question powerup is finished");
@@ -314,12 +314,12 @@ public class ButtonManager : MonoBehaviour {
 			}
 	}
 
+
 	private void removetopwallcollider()
 	{
 		topwall.GetComponent<BoxCollider2D>().enabled=false;
 	}
-
-
+	
 	IEnumerator showquestionchangecatwindow()
 	{	
 		for(int i=0;i<40;i++)
@@ -334,7 +334,8 @@ public class ButtonManager : MonoBehaviour {
 		
 	IEnumerator hidequestionchangecatwindow()
 	{
-
+		character.GetComponent<SpriteRenderer>().enabled=true;
+		character.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled=true;
 		for(int i=0;i<40;i++)
 		{
 			Vector3 oldposition=changequestioncategorycolor.transform.position;
@@ -344,15 +345,13 @@ public class ButtonManager : MonoBehaviour {
 		}
 		yield return new WaitForEndOfFrame();
 		changequestioncategory_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-
 	}
-
+	
 	public static IEnumerator showrewardsscreen()
 	{
 		yield return null;
 	}
-
-
+	
 	void fadebgalphaandtriggerdisable()
 	{
 		MAIN.GetComponent<BattleEngine>().categorySelect.enablequestioncollidersandtriggers();
@@ -360,5 +359,10 @@ public class ButtonManager : MonoBehaviour {
 		fadebgcolor=fadebg.GetComponent<SpriteRenderer>().color;
 		fadebgcolor.a=0;
 		fadebg.GetComponent<SpriteRenderer>().color=fadebgcolor;
+	}
+
+	private void getcharacter()
+	{
+		character=GameObject.Find("Character(Clone)");
 	}
 }

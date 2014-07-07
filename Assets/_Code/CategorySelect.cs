@@ -16,11 +16,12 @@ public class CategorySelect : MonoBehaviour {
 	public Questions QE;
 	private int [] catBitmap = new int[4]  { 14,  13, 11, 7}; //different num categories have different bitmap list. It is 4 now
 	public bool animationIsPlaying;
+	private GameObject battleengineobject;
 
 	public enum CategoryTypes
 	{
-		Sports = 0,
-		Movies = 1,
+		Sport = 0,
+		Movie = 1,
 		Music = 2,
 		Geography = 3
 	}
@@ -40,6 +41,7 @@ public class CategorySelect : MonoBehaviour {
 		public Color color;
 		public Sprite colorsprite;
 		public GameObject obj;
+		
 
 		public Category(int _id, CategoryTypes _categoryType, ColorTypes _colorType, GameObject _obj)
 		{
@@ -77,7 +79,15 @@ public class CategorySelect : MonoBehaviour {
 		private void DefineLabel()
 		{
 			TextMesh textM = (TextMesh) obj.GetComponentInChildren<TextMesh>();
+			textM.font=BattleEngine.font1;
+			textM.renderer.material=BattleEngine.material1[0];
 			textM.text = categoryType.ToString();
+			textM.fontSize=33;
+			textM.characterSize=0.45f;
+			textM.fontStyle=FontStyle.Bold;
+			textM.color=Color.white;
+			textM.gameObject.transform.localScale=textM.gameObject.transform.localScale/2;
+			textM.gameObject.transform.position=new Vector3(textM.transform.position.x,textM.transform.position.y-0.15f,textM.transform.position.z);
 
 			if(textM.text.Length>6)
 			{
@@ -85,9 +95,10 @@ public class CategorySelect : MonoBehaviour {
 
 				for(int i=0;i<len;i++)
 				{
-					textM.characterSize -= 0.05f;
+					//textM.characterSize -= 0.05f;
 				}
 			}
+
 		}
 
 		private void DefineSize()
@@ -127,6 +138,7 @@ public class CategorySelect : MonoBehaviour {
 		catRef = (GameObject) GameObject.Find("REFERENCES/category_bg");
 		INIT = (GameObject) GameObject.Find("RUNTIME_INIT");
 		QE = (Questions) GameObject.Find("MAIN").AddComponent<Questions>();
+		battleengineobject=GameObject.Find("MAIN");
 	}
 
 	public void PlaceCategories(int diff)
