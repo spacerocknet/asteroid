@@ -84,7 +84,7 @@ public class CategorySelect : MonoBehaviour {
 			textM.text = categoryType.ToString();
 			textM.fontSize=33;
 			textM.characterSize=0.45f;
-			textM.fontStyle=FontStyle.Bold;
+			textM.fontStyle=FontStyle.Normal;
 			textM.color=Color.white;
 			textM.gameObject.transform.localScale=textM.gameObject.transform.localScale/2;
 			textM.gameObject.transform.position=new Vector3(textM.transform.position.x,textM.transform.position.y-0.15f,textM.transform.position.z);
