@@ -48,6 +48,15 @@ public class Questions : MonoBehaviour {
 	private int maxWordsPerLine = 35;
 	private CategorySelect.ColorTypes currentColorType;
 
+
+	//GameObject PowerUp References
+	private GameObject powerup1;
+	private GameObject powerup2;
+	private GameObject powerup3;
+	private GameObject powerup4;
+
+	private GameObject character;
+
 	private void Awake()
 	{
 		cancelIndicator = false;
@@ -59,12 +68,20 @@ public class Questions : MonoBehaviour {
 		indicatorColor = (GameObject) GameObject.Find("indicator_bg/blank_color");
 		BATTLE_ENGINE = (BattleEngine) GameObject.Find("MAIN").GetComponent<BattleEngine>();
 
+
+		//PowerupRefrences
+		powerup1=GameObject.Find("button_power_up_02");
+		powerup2=GameObject.Find("button_power_up_03");
+		powerup3=GameObject.Find("button_power_up_04");
+		powerup4=GameObject.Find("button_power_up_05");
+
+
 		// temporary for testing
 		//Movies
-		AllQuestions.Add(CategorySelect.CategoryTypes.Movies, new List<Question> ());
-		List<Question> movies = AllQuestions[CategorySelect.CategoryTypes.Movies];
-		movies.Add(new Question(0,CategorySelect.CategoryTypes.Movies,"Who directed 'Avatar' in 2009",GenerateAnswerList("Werner Herzog","Sam Raimi","James Cameron","Kathryn Bigelow"),3));
-		movies.Add(new Question(1,CategorySelect.CategoryTypes.Movies,"Who is the director of the 2010 movie 'Kick Ass'",GenerateAnswerList("Spike Lee","Mathew Vaughn","Ridley Scott","Peter Jackson"),2));
+		AllQuestions.Add(CategorySelect.CategoryTypes.Movie, new List<Question> ());
+		List<Question> movies = AllQuestions[CategorySelect.CategoryTypes.Movie];
+		movies.Add(new Question(0,CategorySelect.CategoryTypes.Movie,"Who directed 'Avatar' in 2009",GenerateAnswerList("Werner Herzog","Sam Raimi","James Cameron","Kathryn Bigelow"),3));
+	/*	movies.Add(new Question(1,CategorySelect.CategoryTypes.Movies,"Who is the director of the 2010 movie 'Kick Ass'",GenerateAnswerList("Spike Lee","Mathew Vaughn","Ridley Scott","Peter Jackson"),2));
 		movies.Add(new Question(2,CategorySelect.CategoryTypes.Movies,"In 'Men in Black 3', if Will Smith is 'J', Tommy Lee Jones is 'K', who is 'O'",GenerateAnswerList("Nicolas Cage","Emma Thompson","Josh Brolin","Lady Gaga"),2));
 		movies.Add(new Question(3,CategorySelect.CategoryTypes.Movies,"'True Lies' was directed by which of the following",GenerateAnswerList("Jan de Bont","John McTiernan","James Cameron","Tony Scott"),3));
 		movies.Add(new Question(4,CategorySelect.CategoryTypes.Movies,"Which actor is the voice of Lightening McQueen in the 2011 movie 'Cars 2'",GenerateAnswerList("Charlie Sheen","Clive Owen","Liam Neeson","Owen Wilson"),4));
@@ -78,12 +95,12 @@ public class Questions : MonoBehaviour {
 		movies.Add(new Question(12,CategorySelect.CategoryTypes.Movies,"What is the sub-title of the 2002 Lord of the Rings movie",GenerateAnswerList("The Two Towers","The Return of the King","Rise of the Witch King","The Fellowship of the Ring"),1));
 		movies.Add(new Question(13,CategorySelect.CategoryTypes.Movies,"Who played the role of Bruce Banner in the 2008 film 'The incredible Hulk'",GenerateAnswerList("Tim Roth","Mark Ruffalo","Eric Bana","Edward Norton"),4));
 		movies.Add(new Question(14,CategorySelect.CategoryTypes.Movies,"Who played Peter Parker in the Spiderman re-boot 'The Amazing Spider-Man'",GenerateAnswerList("Andrew Garfield","Johnny Depp","James Marsden","Tobey Maguire"),1));
-
+	*/
 		//Sports
-		AllQuestions.Add(CategorySelect.CategoryTypes.Sports, new List<Question> ());
-		List<Question> sports = AllQuestions[CategorySelect.CategoryTypes.Sports];
-		sports.Add(new Question(100,CategorySelect.CategoryTypes.Sports,"What team did Steve Nash play for before signing with the Lakers in 2012",GenerateAnswerList("Phoenix Suns","Miami Heat","New York Knicks","San Antonio Spurs"),1));
-		sports.Add(new Question(101,CategorySelect.CategoryTypes.Sports,"What legendary actor is often seen wearing sunglasses in his court side seat at Lakers home games",GenerateAnswerList("Al Pacino","Anthony Hopkins","Jack Nicholson","Robert De Niro"),3));
+		AllQuestions.Add(CategorySelect.CategoryTypes.Sport, new List<Question> ());
+		List<Question> sports = AllQuestions[CategorySelect.CategoryTypes.Sport];
+		sports.Add(new Question(100,CategorySelect.CategoryTypes.Sport,"What team did Steve Nash play for before signing with the Lakers in 2012",GenerateAnswerList("Phoenix Suns","Miami Heat","New York Knicks","San Antonio Spurs"),1));
+	/*	sports.Add(new Question(101,CategorySelect.CategoryTypes.Sports,"What legendary actor is often seen wearing sunglasses in his court side seat at Lakers home games",GenerateAnswerList("Al Pacino","Anthony Hopkins","Jack Nicholson","Robert De Niro"),3));
 		sports.Add(new Question(102,CategorySelect.CategoryTypes.Sports,"What team did Mike D'Antoni coach before joining the Lakers",GenerateAnswerList("Houston Rockets","New York Knicks","Golden State Warriors","Brooklyn Nets"),2));
 		sports.Add(new Question(103,CategorySelect.CategoryTypes.Sports,"What is the name of the arena where the Lakers play",GenerateAnswerList("The Mobil One Center","The Office Max Center","The Staples Center","The Times Union Center"),3));
 		sports.Add(new Question(104,CategorySelect.CategoryTypes.Sports,"What one time Lakers has the record for most season leading league in defensive rebounds with six",GenerateAnswerList("Dwight Howard","Wilt Chamberlain","Kareem Jabbar","Shaquille O'Neal"),1));
@@ -103,12 +120,13 @@ public class Questions : MonoBehaviour {
 		sports.Add(new Question(117,CategorySelect.CategoryTypes.Sports,"Which of these teams' coaches would wear the same uniform as the players",GenerateAnswerList("New York Giants","New York Knicks","New York Yankees","New York Rangers"),3));
 		sports.Add(new Question(118,CategorySelect.CategoryTypes.Sports,"What trophy was found at the bottom of Mario Lemieux's swimming pool in 1991",GenerateAnswerList("Jules Rimet Trophy","Borg Warner","Stanley Cup","Heisman Trophy"),3));
 		sports.Add(new Question(119,CategorySelect.CategoryTypes.Sports,"Goal Shooter and Goal Attack are the only players that can score in which sport",GenerateAnswerList("Lacrosse","Ice Hockey","Netball","Aussie Rules Football"),3));
+		*/
 
 		//Musics
 		AllQuestions.Add(CategorySelect.CategoryTypes.Music, new List<Question> ());
 		List<Question> musics = AllQuestions[CategorySelect.CategoryTypes.Music];
 		musics.Add(new Question(200,CategorySelect.CategoryTypes.Music,"Who was nominated as one of the three 'men of the decade' on a special UK television production in 1069",GenerateAnswerList("George","Paul","John","Ringo"),3));
-		musics.Add(new Question(201,CategorySelect.CategoryTypes.Music,"Who was the final Beatle to be married",GenerateAnswerList("Paul","John","Ringo","George"),1));
+	/*	musics.Add(new Question(201,CategorySelect.CategoryTypes.Music,"Who was the final Beatle to be married",GenerateAnswerList("Paul","John","Ringo","George"),1));
 		musics.Add(new Question(202,CategorySelect.CategoryTypes.Music,"Who did Dana Carvey regularly impersonate on Saturday Night Live",GenerateAnswerList("John","Ringo","George","Paul"),4));
 		musics.Add(new Question(203,CategorySelect.CategoryTypes.Music,"John Lennon said The Beatles were 'more popular than Jesus' in which newspaper",GenerateAnswerList("London Evening Standard","London Chronical","Daily Mail","Liverpool Daily Post And Echo"),1));
 		musics.Add(new Question(204,CategorySelect.CategoryTypes.Music,"Which band had a 2004 hit with 'She will be loved'",GenerateAnswerList("Maroon 5","Creed","Los Lonely Boys","The Killers"),1));
@@ -123,12 +141,13 @@ public class Questions : MonoBehaviour {
 		musics.Add(new Question(213,CategorySelect.CategoryTypes.Music,"Who had a 1999 hit with 'Man! I Feel Like a Woman'",GenerateAnswerList("Jennifer Rush","Shania Twain","Madonna","Sheryl Crow"),2));
 		musics.Add(new Question(214,CategorySelect.CategoryTypes.Music,"'Unbreak My Heart' was a No.1 hit for which star in 1997",GenerateAnswerList("Toni Braxton","Brandy","Beyonce","Mariah Carey"),1));
 		musics.Add(new Question(215,CategorySelect.CategoryTypes.Music,"Which band sang the theme tune to the TV Sitcom Friends",GenerateAnswerList("The Remembrance","The Rembrants","The Remembers","The Remingtons"),2));
-		
+	*/
+
 		//Geography
 		AllQuestions.Add(CategorySelect.CategoryTypes.Geography, new List<Question> ());
 		List<Question> geography = AllQuestions[CategorySelect.CategoryTypes.Geography];
 		geography.Add(new Question(300,CategorySelect.CategoryTypes.Geography,"Where is Lithuania",GenerateAnswerList("In US","In EU","In Asia","In Australia"),2));
-		geography.Add(new Question(301,CategorySelect.CategoryTypes.Geography,"Milan is a city in which Italian Region",GenerateAnswerList("Tuscany","Piedmonth","Lombardy","Sicilia"),3));
+	/*	geography.Add(new Question(301,CategorySelect.CategoryTypes.Geography,"Milan is a city in which Italian Region",GenerateAnswerList("Tuscany","Piedmonth","Lombardy","Sicilia"),3));
 		geography.Add(new Question(302,CategorySelect.CategoryTypes.Geography,"Which of these is a city in Switzerland",GenerateAnswerList("InnsBruck","Geneva","LilyHammer","Hesse"),2));
 		geography.Add(new Question(303,CategorySelect.CategoryTypes.Geography,"The largest ancient castle in the world is located in this city",GenerateAnswerList("Prague","Memphis","Bejing","Cairo"),1));
 		geography.Add(new Question(304,CategorySelect.CategoryTypes.Geography,"Which of these is a city in Paraguay",GenerateAnswerList("Oruro","San Lorenzo","Saltao","La Plato"),2));
@@ -137,7 +156,7 @@ public class Questions : MonoBehaviour {
 		geography.Add(new Question(307,CategorySelect.CategoryTypes.Geography,"Which of these countries does Oman NOT share a border with",GenerateAnswerList("Yemen","Kuwait","United Arab Emirates","Saudi Arabia"),2));
 		geography.Add(new Question(308,CategorySelect.CategoryTypes.Geography,"What Arab nation has the highest percentage of Christian",GenerateAnswerList("Egypt","Syria","Iraq","Lebanon"),4));
 		geography.Add(new Question(309,CategorySelect.CategoryTypes.Geography,"What was the only country ever to have archdukes, although it doesn't anymore",GenerateAnswerList("Germany","Netherlands","Austria","Sweden"),3));
-
+	*/
 
 	}
 
@@ -282,7 +301,7 @@ public class Questions : MonoBehaviour {
 		if(!isHide)
 		{
 			indicatorColor.transform.localScale = new Vector3(8,1,1);
-			indicatorBG.transform.position = new Vector3(0f,0f,-2f);
+			indicatorBG.transform.position = new Vector3(0f,-3f,-2f);
 			indicatorBG.transform.localScale = new Vector3(0,0.73655f,1);
 		}
 
@@ -302,7 +321,7 @@ public class Questions : MonoBehaviour {
 
 		if(isHide)
 		{
-			indicatorBG.transform.position = new Vector3(-7,0,0);
+			indicatorBG.transform.position = new Vector3(-7,-3f,0);
 		}
 
 		yield return 0;
@@ -310,14 +329,16 @@ public class Questions : MonoBehaviour {
 
 	public IEnumerator ShowQuestionBox(bool isHide=false)
 	{
+		hidecharacter();
 		if(!isHide)
 		{
+
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
-			tm.fontSize = 18;
+			//tm.fontSize = 13;
 			tm.text = ResolveTextSize(currentQuestion.title, maxWordsPerLine) + '?';
-			Debug.Log(tm.text);
-			questionBoxRef.transform.position = new Vector3(0.01865721f,2.044059f,-2f);
-			questionBoxRef.transform.localScale = new Vector3(0,0,0.1f);
+			//Debug.Log(tm.text);
+			questionBoxRef.transform.position = new Vector3(0f,0f,-2f); // Changed The Value To ,x.Zero, Y.Zero to center The Question Box in The screen  
+			questionBoxRef.transform.localScale = new Vector3(0.04f,0.05f,0.1f);
 		}
 
 		for(int i=0;i<6;i++)
@@ -342,6 +363,7 @@ public class Questions : MonoBehaviour {
 
 	private IEnumerator DiscardAnswers(int index)
 	{
+		showcharacter();
 		for(int i=0;i<4;i++)
 		{
 			currentAnswers[i].GetComponent<BoxCollider2D>().enabled = false;
@@ -422,6 +444,7 @@ public class Questions : MonoBehaviour {
 	
 	public void ShowAnswersByCategory(CategorySelect.CategoryTypes cat, CategorySelect.ColorTypes colorType)
 	{
+
 		currentColorType = (CategorySelect.ColorTypes) colorType;
 		BATTLE_ENGINE.canTarget = false;
 		currentQuestion = (Question) GetQuestionByCategory(cat);
@@ -431,16 +454,22 @@ public class Questions : MonoBehaviour {
 		StartCoroutine(ShowIndicator());
 		StartCoroutine(TimerForAnswer(TIME_FOR_ANSWER));
 
+		//Disable the powerup buttonss
+		powerup1.GetComponent<BoxCollider2D>().enabled=false;
+		powerup2.GetComponent<BoxCollider2D>().enabled=false;
+		powerup3.GetComponent<BoxCollider2D>().enabled=false;
+		powerup4.GetComponent<BoxCollider2D>().enabled=false;
+
 		currentAnswers.Clear();
 
 		for(int i=0;i<4;i++)
 		{	
-			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,-1.2f+(-0.7f*i),-2.1f),answerObjRef.transform.rotation);
+			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,0.25f+(-0.67f*i),-2.1f),answerObjRef.transform.rotation); // Changed the value of y to center the answers
 			obj.name = i.ToString();
 			currentAnswers.Add(obj);
 			TextMesh tm = (TextMesh) obj.GetComponentInChildren<TextMesh>();
 			tm.text = ResolveTextSize(currentQuestion.answers[i], maxWordsPerLine);
-			tm.fontSize = 16; 
+			//tm.fontSize = 9; 
 			StartCoroutine(SpawnAnswer(i,currentQuestion.answers[i],obj));
 		}
 	}
@@ -465,12 +494,17 @@ public class Questions : MonoBehaviour {
 	private IEnumerator UserAnswer(bool isCorrect, int index)
 	{
 		canAnswer = false;
-
 		StartCoroutine(ShowQuestionBox(true));
 		StartCoroutine(ShowFadeBG(true));
 		StartCoroutine(ShowIndicator(true));
 
 		yield return StartCoroutine(DiscardAnswers(index));
+
+		powerup1.GetComponent<BoxCollider2D>().enabled=true;
+		powerup2.GetComponent<BoxCollider2D>().enabled=true;
+		powerup3.GetComponent<BoxCollider2D>().enabled=true;
+		powerup4.GetComponent<BoxCollider2D>().enabled=true;
+
 
 		StartCoroutine(BATTLE_ENGINE.NextRound(isCorrect,currentColorType));
 
@@ -493,10 +527,24 @@ public class Questions : MonoBehaviour {
 					    int answerIndex = (int) System.Convert.ToInt32(hit.collider.gameObject.name);
 					   	bool isCorrectAnswer = currentQuestion.CheckAnswer(answerIndex+1);
 					   	StartCoroutine(UserAnswer(isCorrectAnswer,answerIndex));
-					   	Debug.Log(answerIndex+":"+isCorrectAnswer);
+					   //Debug.Log(answerIndex+":"+isCorrectAnswer);
 					}
 				}
 			}
 		}
 	}
+
+	 void hidecharacter()
+	{
+		character=GameObject.Find("Character(Clone)");	
+		character.transform.localScale=new Vector3(0f,0f,0f);
+	}
+
+	void showcharacter()
+	{
+		character=GameObject.Find("Character(Clone)");
+		character.transform.localScale=new Vector3(1f,1f,1f);
+
+	}
+
 }

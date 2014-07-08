@@ -3,8 +3,8 @@ using System.Collections;
 
 public class BattleEngine : MonoBehaviour {
 
-	private CategorySelect categorySelect;
-	private Asteroids asteroids;
+	public CategorySelect categorySelect;
+	public Asteroids asteroids;
 	private LevelManager levels;
 	[HideInInspector]
 	public bool canTarget;
@@ -15,6 +15,16 @@ public class BattleEngine : MonoBehaviour {
 	private GameObject WinLoseTextAsset;
 	private bool isEndGame;
 	public bool LastHitMiss;
+	public bool isgamewon;
+	private Transform gun;
+	private Vector3 dir;
+
+	public Font font;
+	public Material[] FontMats;
+
+
+	public static Font font1;
+	public static Material[] material1;
 
 	private void Awake()
 	{
@@ -28,19 +38,18 @@ public class BattleEngine : MonoBehaviour {
 		AtkSystem = (AttackSystem) this.gameObject.AddComponent<AttackSystem>();
 		character = (Characters) this.gameObject.AddComponent<Characters>();
 		levels = (LevelManager) this.gameObject.AddComponent<LevelManager>();
-
 		levels.currentLevel = 0;
 		levels.currentINC = 0;
+		Invoke("getgun",0.75f);
+		font1=font;
+		material1=FontMats;
 	}
 
 	private IEnumerator Start()
 	{	
 		yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
-
 		categorySelect.PlaceCategories(0);
-
 		canTarget = true;
-
 		yield return 0;
 	}
 
@@ -75,10 +84,12 @@ public class BattleEngine : MonoBehaviour {
 		bool isAnyLeft = asteroids.CheckIfAnyExists();
 		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
 
-		if(!isAnyLeft||isLevelProgressFull)
+		//New Changes ***
+		if(isLevelProgressFull)
 		{
 			WinBattle();
 		}
+		//
 		else
 		{
 			yield return StartCoroutine(asteroids.MoveAsteroids());
@@ -90,7 +101,9 @@ public class BattleEngine : MonoBehaviour {
 
 			if(!LastHitMiss&&spawnINC!=0)
 			{
-				StartCoroutine(levels.UpdateLevelProgressBar());
+				//New
+				StartCoroutine(levels.UpdateLevelProgressBarForAsteriodsSpawned(1));
+				//
 			}
 
 			bool isAnyCrossingTheLine = asteroids.CheckIfAnyCrossesTheLine();
@@ -110,20 +123,35 @@ public class BattleEngine : MonoBehaviour {
 	{
 		isEndGame = true;
 		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
+		isgamewon=true;
 		StartCoroutine(ShowEndBattleText("YOU WIN!",true));
 	}
 
 	private void LoseBattle()
 	{
+		isgamewon=false;
+		if(mainmenu.totallives!=0)
+		{
+		mainmenu.totallives--;
+		}
+		PlayerPrefs.SetInt("totallives",mainmenu.totallives);
 		isEndGame = true;
 		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
 		StartCoroutine(ShowEndBattleText("YOU LOSE!",false));
+		mainmenu.resettimerfornewlife();
+
+
+		if(mainmenu.totallives<5)
+		{
+			Debug.Log("true");
+			mainmenu.managetimerfornewlife(true);
+		}
 	}
 
 	private IEnumerator ShowEndBattleText(string str, bool isItWin)
 	{
 		WinLoseTextAsset.GetComponent<TextMesh>().text = str;
-
+		
 		if(isItWin)
 		{
 			WinLoseTextAsset.GetComponent<TextMesh>().color = Color.green;
@@ -146,14 +174,48 @@ public class BattleEngine : MonoBehaviour {
 	{
 		if(isEndGame)
 		{
-			if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2,200,50),"Restart"))
+			if(isgamewon==false)
 			{
-				Application.LoadLevel("MainScene");
+				if(mainmenu.totallives!=0)
+				{
+					if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"Restart You still have "+mainmenu.totallives.ToString()+" Lives"))
+					{
+						Application.LoadLevel("MainScene");
+					}
+					if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2+50,200,50),"Go To Main Menu"))
+					{
+						Application.LoadLevel("MenuScene");
+					}
+				}
+				else
+				{
+					if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"You have lost all your lives, Please buy more lives or proceed to main menu"))
+					{
+						Application.LoadLevel("MenuScene");
+					}
+
+					if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2+50,200,50),"Buy More Lives"))
+					{
+						//Debug.Log("Does nothing");
+					}
+				}
+			}
+			else if(isgamewon==true)
+			{
+				//Temperory Data
+				if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"Rewards Section"))
+				   {
+
+				   }
+				if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2+50,200,50),"Go To Main Menu"))
+				{
+					Application.LoadLevel("MenuScene");
+				}
 			}
 		}
 	}
 
-	private void Update()
+	private void LateUpdate()
 	{
 		if(canTarget)
 		{
@@ -169,6 +231,8 @@ public class BattleEngine : MonoBehaviour {
 
 			if(isMouseDown)
 			{
+				if(ButtonManager.canmovemarker)
+				{
 				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
 				if(hit.collider)
@@ -179,12 +243,54 @@ public class BattleEngine : MonoBehaviour {
 						AtkTarget.transform.position = hit.point;
 						AtkTarget.transform.position += new Vector3(0,0,-1.9f);
 
+						//New Code for the character aiming
+						if(Input.mousePosition.x<Screen.width/2)
+							{
+								leftsidetouched();
+							}
+						else if(Input.mousePosition.x>Screen.width/2)
+							{
+								rightsidetouched();
+							}
+					
+						//The old logic, for the character programming is ignored and new logic is considered for the programming which has
+						//two methods leftsidetouched and rightsidetouched that manage the rotation of the player and the rotation of the gun
+
+						/*
 						Vector3 relative = transform.InverseTransformPoint(AtkTarget.transform.position);
 						float angle = Mathf.Atan2(relative.x, relative.z) * Mathf.Rad2Deg;
 						character.currentChar.transform.localEulerAngles = new Vector3(0,0,angle);
+						*/
 					}
 				}
 			}
+				}
 		}
+	}
+
+	private void GoToMainMenu()
+	{
+		Application.LoadLevel(0);
+	}
+
+	private void getgun()
+	{
+		gun=character.currentChar.transform.GetChild(0);
+	}
+
+	private void leftsidetouched()
+	{
+		character.currentChar.transform.eulerAngles=new Vector3(0f,180f,0f);
+		gun.transform.localScale=new Vector3(gun.transform.localScale.x,-1f,gun.transform.localScale.z);
+		dir=AtkTarget.transform.position-gun.transform.position;
+		gun.transform.rotation = Quaternion.Euler (new Vector3 (0,0,Mathf.Atan2 (dir.y, dir.x) * Mathf.Rad2Deg));
+	}
+
+	private void rightsidetouched()
+	{
+		character.currentChar.transform.eulerAngles=new Vector3(0f,360f,0f);
+		gun.transform.localScale=new Vector3(gun.transform.localScale.x,1f,gun.transform.localScale.z);
+		dir=AtkTarget.transform.position-gun.transform.position;
+		gun.transform.rotation = Quaternion.Euler (new Vector3 (0,0,Mathf.Atan2 (dir.y, dir.x) * Mathf.Rad2Deg));
 	}
 }

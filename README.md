@@ -1,4 +1,0 @@
-asteroid
-========
-
-Mobile Game

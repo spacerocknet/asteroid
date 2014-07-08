@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 public class Characters : MonoBehaviour {
 
+	//All the code is commented and re-written for integrating the new character 
+
+	GameObject character;
+	GameObject character_gun;
+
 	public class Character
 	{
 		public string name;
@@ -23,12 +28,19 @@ public class Characters : MonoBehaviour {
 
 	private void Awake()
 	{
-		AllCharacters.Add(new Character("Batman",3,(GameObject)Resources.Load("Characters/char_1")));
+		character=Resources.Load("prefabs/Character") as GameObject;
+		currentChar=(GameObject) Instantiate(character,new Vector3(0,-2.68f,-1.4f),Quaternion.identity);
+		//AllCharacters.Add(new Character("Batman",3,(GameObject)Resources.Load("Characters/char_2")));
 	}
 
 	private void Start()
 	{
+
 		// for now
-		currentChar = (GameObject) Instantiate(AllCharacters[0].obj,new Vector3(0,-2.83305f,-1.4f),AllCharacters[0].obj.transform.rotation);
+		//currentChar = (GameObject) Instantiate(AllCharacters[0].obj,new Vector3(0,-2.83305f,-1.4f),AllCharacters[0].obj.transform.rotation);
+		//New Changes *** Rotating the character so it is not inverted, and also repositioning it
+		//currentChar.transform.eulerAngles=new Vector3(0f,0f,180f);
+		//currentChar.transform.position=new Vector3(currentChar.transform.position.x,currentChar.transform.position.y+0.25f,currentChar.transform.position.z);
+		//
 	}
 }

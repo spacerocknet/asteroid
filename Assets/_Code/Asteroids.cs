@@ -10,15 +10,17 @@ public class Asteroids : MonoBehaviour {
 	private GameObject INIT;
 	private static int ASTEROID_LIMIT = 8;
 	private List<float> lifeList = new List<float>();
+	
 
 	public class Asteroid
 	{
 		public AsteroidColorTypes colorType;
 		public int life;
 		public Color color;
+		public Sprite colorsprite;
 		public GameObject obj;
 		public bool isDead;
-
+		
 		public Asteroid(AsteroidColorTypes _colorType, int _life, GameObject _obj)
 		{
 			isDead = false;
@@ -34,18 +36,18 @@ public class Asteroids : MonoBehaviour {
 			switch(colorType)
 			{
 				case AsteroidColorTypes.Red:
-					this.color = Color.red;
+				this.colorsprite=Resources.Load("Rocks/rock_red",typeof(Sprite)) as Sprite; 
 					break;
 				case AsteroidColorTypes.Green:
-					this.color = Color.green;
+				this.colorsprite=Resources.Load("Rocks/rock_green",typeof(Sprite)) as Sprite; 
 					break;
 				case AsteroidColorTypes.Blue:
-					this.color = Color.blue;
+				this.colorsprite=Resources.Load("Rocks/rock_blue",typeof(Sprite)) as Sprite; 
 					break;
 				default: break;
 			}
 
-			obj.GetComponent<SpriteRenderer>().color = this.color;
+			obj.GetComponent<SpriteRenderer>().sprite=this.colorsprite;
 		}
 
 		public IEnumerator DoDamage(int hitPoints)
@@ -104,9 +106,33 @@ public class Asteroids : MonoBehaviour {
 
 		yield return 0;
 	}
+	
+	public IEnumerator ReverseTimePowerUp()
+	{
+		for(int j=0;j<20;j++)
+		{
+			for(int i=0;i<currentAsteroids.Count;i++)
+			{
+				currentAsteroids[i].obj.transform.position -=new Vector3(0,-0.03f,0);
+			}
+			yield return 0;
+		}
+		yield return new WaitForSeconds(0.35f);
+
+		for(int j=0;j<20;j++)
+		{
+			for(int i=0;i<currentAsteroids.Count;i++)
+			{
+				currentAsteroids[i].obj.transform.position -=new Vector3(0,-0.03f,0);
+			}
+			yield return 0;
+		}
+	}
+
 
 	public IEnumerator SpawnAsteroids(int count, float diff)
 	{
+
 		if(currentAsteroids.Count+count>ASTEROID_LIMIT)
 		{
 			while(currentAsteroids.Count+count>ASTEROID_LIMIT)
@@ -115,13 +141,19 @@ public class Asteroids : MonoBehaviour {
 			}
 		}
 
+		
+		//New Changes ***
+		StartCoroutine("NotifyProgressBarForAsteriodSpawn",count);
+		//
+
 		for(int i=0;i<count;i++)
 		{
-			GameObject asteroid = (GameObject) Instantiate(asteroidRef,new Vector3(Random.Range(-1.8f,2.0f),Random.Range(3.4f,3.6f),-1.0f),Quaternion.identity);
+			GameObject asteroid = (GameObject) Instantiate(asteroidRef,new Vector3(Random.Range(-1.8f,2.0f),Random.Range(2.6f,2.8f),-1.0f),Quaternion.identity);
 
 			int lifeHits = Random.Range(1,4);
 
 			currentAsteroids.Add(new Asteroid((AsteroidColorTypes)Random.Range(0,3),lifeHits,asteroid));
+
 
 			asteroid.transform.localScale = new Vector3(0,0,1);
 			asteroid.transform.Rotate(new Vector3(0,0,Random.Range(0,361)));
@@ -138,8 +170,12 @@ public class Asteroids : MonoBehaviour {
 			asteroid.transform.localScale = new Vector3(0.5f*lifeHits,0.5f*lifeHits,1);
 			asteroid.transform.parent = INIT.transform;
 
+		
 			yield return 0;
 		}
+
+
+
 	}
 
 	public bool CheckIfAnyExists()
@@ -185,4 +221,15 @@ public class Asteroids : MonoBehaviour {
 
 		return pos;
 	}
+
+
+	//New Changes ***
+	IEnumerator NotifyProgressBarForAsteriodSpawn(int numberOfAsteriodsSpawned)
+	{
+		yield return new WaitForSeconds (0.15f);
+		StartCoroutine(GameObject.Find("MAIN").GetComponent<LevelManager>().UpdateLevelProgressBarForAsteriodsSpawned(numberOfAsteriodsSpawned));
+	}
+
+
+	//
 }
