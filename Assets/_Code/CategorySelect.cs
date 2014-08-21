@@ -17,6 +17,7 @@ public class CategorySelect : MonoBehaviour {
 	private int [] catBitmap = new int[4]  { 14,  13, 11, 7}; //different num categories have different bitmap list. It is 4 now
 	public bool animationIsPlaying;
 	private GameObject battleengineobject;
+	private GameObject soundmanager;
 
 	public enum CategoryTypes
 	{
@@ -139,6 +140,7 @@ public class CategorySelect : MonoBehaviour {
 		INIT = (GameObject) GameObject.Find("RUNTIME_INIT");
 		QE = (Questions) GameObject.Find("MAIN").AddComponent<Questions>();
 		battleengineobject=GameObject.Find("MAIN");
+		soundmanager=GameObject.Find("Secondary_SoundManager");
 	}
 
 	public void PlaceCategories(int diff)
@@ -243,7 +245,7 @@ public class CategorySelect : MonoBehaviour {
 		yield return 0;
 	}
 
-	private IEnumerator HideCategories()
+	public IEnumerator HideCategories()
 	{
 		for(int i=0;i<currentCategories.Count;i++)
 		{
@@ -271,18 +273,21 @@ public class CategorySelect : MonoBehaviour {
 				{
 					if(hit.collider.gameObject.tag.Equals("Category"))
 					{
+						soundmanager.GetComponent<SoundManager>().selectcategory_soundplay();
+
 						if(!targetSelect)
 						{
 							QE.AttackNierest();
 						}
-						
-					    int index = (int) System.Convert.ToInt32(hit.collider.gameObject.name);
+
+						int index = (int) System.Convert.ToInt32(hit.collider.gameObject.name);
 
 					    Category cat = (Category) GetCategoryByIndex(index);
 					    
 						canSelect = false;
 						StartCoroutine(HideCategories());
 						QE.ShowAnswersByCategory(cat.categoryType,cat.colorType);
+
 					}
 				}
 			}

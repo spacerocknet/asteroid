@@ -9,8 +9,11 @@ public class AttackSystem : MonoBehaviour {
 	private GameObject label_ref;
 	private BattleEngine BATTLE_ENGINE;
 
+	private GameObject soundmanager;
+
 	private void Awake()
 	{
+		soundmanager=GameObject.Find("Powerup_SoundManager");
 		weapons = (Weapons) this.gameObject.AddComponent<Weapons>();
 		label_ref = (GameObject) GameObject.Find("REFERENCES/label_ref");
 		BATTLE_ENGINE = (BattleEngine) GameObject.Find("MAIN").GetComponent<BattleEngine>();
@@ -26,7 +29,7 @@ public class AttackSystem : MonoBehaviour {
 		List<int> destroyIndex = new List<int>();
 
 		GameObject expT = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,target,Quaternion.identity);
-		Destroy(expT,2);
+		Destroy(expT,0.67f);
 
 		for(int i=0;i<currentAsteroids.Count;i++)
 		{
@@ -45,9 +48,10 @@ public class AttackSystem : MonoBehaviour {
 				if(dist<powerupdoubleblast)
 				{
 					ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+					soundmanager.audio.Play();
 					ButtonManager.attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
 					GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
-					Destroy(exp,2);
+					Destroy(exp,0.67f);
 					destroyIndex.Add(i);
 				}
 			}
@@ -56,7 +60,7 @@ public class AttackSystem : MonoBehaviour {
 				if(dist<normalpowerupdistance)
 					{
 						GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
-						Destroy(exp,2);
+						Destroy(exp,0.67f);
 						destroyIndex.Add(i);
 					}
 				}
@@ -76,7 +80,6 @@ public class AttackSystem : MonoBehaviour {
 				//
 			}
 		}
-
 		yield return 0;
 	}
 
@@ -87,7 +90,9 @@ public class AttackSystem : MonoBehaviour {
 		{
 			if(ButtonManager.powerupselected=="bomb")
 			{
+				
 				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+				soundmanager.audio.Play();
 				return 2+2;
 			}
 			else
@@ -101,6 +106,7 @@ public class AttackSystem : MonoBehaviour {
 			if(ButtonManager.powerupselected=="bomb")
 			{
 				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+				soundmanager.audio.Play();
 				return 3+3;
 			}
 			else
@@ -114,6 +120,7 @@ public class AttackSystem : MonoBehaviour {
 			if(ButtonManager.powerupselected=="bomb")
 			{
 				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+				soundmanager.audio.Play();
 				return 1+1; 
 			}
 			else
@@ -173,7 +180,6 @@ public class AttackSystem : MonoBehaviour {
 
 			yield return 0;
 		}
-
 		Destroy(missInit);
 //		Debug.Log("Miss!");
 

@@ -29,7 +29,7 @@ public class ButtonManager : MonoBehaviour {
 	public GameObject double_hitpowerup_gameobject;
 	public GameObject double_blastpowerup_gameobject;
 	public GameObject changequestioncategory_gameobject;
-	public static GameObject rewardsscreen;
+
 
 
 	//Public static GameObjects to access on the reduction
@@ -41,8 +41,52 @@ public class ButtonManager : MonoBehaviour {
 	public static bool canmovemarker;
 	GameObject character;
 
+	//SoundMnager
+	private GameObject soundmanager;
+
+	private GameObject soundmanager1;
+
+
+	public static bool gameover;
+
+	//Rewards
+	public GameObject rewardscreen;
+
+	//Lose Screen
+	public GameObject losescreen;
+
+	//Lives
+	public GameObject buymorelives;
+
+	//New Life Timer
+	public GameObject livestimer;
+
+	//Basic Button Click
+	public GameObject basic_button_click;
+
+	//Quit Popup
+	public GameObject quit_popup;
+
+	//Date
+	DateTime currenttime;
+	DateTime oldtime;
+
+	public int totaltimrfornewlife_onresume;
+
+	int runcounter;
+
+	int newlifetimer_minutes;
+	int newlifetimer_seconds;
+	
+
+	private int fromthis;
+
+	GameObject temp;
+
 	void Awake()
 	{
+		fromthis=0;
+		gameover=false;
 		canmovemarker=true;
 		hitpowerup_static_gameobject=GameObject.Find("button_power_up_02");
 		doubleblastradius_static_gameobject=GameObject.Find("button_power_up_03");
@@ -52,7 +96,6 @@ public class ButtonManager : MonoBehaviour {
 		powerupselectedcolor=new Color(139f,142f,142f,0.5f);
 		powerupnormalcolor=new Color(255f,255f,255f,1f);
 		bombtextmesh=GameObject.Find("bomb_textmesh");
-		rewardsscreen=GameObject.Find("rewardsscreen");
 		doubleblastradiustextmesh=GameObject.Find("doubleblastradius_textmesh");
 		reversetimetextmesh=GameObject.Find("reversetime_textmesh");
 		changequestioncategoriestextmesh=GameObject.Find("changecategory_textmesh");
@@ -68,8 +111,24 @@ public class ButtonManager : MonoBehaviour {
 		changequestioncategoriestextmesh.GetComponent<TextMesh>().text=mainmenu.changequestioncategorypowerupcount.ToString();
 		//Invoke("removetopwallcollider",1.65f);
 		Invoke("getcharacter",0.10f);
+		soundmanager=GameObject.Find("Powerup_SoundManager");
+		soundmanager1=GameObject.Find("Secondary_SoundManager");
 	}
 
+	void Start()
+	{
+	if(mainmenu.sound==1)
+		{
+			unmuteallaudiosourcesinscene();
+		}
+	else if(mainmenu.sound==0)
+		{
+			muteallaudiosourcesinscene();
+		}
+	Invoke("thememusicplay",0.12f);
+	}
+
+	
 	void Update () {
 
 		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) 
@@ -79,21 +138,36 @@ public class ButtonManager : MonoBehaviour {
 		}
 
 		//For testing with the mouse
+
+		/*
 		if(Input.GetMouseButtonUp(0))
 		{
-		//	touchposition=Input.mousePosition;
-		//	touchended();
+			touchposition=Input.mousePosition;
+			touchended();
 		}
-		
+		*/
+
+	
+
 		if(Input.GetKeyUp(KeyCode.Escape))
 		{
+			//Application.LoadLevel(0);
+			if(gameover==false)
+			{
+			StartCoroutine("showquitpopup");
+			}
+			else
+			{
 			Application.LoadLevel(0);
+			}
 		}
 
 		if(mainmenu.timerstarted==true)
 		{
-			mainmenu.cachetotaltimefornewlife -=Time.deltaTime;
+			mainmenu.cachetotaltimefornewlife -= Time.deltaTime;
 			mainmenu.ts=TimeSpan.FromSeconds(mainmenu.cachetotaltimefornewlife);
+			livestimer.GetComponent<TextMesh>().text=mainmenu.ts.ToString().Substring(3,5);
+			Invoke("calculateminutesandseconds",0.15f);
 		}
 
 		if(mainmenu.ts.TotalSeconds<=0)
@@ -108,7 +182,7 @@ public class ButtonManager : MonoBehaviour {
 				//resettimer();
 				if(mainmenu.totallives<5)
 				{
-					mainmenu.managetimerfornewlife(true);
+					//mainmenu.managetimerfornewlife(true);
 				}
 				else
 				{
@@ -116,12 +190,12 @@ public class ButtonManager : MonoBehaviour {
 				}
 			}
 		}
-
-
 	}
 		
 	void touchended()
 	{
+			if(gameover==false)
+		{
 			hit=Physics2D.Raycast(camera.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero,Mathf.Infinity,layermask);
 			if(hit.collider!=null)
 					{
@@ -144,12 +218,13 @@ public class ButtonManager : MonoBehaviour {
 								powerupselected="bomb";
 								//ToggleHere	
 								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+								soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();	
 							}
 							else
 								{
 								Debug.Log("Bomb powerup is finished");
 								}
-							}
+						}
 						else
 						{
 						//This will toggle if it already selected
@@ -168,6 +243,7 @@ public class ButtonManager : MonoBehaviour {
 							//ToggleHere
 							hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
 							double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+							soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();
 							}
 						else
 							{
@@ -193,6 +269,7 @@ public class ButtonManager : MonoBehaviour {
 							}
 							double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							powerupselected="reverse_time";
+							soundmanager.audio.Play();
 							MAIN.GetComponent<BattleEngine>().asteroids.StartCoroutine("ReverseTimePowerUp");
 							reducepowerupcount(powerupselected);
 						}
@@ -211,6 +288,7 @@ public class ButtonManager : MonoBehaviour {
 								{
 								attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
 								}
+								soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();	
 								character.GetComponent<SpriteRenderer>().enabled=false;
 								character.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled=false;
 								MAIN.GetComponent<BattleEngine>().categorySelect.disablequestioncollidersandtriggers();
@@ -224,7 +302,6 @@ public class ButtonManager : MonoBehaviour {
 								double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 								double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
-										
 							}
 							else
 							{
@@ -240,40 +317,143 @@ public class ButtonManager : MonoBehaviour {
 						}
 						
 					}
+
+					//Activated if Button_Okay_Rewards_Screen
+
 					else if(hit.collider.gameObject.name=="FadeBG")
 					{
 					Debug.Log("working");
 					fadebgalphaandtriggerdisable();
 					StartCoroutine("hidequestionchangecatwindow");
 					}
+
 					else if(hit.collider.gameObject.name=="button_bluecolor")
 					{	
 					fadebgalphaandtriggerdisable();
 					StartCoroutine("hidequestionchangecatwindow");	
 					reducepowerupcount(powerupselected);
+					soundmanager.audio.Play();
 					MAIN.GetComponent<BattleEngine>().categorySelect.PlaceCategoriesByCategoryChangePowerup("blue");
 					}
+
 					else if(hit.collider.gameObject.name=="button_greencolor")
 					{
 					fadebgalphaandtriggerdisable();	
 					StartCoroutine("hidequestionchangecatwindow");
 					reducepowerupcount(powerupselected);
+				soundmanager.audio.Play();
 					MAIN.GetComponent<BattleEngine>().categorySelect.PlaceCategoriesByCategoryChangePowerup("green");
 					}
+
 					else if(hit.collider.gameObject.name=="button_redcolor")
 					{
 					fadebgalphaandtriggerdisable();
 					StartCoroutine("hidequestionchangecatwindow");
 					reducepowerupcount(powerupselected);
+					soundmanager.audio.Play();
 					MAIN.GetComponent<BattleEngine>().categorySelect.PlaceCategoriesByCategoryChangePowerup("red");
 					}
+
+					//For the quit game button
+					else if (hit.collider.gameObject.name=="button_continue")
+					{
+					basic_button_click.audio.Play();
+					StartCoroutine("hidequitpopup");
+					}
+
+					else if (hit.collider.gameObject.name=="button_quit")
+					{
+					basic_button_click.audio.Play();
+					mainmenu.totallives--;
+					PlayerPrefs.SetInt("totallives",mainmenu.totallives);
+				
+
+					if(mainmenu.totallives<5)
+					{
+						if(mainmenu.timerstarted==false)
+						{
+							mainmenu.resettimerfornewlife();
+							mainmenu.managetimerfornewlife(true);
+						}
+					}
+
+					Application.LoadLevel(0);
+					}
+
 				}
 		else
 				{
 				canmovemarker=true;
 				}
 
+		}
 
+		//Only works if gameover is true
+		else if(gameover==true)
+		{
+			hit=Physics2D.Raycast(camera.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero,Mathf.Infinity,layermask);
+			if(hit.collider!=null)
+			{
+				if(hit.collider.gameObject.name=="button_okay_rewards")
+				{
+					basic_button_click.audio.Play();
+					button_okay_rewardsscreen_clicked();
+				}
+
+				else if(hit.collider.gameObject.name=="retry")
+				{
+					 if(mainmenu.totallives!=0)
+					{
+					 basic_button_click.audio.Play();
+					 reloadscene();
+					}
+					else
+					{
+					//Show the popup for buy lives and hide the current popup.
+					 basic_button_click.audio.Play();
+					 StartCoroutine("hidelosescreenandshowbuylives");
+					}
+				}
+
+				else if(hit.collider.gameObject.name=="home")
+				{
+					Application.LoadLevel(0);
+				}
+
+				else if(hit.collider.gameObject.name=="button_buy")
+				{
+					if(mainmenu.totalgold>=200)
+					{
+						basic_button_click.audio.Play();
+						mainmenu.totallives++;
+						mainmenu.totalgold -=200;
+						PlayerPrefs.SetInt("totallives",mainmenu.totallives);
+						PlayerPrefs.SetInt("totalgold",mainmenu.totalgold);
+
+						if(mainmenu.totallives>=5)
+						{
+								mainmenu.managetimerfornewlife(false);
+								livestimer.GetComponent<TextMesh>().text="Lives Full";
+						}
+						reloadscene();
+					}
+				}
+
+				else if(hit.collider.gameObject.name=="button_close")
+				{
+					if(mainmenu.totallives==0)
+					{
+						basic_button_click.audio.Play();
+						Application.LoadLevel(0);
+					}
+					else
+					{
+						basic_button_click.audio.Play();
+						Application.LoadLevel(Application.loadedLevel);
+					}
+				}
+			}
+		}
 	}
 
 	public static void reducepowerupcount(string powerup)
@@ -346,11 +526,7 @@ public class ButtonManager : MonoBehaviour {
 		yield return new WaitForEndOfFrame();
 		changequestioncategory_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 	}
-	
-	public static IEnumerator showrewardsscreen()
-	{
-		yield return null;
-	}
+
 	
 	void fadebgalphaandtriggerdisable()
 	{
@@ -364,5 +540,229 @@ public class ButtonManager : MonoBehaviour {
 	private void getcharacter()
 	{
 		character=GameObject.Find("Character(Clone)");
+	}
+
+
+	//show the rewards screen 
+	public IEnumerator showrewardsscreen()
+	{
+		for(int i=0;i<20;i++)
+		{
+			Vector3 oldposition=rewardscreen.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,0f,0.25f);
+			rewardscreen.transform.position=new Vector3(newposition,rewardscreen.transform.position.y,rewardscreen.transform.position.z);
+			//rewardscreen.transform.position=new Vector3(0f,0f,0f);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+
+	public IEnumerator showlosescreen()
+	{
+		for(int i=0;i<20;i++)
+		{
+			Vector3 oldposition=losescreen.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,-0.04f,0.25f);
+			losescreen.transform.position=new Vector3(newposition,losescreen.transform.position.y,losescreen.transform.position.z);
+			//rewardscreen.transform.position=new Vector3(0f,0f,0f);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+
+	public IEnumerator hidelosescreenandshowbuylives()
+	{
+		for(int i=0;i<12;i++)
+		{
+			
+			Vector3 oldposition=losescreen.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,-7f,0.15f);
+			losescreen.transform.position=new Vector3(newposition,losescreen.transform.position.y,losescreen.transform.position.z);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+		StartCoroutine("buylives");
+	}
+
+	public IEnumerator buylives()
+	{
+		for(int i=0;i<20;i++)
+		{
+			Vector3 oldposition=buymorelives.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,0f,0.25f);
+			buymorelives.transform.position=new Vector3(newposition,buymorelives.transform.position.y,buymorelives.transform.position.z);
+			//rewardscreen.transform.position=new Vector3(0f,0f,0f);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+
+	public IEnumerator showquitpopup()
+	{
+		StartCoroutine("hidequestionchangecatwindow");
+		for(int i=0;i<20;i++)
+		{
+			Vector3 oldposition=quit_popup.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,-0.04f,0.25f);
+			quit_popup.transform.position=new Vector3(newposition,quit_popup.transform.position.y,quit_popup.transform.position.z);
+			//rewardscreen.transform.position=new Vector3(0f,0f,0f);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+
+	public IEnumerator hidequitpopup()
+	{
+		for(int i=0;i<20;i++)
+		{
+			Vector3 oldposition=quit_popup.transform.position;
+			float newposition=Mathf.Lerp(oldposition.x,9f,0.25f);
+			quit_popup.transform.position=new Vector3(newposition,quit_popup.transform.position.y,quit_popup.transform.position.z);
+			//rewardscreen.transform.position=new Vector3(0f,0f,0f);
+			yield return null;
+		}
+		yield return new WaitForEndOfFrame();
+	}
+
+	void button_okay_rewardsscreen_clicked()
+	{
+		Application.LoadLevel(0);
+	}
+
+	void reloadscene()
+	{
+		Application.LoadLevel(Application.loadedLevel);
+	}
+
+
+	//For background timer manager
+	void OnApplicationPause (bool pause)
+	{
+
+		
+		if(pause)
+		{
+			fromthis=1;
+			runcounter++;
+			PlayerPrefs.SetInt("runcounter",runcounter);
+			PlayerPrefs.SetString("oldtime",DateTime.Now.ToBinary().ToString());
+			int previouselapsedminutes=newlifetimer_minutes;
+			int previouselapsedseconds=newlifetimer_seconds;
+			int totalelapsedseconds=(((1800-(previouselapsedminutes*60))-((00-previouselapsedseconds)*-1)));
+			PlayerPrefs.SetInt("totalelapsedseconds",totalelapsedseconds);
+		}
+		else
+		{
+			//Resume
+			if(mainmenu.totallives<5 && runcounter>0 &&fromthis==1)
+			{
+				fromthis=0;
+				currenttime=DateTime.Now;
+				long temp=Convert.ToInt64(PlayerPrefs.GetString("oldtime"));
+				
+				oldtime=DateTime.FromBinary(temp);
+				
+				TimeSpan difference = currenttime.Subtract(oldtime);
+				int totaldifferenceseconds=(int)difference.TotalSeconds;
+				
+				//Previous pause elapsed seconds
+				int previouslyelapsedseconds=PlayerPrefs.GetInt("totalelapsedseconds");
+				
+				//Final difference seconds computed by adding differenceseconds + previously already elapsed seconds for new life 
+				int finaldifferenceseconds=totaldifferenceseconds+previouslyelapsedseconds;
+				
+				//Increase the life on the difference
+				if(finaldifferenceseconds>=1800  && finaldifferenceseconds< 3600)
+				{
+					//Increase 1 life
+					mainmenu.totallives +=1;
+					totaltimrfornewlife_onresume=Mathf.Abs(finaldifferenceseconds-3600);
+				}
+				
+				else if(finaldifferenceseconds>=3600 && finaldifferenceseconds< 5400)
+				{
+					//Increase 2 Life
+					mainmenu.totallives+=2;
+					totaltimrfornewlife_onresume=Mathf.Abs(finaldifferenceseconds-5400);
+				}
+				
+				else if(finaldifferenceseconds>=5400  && finaldifferenceseconds<7200)
+				{
+					//Increase 3 Life
+					mainmenu.totallives+=3;
+					totaltimrfornewlife_onresume=Mathf.Abs(finaldifferenceseconds-7200);
+				}                                                                                         
+				else if(finaldifferenceseconds>=7200 && finaldifferenceseconds<9000)
+				{
+					//Increase 4 Life
+					mainmenu.totallives+=4;
+					totaltimrfornewlife_onresume=Mathf.Abs(finaldifferenceseconds-9000);
+				}
+				else if(finaldifferenceseconds>=9000)
+				{
+					//Increase 5 Life 
+					mainmenu.totallives+=5;
+				}
+				else if(finaldifferenceseconds<1800)
+				{
+					totaltimrfornewlife_onresume=Mathf.Abs(finaldifferenceseconds-1800);
+				}
+				
+				if(mainmenu.totallives>=5)
+				{
+					//No need for timer as lives becomes full.
+					mainmenu.totallives=5;
+					mainmenu.managetimerfornewlife(false);
+	
+				}
+				else
+				{
+					//Set the new required timer
+					mainmenu.resettimerfornewlifeonresume(totaltimrfornewlife_onresume);
+					mainmenu.managetimerfornewlife(true);
+				}
+			} 
+		}
+	}
+	
+	void calculateminutesandseconds()
+	{
+		string temp1=mainmenu.ts.ToString().Substring(3,2);
+		string temp2=mainmenu.ts.ToString().Substring(6,2);
+		newlifetimer_minutes=int.Parse(temp1);
+		newlifetimer_seconds=int.Parse(temp2);
+	}
+
+	//Sound management
+	void muteallaudiosourcesinscene()
+	{
+		object[] obj = GameObject.FindObjectsOfType(typeof (GameObject));
+		foreach (object o in obj)
+		{
+			temp=(GameObject) o;
+			if(temp.GetComponent<AudioSource>()!=null)
+			{
+				temp.GetComponent<AudioSource>().mute=true;
+			}
+		}
+	}
+	
+	void unmuteallaudiosourcesinscene()
+	{
+		object[] obj = GameObject.FindObjectsOfType(typeof (GameObject));
+		foreach (object o in obj)
+		{
+			temp=(GameObject) o;
+			if(temp.GetComponent<AudioSource>()!=null)
+			{
+				temp.GetComponent<AudioSource>().mute=false;
+			}
+		}
+	}
+
+	void thememusicplay()
+	{
+		this.audio.Play();
+		this.audio.loop=true;
 	}
 }

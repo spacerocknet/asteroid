@@ -15,10 +15,10 @@ public class sortlayerforpoweruptextmesh : MonoBehaviour {
 
 		foreach (Transform child in poweruptoplist.transform)
 		{
-			Debug.Log("CALLED");
+//			Debug.Log("CALLED");
 			if(child.gameObject.GetComponent<TextMesh>()!=null)
 			{
-				Debug.Log(child.gameObject.name);
+//				Debug.Log(child.gameObject.name);
 				child.gameObject.renderer.sortingOrder=7;
 			}
 		}

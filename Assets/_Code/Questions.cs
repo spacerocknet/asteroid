@@ -57,6 +57,9 @@ public class Questions : MonoBehaviour {
 
 	private GameObject character;
 
+
+	private GameObject soundmanager;
+
 	private void Awake()
 	{
 		cancelIndicator = false;
@@ -75,6 +78,8 @@ public class Questions : MonoBehaviour {
 		powerup3=GameObject.Find("button_power_up_04");
 		powerup4=GameObject.Find("button_power_up_05");
 
+		//Related to soundmanager
+		soundmanager=GameObject.Find("Secondary_SoundManager");
 
 		// temporary for testing
 		//Movies
@@ -505,6 +510,11 @@ public class Questions : MonoBehaviour {
 		powerup3.GetComponent<BoxCollider2D>().enabled=true;
 		powerup4.GetComponent<BoxCollider2D>().enabled=true;
 
+		if(!isCorrect)
+		{
+			ButtonManager.reducepowerupcount(ButtonManager.powerupselected); 
+			soundmanager.GetComponent<SoundManager>().answerwrong_soundplay();
+		}
 
 		StartCoroutine(BATTLE_ENGINE.NextRound(isCorrect,currentColorType));
 
@@ -544,6 +554,10 @@ public class Questions : MonoBehaviour {
 	{
 		character=GameObject.Find("Character(Clone)");
 		character.transform.localScale=new Vector3(1f,1f,1f);
+	}
+
+	public static void wasanswercorrect()
+	{
 
 	}
 

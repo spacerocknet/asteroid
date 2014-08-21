@@ -10,7 +10,6 @@ public class Asteroids : MonoBehaviour {
 	private GameObject INIT;
 	private static int ASTEROID_LIMIT = 8;
 	private List<float> lifeList = new List<float>();
-	
 
 	public class Asteroid
 	{
