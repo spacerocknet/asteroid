@@ -25,6 +25,12 @@ public class BattleEngine : MonoBehaviour {
 
 	public static Font font1;
 	public static Material[] material1;
+	
+
+	//Related to sound
+	GameObject soundmanager;
+
+	public GameObject buttonmanager;
 
 	private void Awake()
 	{
@@ -43,6 +49,7 @@ public class BattleEngine : MonoBehaviour {
 		Invoke("getgun",0.75f);
 		font1=font;
 		material1=FontMats;
+		soundmanager=GameObject.Find("Secondary_SoundManager");
 	}
 
 	private IEnumerator Start()
@@ -62,6 +69,17 @@ public class BattleEngine : MonoBehaviour {
 
 	public IEnumerator NextRound(bool isHitTarget, CategorySelect.ColorTypes currentColorType)
 	{
+
+		if(ButtonManager.powerupselected=="double_blast_radius")
+		{
+			ButtonManager.reducepowerupcount("double_blast_radius");
+		}
+		else if(ButtonManager.powerupselected=="bomb")
+		{
+			ButtonManager.reducepowerupcount("bomb");
+		}
+	
+
 		categorySelect.animationIsPlaying = true;
 		Vector3 target = AtkTarget.transform.position;
 		categorySelect.targetSelect = false;
@@ -75,6 +93,7 @@ public class BattleEngine : MonoBehaviour {
 		if(isHitTarget)
 		{
 			yield return StartCoroutine(AtkSystem.AttackTarget(target,asteroids.currentAsteroids,levels,currentColorType));
+			soundmanager.GetComponent<SoundManager>().weapon_attack_soundplay();
 		}
 		else
 		{
@@ -122,8 +141,13 @@ public class BattleEngine : MonoBehaviour {
 	private void WinBattle()
 	{
 		isEndGame = true;
+		soundmanager.GetComponent<SoundManager>().mutemaintheme_sound();
+		StartCoroutine(buttonmanager.GetComponent<ButtonManager>().showrewardsscreen());
 		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
 		isgamewon=true;
+		ButtonManager.gameover=true;
+		StartCoroutine(soundmanager.GetComponent<SoundManager>().winbattle_soundplay());
+		StartCoroutine(categorySelect.HideCategories());
 		StartCoroutine(ShowEndBattleText("YOU WIN!",true));
 	}
 
@@ -134,17 +158,29 @@ public class BattleEngine : MonoBehaviour {
 		{
 		mainmenu.totallives--;
 		}
+
+		soundmanager.GetComponent<SoundManager>().mutemaintheme_sound();
+
+		StartCoroutine(buttonmanager.GetComponent<ButtonManager>().showlosescreen());
+	
 		PlayerPrefs.SetInt("totallives",mainmenu.totallives);
+		ButtonManager.gameover=true;
 		isEndGame = true;
 		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
+		StartCoroutine(categorySelect.HideCategories());
+		StartCoroutine(soundmanager.GetComponent<SoundManager>().lostbattle_soundplay());
 		StartCoroutine(ShowEndBattleText("YOU LOSE!",false));
-		mainmenu.resettimerfornewlife();
 
 
 		if(mainmenu.totallives<5)
 		{
 			Debug.Log("true");
+			if(mainmenu.timerstarted==false)
+			{
+			Debug.Log("going here");
+			mainmenu.resettimerfornewlife();
 			mainmenu.managetimerfornewlife(true);
+			}
 		}
 	}
 
@@ -163,7 +199,7 @@ public class BattleEngine : MonoBehaviour {
 
 		for(int i=0;i<10;i++)
 		{
-			WinLoseTextAsset.transform.localScale += new Vector3(0.1f,0.1f,0.1f);
+			WinLoseTextAsset.transform.localScale += new Vector3(0.05f,0.05f,0.05f);
 			yield return 0;
 		}
 
@@ -178,7 +214,7 @@ public class BattleEngine : MonoBehaviour {
 			{
 				if(mainmenu.totallives!=0)
 				{
-					if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"Restart You still have "+mainmenu.totallives.ToString()+" Lives"))
+					/*if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"Restart You still have "+mainmenu.totallives.ToString()+" Lives"))
 					{
 						Application.LoadLevel("MainScene");
 					}
@@ -186,22 +222,24 @@ public class BattleEngine : MonoBehaviour {
 					{
 						Application.LoadLevel("MenuScene");
 					}
+					*/
 				}
 				else
 				{
-					if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"You have lost all your lives, Please buy more lives or proceed to main menu"))
-					{
-						Application.LoadLevel("MenuScene");
-					}
+					//if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"You have lost all your lives, Please buy more lives or proceed to main menu"))
+					//{
+					//	Application.LoadLevel("MenuScene");
+					//}
 
-					if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2+50,200,50),"Buy More Lives"))
-					{
-						//Debug.Log("Does nothing");
-					}
+					//if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2+50,200,50),"Buy More Lives"))
+					//{
+					////Debug.Log("Does nothing");
+					//}
 				}
 			}
 			else if(isgamewon==true)
 			{
+				/*
 				//Temperory Data
 				if(GUI.Button(new Rect(Screen.width/2-100,Screen.height/2-25,200,50),"Rewards Section"))
 				   {
@@ -211,6 +249,7 @@ public class BattleEngine : MonoBehaviour {
 				{
 					Application.LoadLevel("MenuScene");
 				}
+				*/
 			}
 		}
 	}
