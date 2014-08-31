@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
+
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+
+using SimpleJSON;
+
+
 
 public class Questions : MonoBehaviour {
 
@@ -44,7 +50,7 @@ public class Questions : MonoBehaviour {
 	private BattleEngine BATTLE_ENGINE;
 	private static float TIME_FOR_ANSWER = 10.0f;
 	private bool cancelIndicator;
-	private bool testMode = true; //should use isDebugBuild()?
+	private bool testMode = false; //should use isDebugBuild()?
 	private int maxWordsPerLine = 35;
 	private CategorySelect.ColorTypes currentColorType;
 
@@ -166,7 +172,7 @@ public class Questions : MonoBehaviour {
 	}
 
 	//temp
-	private List<string> GenerateAnswerList(string s1, string s2, string s3, string s4)
+	public static List<string> GenerateAnswerList(string s1, string s2, string s3, string s4)
 	{
 		List<string> ls = new List<string>();
 		ls.Add(s1);
@@ -186,7 +192,7 @@ public class Questions : MonoBehaviour {
 	{
 		cancelIndicator = false;
 		float cDur = t;
-		float cSize = 8f;
+		//float cSize = 8f;
 		float cTime = Time.timeSinceLevelLoad;
 
 		bool timeFalse = false;
@@ -229,19 +235,45 @@ public class Questions : MonoBehaviour {
 
 	//Test mode: get from AllQuestions
 	//Release mode: get it from backend server
-	private Question GetQuestionByCategory(CategorySelect.CategoryTypes cat)
+	private IEnumerator GetQuestionByCategory(CategorySelect.CategoryTypes cat)
 	{
-		if (testMode) {
-			return GetQuestionByCategoryLocal(cat);	
-		}
+		  if (testMode) {
+			  currentQuestion = GetQuestionByCategoryLocal (cat);
+				//yield return currentQuestion;
+		  } else {
+				/*
+                    GameResource gameResource = new GameResource ();
+                    string catName = cat.ToString ();
+                    JSONNode json = gameResource.GetQuizzes (catName, 1);
 
-		return null;
+                    Question q = new Question (json ["qid"].AsInt, cat, json ["question"],
+                                               GenerateAnswerList (json ["answers"] [0], json ["answers"] [1], json ["answers"] [2], json ["answers"] [3]),
+                                               1);
+
+                    return q;
+                  */
+		
+				 /*
+                    RestClient rc = new RestClient ();
+                    string catName = cat.ToString ();
+                    string result = rc.GetQuizzes(catName, 1, (string s) => {
+                                                             Debug.Log ("HEHEHE: " + s);
+                                                             currentQuestion = GetQuestionByCategoryLocal(cat);
+                                                        });
+                    Debug.Log ("TEsting here: " + result);
+                  */
+				GameResource gameResource = new GameResource ();
+				currentQuestion = gameResource.GetQuizzes (cat, 1);
+				Debug.Log ("currentQuestion: " + currentQuestion.title);
+			}
+		    //yield return currentQuestion;
+		    yield return StartCoroutine(ShowQuestionBox());
 	}
-
+	
 	private Question GetQuestionByCategoryLocal(CategorySelect.CategoryTypes cat)
 	{
 		List<Question> questions = AllQuestions[cat];
-
+		
 		if (questions != null) {
 			int index = Random.Range(0, questions.Count);
 			return (Question) questions[index];
@@ -251,7 +283,7 @@ public class Questions : MonoBehaviour {
 		
 		IEnumerator enumerator = AllQuestions.Values.GetEnumerator();
 		enumerator.MoveNext();
-		object first = enumerator.Current;
+		//object first = enumerator.Current;
 
 		return ((List<Question>)enumerator) [0]; //just return the first one
 	}
@@ -452,10 +484,10 @@ public class Questions : MonoBehaviour {
 
 		currentColorType = (CategorySelect.ColorTypes) colorType;
 		BATTLE_ENGINE.canTarget = false;
-		currentQuestion = (Question) GetQuestionByCategory(cat);
+		//currentQuestion = (Question) GetQuestionByCategory(cat);
+		StartCoroutine(GetQuestionByCategory(cat));
 
 		StartCoroutine(ShowFadeBG());
-		StartCoroutine(ShowQuestionBox());
 		StartCoroutine(ShowIndicator());
 		StartCoroutine(TimerForAnswer(TIME_FOR_ANSWER));
 
@@ -464,6 +496,11 @@ public class Questions : MonoBehaviour {
 		powerup2.GetComponent<BoxCollider2D>().enabled=false;
 		powerup3.GetComponent<BoxCollider2D>().enabled=false;
 		powerup4.GetComponent<BoxCollider2D>().enabled=false;
+
+		//while (currentQuestion == null) {
+		//	Thread.Sleep (5);
+		//}
+		//StartCoroutine(ShowQuestionBox());
 
 		currentAnswers.Clear();
 

@@ -65,8 +65,8 @@ public class TimeTest : MonoBehaviour {
 				if(finalelapsedseconds>1800 && finalelapsedseconds< 3600)
 				{
 					totallives++;
-					int timeremaininginseconds=Mathf.Abs(finalelapsedseconds-3600);
-					TimeSpan t=TimeSpan.FromSeconds(timeremaininginseconds);
+					//int timeremaininginseconds=Mathf.Abs(finalelapsedseconds-3600);
+					//TimeSpan t=TimeSpan.FromSeconds(timeremaininginseconds);
 				}
 				else
 				{

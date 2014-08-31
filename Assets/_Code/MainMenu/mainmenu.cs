@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
+using Facebook.MiniJSON;
+
+
 
 public class mainmenu : MonoBehaviour {
 
@@ -95,6 +99,12 @@ public class mainmenu : MonoBehaviour {
 	public static int sound;
 	GameObject temp;
 	public GameObject audiolistener;
+
+	private String lastTouchedButtonName;
+
+	//For FB
+	private GameObject fbPreLogin;
+	private GameObject fbPostLogin;
 	
 	void Awake()
 	{
@@ -106,18 +116,18 @@ public class mainmenu : MonoBehaviour {
 	void Start()
 	{
 		
-		facebook=PlayerPrefs.GetInt("facebook",1);
+		//facebook=PlayerPrefs.GetInt("facebook",0);
 		sound=PlayerPrefs.GetInt("sound",1);
 
 
-		if(facebook==1)
-		{
-			facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;		
-		}
-		else
-		{
-			facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
-		}
+		//if(facebook==1)
+		//{
+		//	facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;		
+		//}
+		//else
+		//{
+		//	facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
+		//}
 
 		if(sound==1)
 		{
@@ -152,12 +162,12 @@ public class mainmenu : MonoBehaviour {
 		{
 			int gamequit=PlayerPrefs.GetInt("gamequit",0);
 			if(gamequit==0)
-			 {
-			managetimerfornewlife(true);
+			{
+			   managetimerfornewlife(true);
 			}
 			else if(gamequit==1)
 			{
-				runcodeonresume();
+			   runcodeonresume();
 			}
 			launchcount++;
 		}
@@ -173,24 +183,42 @@ public class mainmenu : MonoBehaviour {
 		GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().text=changequestioncategorypowercount_cachevalue.ToString();
 
 		Invoke("thememusicplay",0.12f);
+
+		lastTouchedButtonName = "";
+
+		//For Facebook
+		FB.Init(SetInit, OnHideUnity);
+		fbPostLogin = GameObject.Find("button_fb_post_login");
+		fbPreLogin = GameObject.Find("button_facebook");
+
+		if (FB.IsLoggedIn) {
+			fbPreLogin.transform.Translate(7, 0, 0);
+			fbPreLogin.renderer.enabled = false;
+			fbPostLogin.transform.Translate (-7, 0, 0);
+			fbPostLogin.renderer.enabled = true;
+		} else {
+			fbPreLogin.renderer.enabled = true;
+			fbPostLogin.renderer.enabled = false;
+		}
+
 	}
-
+	
 	void Update()
-			{
-
+	{
+		
 		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) 
 		{
 			touchposition=Input.GetTouch(0).position;
 			touchended();
 		}
-
+		
 		if(Input.GetKeyUp(KeyCode.Escape))
 		{
 			if(gamestate==state.mainmenu)
 			{
 				if(totallives<5)
 				{
-				savecurrenttime();
+				   savecurrenttime();
 				}
 				PlayerPrefs.SetInt("gamequit",1);
 				PlayerPrefs.SetInt("totalgold",totalgold);
@@ -216,13 +244,13 @@ public class mainmenu : MonoBehaviour {
 			//For testing with the mouse
 
 
-	/*
+	
 		if(Input.GetMouseButtonUp(0))
-			    {
-				touchposition=Input.mousePosition;
-				touchended();
-				}
-	*/
+	    {
+		   touchposition=Input.mousePosition;
+		   touchended();
+		}
+	
 	
 		
 			//if(totallives>=5)
@@ -233,14 +261,14 @@ public class mainmenu : MonoBehaviour {
 		//	lives_textmesh.GetComponent<TextMesh>().text=totallives.ToString();
 			
 
-			if(timerstarted)
-			{
+		if(timerstarted)
+		{
 			cachetotaltimefornewlife -=Time.deltaTime;
 			ts=TimeSpan.FromSeconds(cachetotaltimefornewlife);
 			newlifetimer.GetComponent<TextMesh>().text=ts.ToString().Substring(3,5);
 			newlifetimer2.GetComponent<TextMesh>().text=ts.ToString().Substring(3,5);
 			Invoke("calculateminutesandseconds",0.2f);
-			}
+		}
 			
 		if(ts.TotalSeconds<=0)
 		{	
@@ -268,62 +296,72 @@ public class mainmenu : MonoBehaviour {
 	}
 
 	void touchended()
-			{
+	{
 			hit=Physics2D.Raycast(camera.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero);
-				if(hit.collider!=null)
-					{
+			if(hit.collider!=null)
+			{
+			        if(lastTouchedButtonName.Equals(hit.collider.gameObject.name))
+				        return;  //don't process the same button more than one time
+
 					if(gamestate==state.mainmenu)
 					{
 						if(hit.collider.gameObject.name=="button_settings")
-									{
-							fadebg.renderer.enabled=true;
+						{
+							//fadebg.renderer.enabled=true;
 							StartCoroutine("showsettings");
 							buttonclickeffect();
-									}
+						}
 						else if(hit.collider.gameObject.name=="button_store")
-									{
-							fadebg.renderer.enabled=false;
-							StartCoroutine("showcoinstore");
-							buttonclickeffect();
-									}
-						else if(hit.collider.gameObject.name=="button_facebook")
-									{
-							if(facebook==1)
-							{
-							fadebg.renderer.enabled=true;
-							StartCoroutine("showleaderboardui");
-							buttonclickeffect();
-							}	
-						}
-						else if(hit.collider.gameObject.name=="coins_bar_empty")
 						{
-							fadebg.renderer.enabled=false;
+							//fadebg.renderer.enabled=false;
 							StartCoroutine("showcoinstore");
 							buttonclickeffect();
 						}
-						else if(hit.collider.gameObject.name=="Location_01_Level1")
-									{
-										Debug.Log("Location 1 works");	
-										StartCoroutine("showpowerupswindow");
-										levelselected=1;
-										fadebg.renderer.enabled=false;
-										buttonclickeffect();
-									}
+						else if(hit.collider.gameObject.name=="button_facebook")
+						{
+							//if(facebook==1)
+							//{
+						    Debug.Log("facebook works");
+						       //fadebg.renderer.enabled=true;
+						
+						    FB.Login("email,publish_actions", LoginCallback);
+						    buttonclickeffect();
+							//}	
+				        } else if(hit.collider.gameObject.name =="button_fb_post_login")
+				        {
+					       Debug.Log ("fbpostlogin works!!!");
+					       StartCoroutine("showleaderboardui");
+					       buttonclickeffect();
+				        }
+				        else if(hit.collider.gameObject.name=="coins_bar_empty")
+				        {
+					       fadebg.renderer.enabled=false;
+					       StartCoroutine("showcoinstore");
+					       buttonclickeffect();
+				        }
+				        else if(hit.collider.gameObject.name=="Location_01_Level1")
+					    {
+							Debug.Log("Location 1 works");	
+							StartCoroutine("showpowerupswindow");
+							levelselected=1;
+							fadebg.renderer.enabled=false;
+							buttonclickeffect();
+						}
 						else if(hit.collider.gameObject.name=="Location_01_Level2")
-									{
-										StartCoroutine("showpowerupswindow");
-										StartCoroutine("showpowerupswindow");
-										levelselected=2;
-										fadebg.renderer.enabled=false;
-										buttonclickeffect();
-									}
+						{
+							StartCoroutine("showpowerupswindow");
+							StartCoroutine("showpowerupswindow");
+							levelselected=2;
+							fadebg.renderer.enabled=false;
+							buttonclickeffect();
+						}
 						else if(hit.collider.gameObject.name=="Location_01_Level3")
-									{
-										StartCoroutine("showpowerupswindow");
-										levelselected=3;
-										fadebg.renderer.enabled=false;
-										buttonclickeffect();
-									}
+						{
+							StartCoroutine("showpowerupswindow");
+							levelselected=3;
+							fadebg.renderer.enabled=false;
+							buttonclickeffect();
+						}
 						else if(hit.collider.gameObject.name=="Location_01_Level4")
 									{
 										StartCoroutine("showpowerupswindow");
@@ -737,6 +775,8 @@ public class mainmenu : MonoBehaviour {
 								buttonclickeffect();
 							}
 						}
+
+			            lastTouchedButtonName = hit.collider.gameObject.name;
 					}
 				}
 
@@ -1062,6 +1102,85 @@ public class mainmenu : MonoBehaviour {
 		this.audio.loop=true;
 	}
 
+	private void SetInit()
+	{
+		Debug.Log("Facebook SetInit");
+		//enabled = true; // "enabled" is a property inherited from MonoBehaviour
+		if (FB.IsLoggedIn)
+		{
+			Debug.Log("Facebook Already logged in");
+			//OnLoggedIn();
+		}
+	}
+	
+	private void OnHideUnity(bool isGameShown)
+	{
+		Debug.Log("Facebook OnHideUnity");
+		//if (!isGameShown)
+		//{
+		// pause the game - we will need to hide
+		//  Time.timeScale = 0;
+		//}
+		//else
+		//{
+		// start the game back up - we're getting focus again
+		//  Time.timeScale = 1;
+		//}
+	}
+	
+	void LoginCallback(FBResult result)
+	{
+		Debug.Log("LoginCallback");
+		
+		if (FB.IsLoggedIn)
+		{
+			OnLoggedIn();
+			
+		}
+	}
+	
+	void OnLoggedIn()
+	{
+		Debug.Log("Logged in. ID: " + FB.UserId);
+		
+		// Reqest player info and profile picture
+		FB.API("/me?fields=id,first_name,friends.limit(100).fields(first_name,id)", Facebook.HttpMethod.GET, APICallback);
+		//LoadPicture(Util.GetPictureURL("me", 128, 128),MyPictureCallback);
+		
+	}
+
+	void APICallback(FBResult result)
+	{
+		Dictionary<string, string>   profile         = null;
+		Debug.Log("APICallback");
+		if (result.Error != null)
+		{
+			Debug.LogError(result.Error);
+			// Let's just try again
+			FB.API("/me?fields=id,first_name,friends.limit(100).fields(first_name,id)", Facebook.HttpMethod.GET, APICallback);
+			return;
+		}
+		
+		profile = Util.DeserializeJSONProfile(result.Text);
+		Debug.Log ("Facebook info: " + result.Text);
+		Debug.Log("Facebook " + profile["first_name"]);
+		//friends = Util.DeserializeJSONFriends(result.Text);
+		StartCoroutine("showleaderboardui");
+		StartCoroutine ("flipFacebookButtons");
+	}
+
+	
+	IEnumerator flipFacebookButtons()
+	{
+		fbPreLogin.transform.Translate(7, 0, 0);
+		fbPreLogin.renderer.enabled = false;
+		fbPostLogin.transform.Translate (-7, 0, 0);
+		fbPostLogin.renderer.enabled = true;
+		yield return new WaitForEndOfFrame();
+	}
+
+	
+	
 }
 
 

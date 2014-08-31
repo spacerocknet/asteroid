@@ -16,7 +16,7 @@ public class CategorySelect : MonoBehaviour {
 	public Questions QE;
 	private int [] catBitmap = new int[4]  { 14,  13, 11, 7}; //different num categories have different bitmap list. It is 4 now
 	public bool animationIsPlaying;
-	private GameObject battleengineobject;
+	//private GameObject battleengineobject;
 	private GameObject soundmanager;
 
 	public enum CategoryTypes
@@ -139,7 +139,7 @@ public class CategorySelect : MonoBehaviour {
 		catRef = (GameObject) GameObject.Find("REFERENCES/category_bg");
 		INIT = (GameObject) GameObject.Find("RUNTIME_INIT");
 		QE = (Questions) GameObject.Find("MAIN").AddComponent<Questions>();
-		battleengineobject=GameObject.Find("MAIN");
+		//battleengineobject=GameObject.Find("MAIN");
 		soundmanager=GameObject.Find("Secondary_SoundManager");
 	}
 

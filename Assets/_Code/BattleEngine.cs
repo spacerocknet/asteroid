@@ -104,7 +104,8 @@ public class BattleEngine : MonoBehaviour {
 		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
 
 		//New Changes ***
-		if(isLevelProgressFull)
+		//if(isLevelProgressFull)
+		if(!isAnyLeft||isLevelProgressFull)
 		{
 			WinBattle();
 		}
