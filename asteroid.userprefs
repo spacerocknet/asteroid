@@ -1,23 +1,34 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Code\MainMenu\MainMenuScrollManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Code\MainMenu\GUI\MainMenuManager.cs">
     <Files>
-      <File FileName="Assets\_Code\MainMenu\MainMenuScrollManager.cs" Line="10" Column="1" />
-      <File FileName="Assets\_Code\MainMenu\MainMenuScrollManager.cs" Line="167" Column="1" />
-      <File FileName="Assets\_Code\MainMenu\mainmenu.cs" Line="200" Column="1" />
+      <File FileName="Assets\_Code\Asteroids.cs" Line="1" Column="1" />
+      <File FileName="Assets\_Code\BattleEngine.cs" Line="127" Column="33" />
+      <File FileName="Assets\_Code\MainMenu\mainmenu.cs" Line="201" Column="1" />
+      <File FileName="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" Line="235" Column="12" />
+      <File FileName="Assets\_Code\MainMenu\GUI\LockManager.cs" Line="20" Column="40" />
     </Files>
     <Pads>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State>
-          <Value>level</Value>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="_Code" expanded="True">
+              <Node name="MainMenu" expanded="True">
+                <Node name="GUI" expanded="True">
+                  <Node name="MainMenuManager.cs" selected="True" />
+                </Node>
+                <Node name="Levels" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\USER\Documents\GitHub\asteroid\Assets\_Code\MainMenu\ScrollSprite.cs" line="90" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="Assets\_Code\MainMenu\Levels\LevelInfo.cs" line="5" offsetX="624" offsetY="64" expression="selectedLevelNodeInfo" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

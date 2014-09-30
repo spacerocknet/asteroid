@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System;
 using Facebook.MiniJSON;
 
-
-
 public class mainmenu : MonoBehaviour {
 
-			
 	private Vector2 touchposition;
 	private RaycastHit2D hit;
-	
+
+	public LevelNodeInfoCollection levelNodeInfos;
+	public LevelNodeInfoManager levelNodeInfoManager;
+
 	public enum state{settings,store,facebook,mainmenu,powerups,leaderboard,buylives};
 	public state gamestate;
 	public GameObject coinstore;
@@ -22,8 +22,6 @@ public class mainmenu : MonoBehaviour {
 	public Sprite button_on;
 	public GameObject lives_textmesh;
 
-
-	
 	public static int totalgold;
 	public static int levelselected;
 	public static int playcount;
@@ -105,6 +103,9 @@ public class mainmenu : MonoBehaviour {
 	//For FB
 	private GameObject fbPreLogin;
 	private GameObject fbPostLogin;
+
+	// level node
+	private LevelNodeInfoCollection.LevelNodeInfo selectedLevelNodeInfo;
 	
 	void Awake()
 	{
@@ -297,13 +298,31 @@ public class mainmenu : MonoBehaviour {
 
 	void touchended()
 	{
-			hit=Physics2D.Raycast(camera.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero);
-			if(hit.collider!=null)
-			{
-			        if(lastTouchedButtonName.Equals(hit.collider.gameObject.name))
-				        return;  //don't process the same button more than one time
+		hit=Physics2D.Raycast(camera.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero);
+		if(hit.collider!=null)
+		{
+				
+	        if(lastTouchedButtonName.Equals(hit.collider.gameObject.name))
+		        return;  //don't process the same button more than one time
 
-					if(gamestate==state.mainmenu)
+			LevelNode levelNode = hit.collider.gameObject.GetComponent<LevelNode>();
+			if (levelNode != null) {
+				Debug.Log("Level " + levelNode.level + " selected.");
+
+				LevelNodeInfoCollection.LevelNodeInfo levelNodeInfo = levelNodeInfos.GetLevelNodeInfo(levelNode.level);
+				selectedLevelNodeInfo = levelNodeInfo;
+					
+				StartCoroutine(showpowerupswindow());
+
+				levelselected = levelNode.level;
+
+				fadebg.renderer.enabled = false;
+
+				buttonclickeffect();
+			}
+
+					
+			if(gamestate==state.mainmenu)
 					{
 						if(hit.collider.gameObject.name=="button_settings")
 						{
@@ -311,13 +330,15 @@ public class mainmenu : MonoBehaviour {
 							StartCoroutine("showsettings");
 							buttonclickeffect();
 						}
-						else if(hit.collider.gameObject.name=="button_store")
+						
+				else if(hit.collider.gameObject.name=="button_store")
 						{
 							//fadebg.renderer.enabled=false;
 							StartCoroutine("showcoinstore");
 							buttonclickeffect();
 						}
-						else if(hit.collider.gameObject.name=="button_facebook")
+						
+				else if(hit.collider.gameObject.name=="button_facebook")
 						{
 							//if(facebook==1)
 							//{
@@ -327,7 +348,8 @@ public class mainmenu : MonoBehaviour {
 						    FB.Login("email,publish_actions", LoginCallback);
 						    buttonclickeffect();
 							//}	
-				        } else if(hit.collider.gameObject.name =="button_fb_post_login")
+				        } 
+				else if(hit.collider.gameObject.name =="button_fb_post_login")
 				        {
 					       Debug.Log ("fbpostlogin works!!!");
 					       StartCoroutine("showleaderboardui");
@@ -339,36 +361,36 @@ public class mainmenu : MonoBehaviour {
 					       StartCoroutine("showcoinstore");
 					       buttonclickeffect();
 				        }
-				        else if(hit.collider.gameObject.name=="Location_01_Level1")
-					    {
-							Debug.Log("Location 1 works");	
-							StartCoroutine("showpowerupswindow");
-							levelselected=1;
-							fadebg.renderer.enabled=false;
-							buttonclickeffect();
-						}
-						else if(hit.collider.gameObject.name=="Location_01_Level2")
-						{
-							StartCoroutine("showpowerupswindow");
-							StartCoroutine("showpowerupswindow");
-							levelselected=2;
-							fadebg.renderer.enabled=false;
-							buttonclickeffect();
-						}
-						else if(hit.collider.gameObject.name=="Location_01_Level3")
-						{
-							StartCoroutine("showpowerupswindow");
-							levelselected=3;
-							fadebg.renderer.enabled=false;
-							buttonclickeffect();
-						}
-						else if(hit.collider.gameObject.name=="Location_01_Level4")
-									{
-										StartCoroutine("showpowerupswindow");
-										levelselected=4;
-										fadebg.renderer.enabled=false;
-										buttonclickeffect();
-								}
+//				        else if(hit.collider.gameObject.name=="Location_01_Level1")
+//					    {
+//							Debug.Log("Location 1 works");	
+//							StartCoroutine("showpowerupswindow");
+//							levelselected=1;
+//							fadebg.renderer.enabled=false;
+//							buttonclickeffect();
+//						}
+//						else if(hit.collider.gameObject.name=="Location_01_Level2")
+//						{
+//							StartCoroutine("showpowerupswindow");
+//							StartCoroutine("showpowerupswindow");
+//							levelselected=2;
+//							fadebg.renderer.enabled=false;
+//							buttonclickeffect();
+//						}
+//						else if(hit.collider.gameObject.name=="Location_01_Level3")
+//						{
+//							StartCoroutine("showpowerupswindow");
+//							levelselected=3;
+//							fadebg.renderer.enabled=false;
+//							buttonclickeffect();
+//						}
+//						else if(hit.collider.gameObject.name=="Location_01_Level4")
+//									{
+//										StartCoroutine("showpowerupswindow");
+//										levelselected=4;
+//										fadebg.renderer.enabled=false;
+//										buttonclickeffect();
+//								}
 						else if(hit.collider.gameObject.name=="lives_bar_empty")
 								{
 							//Show buy lives popup
@@ -471,19 +493,26 @@ public class mainmenu : MonoBehaviour {
 						else if(hit.collider.gameObject.name=="button_play")
 						{
 							buttonclickeffect();
-							if(totallives!=0)
+							if(totallives != 0)
 							{
-							gamestate=state.mainmenu;
-							bombpowerupcount +=bombpowerup_count_cachevalue;
-							doublebastradiuspowerupcount += doubleblastradiuspowerupcount_cachevalue;
-							reversetimepowerupcount +=reversetimepowerupcount_cachevalue;
-							changequestioncategorypowerupcount +=changequestioncategorypowercount_cachevalue;
-							PlayerPrefs.SetInt("bombpowerupcount",bombpowerupcount);
-							PlayerPrefs.SetInt("doubleblastradiuspowerupcount",doublebastradiuspowerupcount);
-							PlayerPrefs.SetInt("reversetimepowerupcount",reversetimepowerupcount);
-							PlayerPrefs.SetInt("changequestioncategorypowerupcount",changequestioncategorypowerupcount);
-							PlayerPrefs.SetInt("totalgold",totalgold);
-							loadnewlevel(levelselected);
+								gamestate=state.mainmenu;
+								bombpowerupcount +=bombpowerup_count_cachevalue;
+								doublebastradiuspowerupcount += doubleblastradiuspowerupcount_cachevalue;
+								reversetimepowerupcount +=reversetimepowerupcount_cachevalue;
+								changequestioncategorypowerupcount +=changequestioncategorypowercount_cachevalue;
+								PlayerPrefs.SetInt("bombpowerupcount",bombpowerupcount);
+								PlayerPrefs.SetInt("doubleblastradiuspowerupcount",doublebastradiuspowerupcount);
+								PlayerPrefs.SetInt("reversetimepowerupcount",reversetimepowerupcount);
+								PlayerPrefs.SetInt("changequestioncategorypowerupcount",changequestioncategorypowerupcount);
+								PlayerPrefs.SetInt("totalgold",totalgold);
+								
+								if (selectedLevelNodeInfo != null) {
+									LevelInfo levelInfo = levelNodeInfoManager.gameObject.AddComponent<LevelInfo>();
+									levelInfo.selectedLevelNodeInfo = selectedLevelNodeInfo; 
+								}
+
+								//loadnewlevel(levelselected);
+								Application.LoadLevel("MainScene");
 							}
 							else
 							{
@@ -653,8 +682,8 @@ public class mainmenu : MonoBehaviour {
 							}
 						else if(hit.collider.gameObject.name=="Play_button")
 							{
-							buttonclickeffect();
-							loadnewlevel(levelselected);
+								buttonclickeffect();
+								loadnewlevel(levelselected);
 							}
 						}
 			
@@ -785,11 +814,12 @@ public class mainmenu : MonoBehaviour {
 			{
 				for(int i=0;i<20;i++)
 				{
-				Vector3 oldposition=coinstore.transform.position;
-				float newposition=Mathf.Lerp(oldposition.x,-0.538f,0.25f);
-				coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,0f);
-				yield return null;
+					Vector3 oldposition=coinstore.transform.position;
+					float newposition=Mathf.Lerp(oldposition.x,-0.538f,0.25f);
+					coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,0f);
+					yield return null;
 				}
+
 				yield return new WaitForEndOfFrame();
 				gamestate=state.store;
 			}
@@ -835,15 +865,16 @@ public class mainmenu : MonoBehaviour {
 
 			IEnumerator showpowerupswindow()
 			{
-			gamestate=state.powerups;
-			for(int i=0;i<20;i++)
+				gamestate=state.powerups;
+				for(int i=0;i<20;i++)
 				{
-				Vector3 oldposition=powerups.transform.position;
-				float newposition=Mathf.Lerp(oldposition.y,0f,0.15f);
-				powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,0f);
-				yield return null;
+					Vector3 oldposition=powerups.transform.position;
+					float newposition=Mathf.Lerp(oldposition.y,0f,0.15f);
+					powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,0f);
+					yield return null;
 				}
-			yield return new WaitForEndOfFrame();
+
+				yield return new WaitForEndOfFrame();
 			}
 	
 			IEnumerator hidepowerupwindow()
@@ -861,7 +892,7 @@ public class mainmenu : MonoBehaviour {
 
 		void loadnewlevel(int loadlevelindex)
 		{
-		Application.LoadLevel(loadlevelindex);
+			Application.LoadLevel(loadlevelindex);
 		}
 	
 		public static void managetimerfornewlife(bool start)

@@ -115,13 +115,19 @@
      <Compile Include="Assets\_Code\Characters.cs" />
      <Compile Include="Assets\_Code\GameResource.cs" />
      <Compile Include="Assets\_Code\LevelManager.cs" />
-     <Compile Include="Assets\_Code\MainMenu\LevelNode.cs" />
-     <Compile Include="Assets\_Code\MainMenu\MainMenuScrollManager.cs" />
-     <Compile Include="Assets\_Code\MainMenu\ScrollableSprite.cs" />
+     <Compile Include="Assets\_Code\MainMenu\GUI\LevelOverlay.cs" />
+     <Compile Include="Assets\_Code\MainMenu\GUI\LockManager.cs" />
+     <Compile Include="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\CSVReader.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\LevelInfo.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\LevelNode.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\LevelNodeInfoCollection.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\LevelNodeInfoManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\TimeTest.cs" />
      <Compile Include="Assets\_Code\MainMenu\dataforleaderboard.cs" />
      <Compile Include="Assets\_Code\MainMenu\mainmenu.cs" />
      <Compile Include="Assets\_Code\MainMenu\sortlayerforpoweruptextmesh.cs" />
+     <Compile Include="Assets\_Code\PlayerData.cs" />
      <Compile Include="Assets\_Code\Questions.cs" />
      <Compile Include="Assets\_Code\RestClient.cs" />
      <Compile Include="Assets\_Code\Settings.cs" />
@@ -145,6 +151,7 @@
      <None Include="Assets\GameAnalytics\Plugins\iOS\iOS_Readme.txt" />
      <None Include="Assets\GameAnalytics\Plugins\WebPlayer\crossdomain.xml" />
      <None Include="Assets\GameAnalytics\Plugins\Android\Android_Readme.txt" />
+     <None Include="Assets\Resources\level_nodes.txt" />
  <Reference Include="Ionic.Zlib">
  <HintPath>Assets\external\Ionic.Zlib.dll</HintPath>
  </Reference>

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,6 +11,8 @@ public class Asteroids : MonoBehaviour {
 	private static int ASTEROID_LIMIT = 8;
 	private List<float> lifeList = new List<float>();
 
+	private LevelInfo levelInfo;
+
 	public class Asteroid
 	{
 		public AsteroidColorTypes colorType;
@@ -19,6 +21,8 @@ public class Asteroids : MonoBehaviour {
 		public Sprite colorsprite;
 		public GameObject obj;
 		public bool isDead;
+
+		public int health;
 		
 		public Asteroid(AsteroidColorTypes _colorType, int _life, GameObject _obj)
 		{
@@ -89,6 +93,8 @@ public class Asteroids : MonoBehaviour {
 		lifeList.Add(0.6f);
 		lifeList.Add(1.0f);
 		lifeList.Add(1.5f);
+
+		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
 	}
 
 	public IEnumerator MoveAsteroids()
@@ -128,7 +134,6 @@ public class Asteroids : MonoBehaviour {
 		}
 	}
 
-
 	public IEnumerator SpawnAsteroids(int count, float diff)
 	{
 
@@ -147,34 +152,59 @@ public class Asteroids : MonoBehaviour {
 
 		for(int i=0;i<count;i++)
 		{
-			GameObject asteroid = (GameObject) Instantiate(asteroidRef,new Vector3(Random.Range(-1.8f,2.0f),Random.Range(2.6f,2.8f),-1.0f),Quaternion.identity);
-
 			int lifeHits = Random.Range(1,4);
+			yield return SpawnAsteroid (lifeHits);
+		}
+	}
 
-			currentAsteroids.Add(new Asteroid((AsteroidColorTypes)Random.Range(0,3),lifeHits,asteroid));
+	public IEnumerator SpawnAsteroids(int count) {
+		count = Mathf.Clamp (count, count, levelInfo.selectedLevelNodeInfo.totalRocks);
 
+		for (int index = 0; index < count; index++) {
+			int bigRocks = levelInfo.selectedLevelNodeInfo.bigRocks;
+			int smallRocks = levelInfo.selectedLevelNodeInfo.smallRocks;
+			int allRocks = bigRocks + smallRocks;
 
-			asteroid.transform.localScale = new Vector3(0,0,1);
-			asteroid.transform.Rotate(new Vector3(0,0,Random.Range(0,361)));
+			int allAsteroidSizes = 1 + 2;
+			int asteroid = Random.Range(0, allRocks);
 
-			for(int j=0;j<lifeHits;j++)
-			{
-				for(int k=0;k<5;k++)
-				{
-					asteroid.transform.localScale += new Vector3(0.1f,0.1f,0);
-					yield return 0;
-				}
+			int multiplier = levelInfo.selectedLevelNodeInfo.multiplier;
+			int lifeHits = 0;
+
+			if (asteroid < bigRocks) {
+				levelInfo.selectedLevelNodeInfo.bigRocks--;
+				lifeHits = (int) (1.3125f * multiplier);
 			}
-			
-			asteroid.transform.localScale = new Vector3(0.5f*lifeHits,0.5f*lifeHits,1);
-			asteroid.transform.parent = INIT.transform;
+			else if (asteroid > bigRocks && asteroid <= smallRocks) {
+				levelInfo.selectedLevelNodeInfo.smallRocks--;
+				 lifeHits = (int) (0.75f * multiplier);
+			}
 
-		
-			yield return 0;
+			levelInfo.selectedLevelNodeInfo.totalRocks--;
+
+			yield return SpawnAsteroid(lifeHits);
+		}
+	}
+
+	private IEnumerator SpawnAsteroid (int lifeHits)
+	{
+		GameObject asteroid = (GameObject)Instantiate (asteroidRef, new Vector3 (Random.Range (-1.8f, 2.0f), Random.Range (2.6f, 2.8f), -1.0f), Quaternion.identity);
+
+		currentAsteroids.Add (new Asteroid ((AsteroidColorTypes)Random.Range (0, 3), lifeHits, asteroid));
+		asteroid.transform.localScale = new Vector3 (0, 0, 1);
+		asteroid.transform.Rotate (new Vector3 (0, 0, Random.Range (0, 361)));
+
+		for (int j = 0; j < lifeHits; j++) {
+			for (int k = 0; k < 5; k++) {
+				asteroid.transform.localScale += new Vector3 (0.1f, 0.1f, 0);
+				yield return 0;
+			}
 		}
 
+		asteroid.transform.localScale = new Vector3 (0.5f * lifeHits, 0.5f * lifeHits, 1);
+		asteroid.transform.parent = INIT.transform;
 
-
+		yield return null;
 	}
 
 	public bool CheckIfAnyExists()

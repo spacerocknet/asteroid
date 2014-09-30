@@ -93,6 +93,7 @@
      <None Include="Assets\GameAnalytics\Plugins\iOS\iOS_Readme.txt" />
      <None Include="Assets\GameAnalytics\Plugins\WebPlayer\crossdomain.xml" />
      <None Include="Assets\GameAnalytics\Plugins\Android\Android_Readme.txt" />
+     <None Include="Assets\Resources\level_nodes.txt" />
  <Reference Include="Ionic.Zlib">
  <HintPath>Assets\external\Ionic.Zlib.dll</HintPath>
  </Reference>

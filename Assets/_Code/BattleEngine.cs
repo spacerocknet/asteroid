@@ -32,6 +32,8 @@ public class BattleEngine : MonoBehaviour {
 
 	public GameObject buttonmanager;
 
+	private LevelInfo levelInfo;
+
 	private void Awake()
 	{
 		isEndGame = false;
@@ -50,11 +52,14 @@ public class BattleEngine : MonoBehaviour {
 		font1=font;
 		material1=FontMats;
 		soundmanager=GameObject.Find("Secondary_SoundManager");
+
+		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
 	}
 
 	private IEnumerator Start()
 	{	
-		yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC(),1.0f));
+		//yield return StartCoroutine(asteroids.SpawnAsteroids(levelInfo.selectedLevelNodeInfo.totalRocks));
+		yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC()));
 		categorySelect.PlaceCategories(0);
 		canTarget = true;
 		yield return 0;
@@ -115,9 +120,12 @@ public class BattleEngine : MonoBehaviour {
 			yield return StartCoroutine(asteroids.MoveAsteroids());
 
 			yield return new WaitForSeconds(0.1f);
-			
+
+			//int spawnINC = levelInfo.selectedLevelNodeInfo.totalRocks;
+			//StartCoroutine(asteroids.SpawnAsteroids(spawnINC));
+
 			int spawnINC = levels.GetSpawnCountAutoINC();
-			StartCoroutine(asteroids.SpawnAsteroids(spawnINC,1.0f));
+			StartCoroutine(asteroids.SpawnAsteroids(spawnINC));
 
 			if(!LastHitMiss&&spawnINC!=0)
 			{
