@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class AttackSystem : MonoBehaviour {
 
+	public float asteroidDamage = 2.0f;
+
 	private Weapons weapons;
 	private int currentWeapon;
 	private GameObject label_ref;
@@ -69,19 +71,25 @@ public class AttackSystem : MonoBehaviour {
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
 	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)		
-			StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(DamageCalcByColor(currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType)));
+			StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(asteroidDamage));
+			//StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(DamageCalcByColor(currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType)));
 
 			if(currentAsteroids[destroyIndex[i]].isDead)
 			{
 				Destroy(currentAsteroids[destroyIndex[i]].obj,2);
 				currentAsteroids.RemoveAt(destroyIndex[i]);
+
+				BATTLE_ENGINE.OnAsteroidDestroyed();
+
 				//New Changes ***
-				GameObject.Find("MAIN").GetComponent<LevelManager>().StartCoroutine("UpdateLevelProgressBarForAsteroidsDestroyed");
+				//GameObject.Find("MAIN").GetComponent<LevelManager>().StartCoroutine("UpdateLevelProgressBarForAsteroidsDestroyed");
 				//
 			}
 		}
 		yield return 0;
 	}
+
+
 
 	private int DamageCalcByColor(CategorySelect.ColorTypes c1, Asteroids.AsteroidColorTypes c2)
 	{

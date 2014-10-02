@@ -61,7 +61,7 @@ public class LevelManager : MonoBehaviour {
 	public List<Level> AllLevels = new List<Level>();
 	public int currentLevel;
 	public int currentINC;
-	private GameObject levelProgressBar;
+	// GameObject levelProgressBar;
 	//private int currentProgress;
 
 	//New Changes ***
@@ -73,8 +73,8 @@ public class LevelManager : MonoBehaviour {
 	{
 		//currentProgress = 0;
 		AllLevels.Add(new Level("3 3",30));
-		levelProgressBar = (GameObject) GameObject.Find("level_progress/blank_color");
-		levelProgressBar.transform.localScale=new Vector3(1.01f,0f,0f);
+		//levelProgressBar = (GameObject) GameObject.Find("level_progress/blank_color");
+		//levelProgressBar.transform.localScale=new Vector3(1.01f,0f,0f);
 	}
 
 	public bool CheckIfProgressIfFull()
@@ -82,14 +82,16 @@ public class LevelManager : MonoBehaviour {
 		// New Changes ***
 		// Enter Method Modified
 
-		if(levelProgressBar.transform.localScale.y>0.98f)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+//		if(levelProgressBar.transform.localScale.y>0.98f)
+//		{
+//			return true;
+//		}
+//		else
+//		{
+//			return false;
+//		}
+
+		return false;
 	}
 
 	public static int _totalnumberofasteriods;
@@ -97,30 +99,30 @@ public class LevelManager : MonoBehaviour {
 
 	public IEnumerator UpdateLevelProgressBarForAsteriodsSpawned(int numberOfAsteriodsSpawned)
 	{
-		float pluspart=(_partsizeperasteriodspawn*numberOfAsteriodsSpawned)/7;
-		for(int i=0;i<7;i++)
-		{
-			if(levelProgressBar.transform.localScale.y<0.99f)
-			{
-				yield return new WaitForSeconds(0.01f);
-				levelProgressBar.transform.localScale +=new Vector3(0f,pluspart,0f);
-			}
-		}	
+//		float pluspart=(_partsizeperasteriodspawn*numberOfAsteriodsSpawned)/7;
+//		for(int i=0;i<7;i++)
+//		{
+//			if(levelProgressBar.transform.localScale.y<0.99f)
+//			{
+//				yield return new WaitForSeconds(0.01f);
+//				levelProgressBar.transform.localScale +=new Vector3(0f,pluspart,0f);
+//			}
+//		}	
 		yield return null;
 	}
 	
 
 	public IEnumerator UpdateLevelProgressBarForAsteroidsDestroyed()
 	{
-		float pluspart=_partsizeperasteriodspawn/7;
-		for(int i=0;i<7;i++)
-		{
-			if(levelProgressBar.transform.localScale.y<0.99f)
-			{
-				yield return new WaitForSeconds(0.01f);
-				levelProgressBar.transform.localScale +=new Vector3(0f,pluspart,0f);
-			}
-		}
+//		float pluspart=_partsizeperasteriodspawn/7;
+//		for(int i=0;i<7;i++)
+//		{
+//			if(levelProgressBar.transform.localScale.y<0.99f)
+//			{
+//				yield return new WaitForSeconds(0.01f);
+//				levelProgressBar.transform.localScale +=new Vector3(0f,pluspart,0f);
+//			}
+//		}
 		yield return null;
 	}
 	

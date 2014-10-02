@@ -3,8 +3,15 @@ using System.Collections;
 
 public class BattleEngine : MonoBehaviour {
 
+	public ProgressBarManager progressBarManager;
+
 	public CategorySelect categorySelect;
+
 	public Asteroids asteroids;
+	public Vector3 bigAsteroidScale;
+	public Vector3 smallAsteroidScale;
+	public Vector2 asteroidSpawnStartRange;
+
 	private LevelManager levels;
 	[HideInInspector]
 	public bool canTarget;
@@ -22,10 +29,8 @@ public class BattleEngine : MonoBehaviour {
 	public Font font;
 	public Material[] FontMats;
 
-
 	public static Font font1;
 	public static Material[] material1;
-	
 
 	//Related to sound
 	GameObject soundmanager;
@@ -36,13 +41,19 @@ public class BattleEngine : MonoBehaviour {
 
 	private void Awake()
 	{
+		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
+
 		isEndGame = false;
 		AtkTarget = (GameObject) GameObject.Find("ATTACK_TARGET");
 		WinLoseTextAsset = (GameObject) GameObject.Find("WinLoseText");
 		isMouseDown = false;
 		canTarget = false;
 		categorySelect = (CategorySelect) this.gameObject.AddComponent<CategorySelect>();
+
 		asteroids = (Asteroids) this.gameObject.AddComponent<Asteroids>();
+		asteroids.bigAsteroidScale = bigAsteroidScale;
+		asteroids.smallAsteroidScale = smallAsteroidScale;
+
 		AtkSystem = (AttackSystem) this.gameObject.AddComponent<AttackSystem>();
 		character = (Characters) this.gameObject.AddComponent<Characters>();
 		levels = (LevelManager) this.gameObject.AddComponent<LevelManager>();
@@ -52,17 +63,42 @@ public class BattleEngine : MonoBehaviour {
 		font1=font;
 		material1=FontMats;
 		soundmanager=GameObject.Find("Secondary_SoundManager");
-
-		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
 	}
 
 	private IEnumerator Start()
 	{	
-		//yield return StartCoroutine(asteroids.SpawnAsteroids(levelInfo.selectedLevelNodeInfo.totalRocks));
-		yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC()));
+		int spawnCount = Random.Range ((int) asteroidSpawnStartRange.x, (int) asteroidSpawnStartRange.y);
+		yield return StartCoroutine(asteroids.SpawnAsteroids(100));
+		
+		progressBarManager.UpdateProgressBar (0);
+
+		//yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC()));
 		categorySelect.PlaceCategories(0);
 		canTarget = true;
-		yield return 0;
+		yield return 0; 
+	}
+
+	void Update() {
+		DebugDamageAsteroid ();
+	}
+
+	private void DebugDamageAsteroid() {
+		if (Input.GetKeyDown(KeyCode.K)) {
+			Asteroids.Asteroid asteroid = asteroids.currentAsteroids[0];
+
+			CategorySelect.ColorTypes color = (CategorySelect.ColorTypes) asteroid.colorType;
+
+			StartCoroutine(AtkSystem.AttackTarget(asteroid.obj.transform.position,asteroids.currentAsteroids, 
+			                                      levels, color));
+		}
+
+		if (Input.GetKeyDown(KeyCode.M)) {
+			int totalRocks = levelInfo.selectedLevelNodeInfo.totalRocks;
+			if(asteroids.asteroidsDestroyed >= totalRocks)
+			{
+				WinBattle();
+			}
+		}
 	}
 
 	public void SetAttackToNierestEnemy()
@@ -105,12 +141,13 @@ public class BattleEngine : MonoBehaviour {
 			yield return StartCoroutine(AtkSystem.MissTarget());
 		}
 
-		bool isAnyLeft = asteroids.CheckIfAnyExists();
-		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
+//		bool isAnyLeft = asteroids.CheckIfAnyExists();
+//		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
+		int totalRocks = levelInfo.selectedLevelNodeInfo.totalRocks;
 
 		//New Changes ***
 		//if(isLevelProgressFull)
-		if(!isAnyLeft||isLevelProgressFull)
+		if(asteroids.asteroidsDestroyed >= totalRocks)
 		{
 			WinBattle();
 		}
@@ -121,16 +158,16 @@ public class BattleEngine : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.1f);
 
-			//int spawnINC = levelInfo.selectedLevelNodeInfo.totalRocks;
-			//StartCoroutine(asteroids.SpawnAsteroids(spawnINC));
+			int spawnCount = Random.Range((int) asteroidSpawnStartRange.x, (int) asteroidSpawnStartRange.y);
+			StartCoroutine(asteroids.SpawnAsteroids(spawnCount));
 
-			int spawnINC = levels.GetSpawnCountAutoINC();
-			StartCoroutine(asteroids.SpawnAsteroids(spawnINC));
+//			int spawnINC = levels.GetSpawnCountAutoINC();
+//			StartCoroutine(asteroids.SpawnAsteroids(spawnINC));
 
-			if(!LastHitMiss&&spawnINC!=0)
+			if(!LastHitMiss&&spawnCount!=0)
 			{
 				//New
-				StartCoroutine(levels.UpdateLevelProgressBarForAsteriodsSpawned(1));
+//				StartCoroutine(levels.UpdateLevelProgressBarForAsteriodsSpawned(1));
 				//
 			}
 
@@ -145,6 +182,11 @@ public class BattleEngine : MonoBehaviour {
 		categorySelect.animationIsPlaying = false;
 
 		yield return 0;
+	}
+
+	public void OnAsteroidDestroyed() {
+		asteroids.asteroidsDestroyed++;
+		progressBarManager.UpdateProgressBar (asteroids.asteroidsDestroyed);
 	}
 
 	private void WinBattle()

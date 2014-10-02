@@ -38,8 +38,11 @@ public class MainMenuManager : MonoBehaviour {
 
 	private bool draggingPage;
 	private bool animatingPage;
+	private bool performingUnlock;
 
 	void Start () {
+		//PlayerPrefs.SetInt (PlayerData.CurrentLevelDataLabel, 5);
+
 		subPage2Nodes = subPage2.transform.FindChild ("Buttons_Location").gameObject;
 		mainPageNodes = mainMenu.transform.FindChild ("Buttons_Location").gameObject;
 		subPage1Nodes = subPage1.transform.FindChild ("Buttons_Location").gameObject;
@@ -60,24 +63,24 @@ public class MainMenuManager : MonoBehaviour {
 		menuBoundsLower = transform.position - menuBounds;
 
 		//// get the gameobject from the game level to get new unlocked level;
-		int level = 6;
-		StartCoroutine (CheckForLevelUnlock (level));
+		performingUnlock = true;
+		StartCoroutine (CheckForLevelUnlock (currentLevel));
 	}
 	
 	void Update () {
 
 		int currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelDataLabel);
 		int currentPage = currentLevel / levelNodesPerPage;
-		if (!animatingPage && pageIndex < currentPage) {
-			animatingPage = true;
-			pageScrollSpeed = pageAnimationSpeed;
-		}
+//		if (!animatingPage && !performingUnlock && pageIndex < currentPage) {
+//			animatingPage = true;
+//			pageScrollSpeed = pageAnimationSpeed;
+//		}
+//
+//		if (animatingPage && pageIndex == currentPage) {
+//			animatingPage = false;
+//		}
 
-		if (animatingPage && pageIndex == currentPage) {
-			animatingPage = false;
-		}
-
-		if (Input.GetMouseButtonDown(0) && !draggingPage && !animatingPage) {
+		if (Input.GetMouseButtonDown(0) && !draggingPage && !animatingPage && !performingUnlock) {
 			touchPosition = Input.mousePosition;
 			draggingPage = true;
 		}
@@ -86,7 +89,7 @@ public class MainMenuManager : MonoBehaviour {
 			draggingPage = false;
 		}
 
-		if (!animatingPage) {
+		if (!animatingPage && !performingUnlock) {
 			if (draggingPage) {
 				Vector3 deltaPosition = Vector3.zero;
 				deltaPosition.y = Input.mousePosition.y - touchPosition.y;
@@ -136,6 +139,8 @@ public class MainMenuManager : MonoBehaviour {
 
 	private void UpdateLevelNodes(int mainMenuPage) {
 
+		currentLevelOverlay.SetActive (false);
+
 		// sub menu page 2
 		UpdatePageLevelNodes (subPage2Nodes, -1);
 
@@ -180,8 +185,6 @@ public class MainMenuManager : MonoBehaviour {
 		if (activeLevel == 0) {
 			PlayerPrefs.SetInt(PlayerData.CurrentLevelDataLabel, 1);
 		}
-
-		activeLevel = 2;
 
 		List<LevelNode> levelNodes = new List<LevelNode> (levelNodesRoot.GetComponentsInChildren<LevelNode> ());
 
@@ -234,6 +237,10 @@ public class MainMenuManager : MonoBehaviour {
 
 		LevelNode activeLevelNode = levelNodes.Find(x => x.level == activeLevel);
 		UpdateActiveLevelOverlay (activeLevelNode, activeLevel);
+
+		PlayerPrefs.SetInt (PlayerData.CurrentLevelDataLabel, activeLevel);
+
+		performingUnlock = false;
 	}
 
 	private void UpdateActiveLevelOverlay (LevelNode levelNode, int activeLevel)
@@ -241,5 +248,7 @@ public class MainMenuManager : MonoBehaviour {
 		Vector3 nodePosition = levelNode.transform.position;
 		currentLevelOverlay.transform.position = new Vector3 (nodePosition.x, nodePosition.y, -5);
 		currentLevelOverlay.transform.parent = levelNode.gameObject.transform;
+
+		currentLevelOverlay.SetActive (true);
 	}
 }

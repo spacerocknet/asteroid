@@ -1,24 +1,26 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Code\MainMenu\GUI\MainMenuManager.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Code\BattleEngine.cs">
     <Files>
-      <File FileName="Assets\_Code\Asteroids.cs" Line="1" Column="1" />
-      <File FileName="Assets\_Code\BattleEngine.cs" Line="127" Column="33" />
+      <File FileName="Assets\_Code\Main\ProgressBarManager.cs" Line="32" Column="3" />
+      <File FileName="Assets\_Code\BattleEngine.cs" Line="83" Column="3" />
+      <File FileName="Assets\_Code\Asteroids.cs" Line="321" Column="23" />
+      <File FileName="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" Line="57" Column="49" />
+      <File FileName="Assets\_Code\LevelManager.cs" Line="80" Column="21" />
       <File FileName="Assets\_Code\MainMenu\mainmenu.cs" Line="201" Column="1" />
-      <File FileName="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" Line="235" Column="12" />
-      <File FileName="Assets\_Code\MainMenu\GUI\LockManager.cs" Line="20" Column="40" />
+      <File FileName="Assets\_Code\Questions.cs" Line="556" Column="31" />
+      <File FileName="Assets\_Code\AttackSystem.cs" Line="27" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="_Code" expanded="True">
+              <Node name="Main" expanded="True" />
               <Node name="MainMenu" expanded="True">
-                <Node name="GUI" expanded="True">
-                  <Node name="MainMenuManager.cs" selected="True" />
-                </Node>
-                <Node name="Levels" expanded="True" />
+                <Node name="GUI" expanded="True" />
               </Node>
+              <Node name="BattleEngine.cs" selected="True" />
             </Node>
           </Node>
         </State>

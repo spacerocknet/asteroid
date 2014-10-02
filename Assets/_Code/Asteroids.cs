@@ -4,32 +4,43 @@ using System.Collections.Generic;
 
 public class Asteroids : MonoBehaviour {
 
+	public Vector3 bigAsteroidScale = Vector3.zero;
+	public Vector3 smallAsteroidScale = Vector3.zero;
+
 	private GameObject asteroidRef;
 	[HideInInspector]
 	public List<Asteroid> currentAsteroids = new List<Asteroid>();
+	public int asteroidsDestroyed;
 	private GameObject INIT;
 	private static int ASTEROID_LIMIT = 8;
 	private List<float> lifeList = new List<float>();
-
 	private LevelInfo levelInfo;
 
 	public class Asteroid
 	{
 		public AsteroidColorTypes colorType;
-		public int life;
+		public float life;
 		public Color color;
 		public Sprite colorsprite;
 		public GameObject obj;
 		public bool isDead;
 
-		public int health;
+		public float smallAsteroidLifeHits;
+		private Vector3 smallAsteroidScale;
+
+		private GameObject lifeHitsLabel;
 		
-		public Asteroid(AsteroidColorTypes _colorType, int _life, GameObject _obj)
+		public Asteroid(AsteroidColorTypes _colorType, float _life, GameObject _obj, float smallLifeHits, Vector3 smallScale)
 		{
 			isDead = false;
 			colorType = _colorType;
 			life = _life;
 			obj = _obj;
+
+			smallAsteroidLifeHits = smallLifeHits;
+			smallAsteroidScale = smallScale;
+
+			UpdateDebugText ();
 
 			DefineColor();
 		}
@@ -53,7 +64,7 @@ public class Asteroids : MonoBehaviour {
 			obj.GetComponent<SpriteRenderer>().sprite=this.colorsprite;
 		}
 
-		public IEnumerator DoDamage(int hitPoints)
+		public IEnumerator DoDamage(float hitPoints)
 		{
 			if(life<hitPoints)
 			{
@@ -61,6 +72,11 @@ public class Asteroids : MonoBehaviour {
 			}
 
 			life -= hitPoints;
+			UpdateDebugText ();
+
+			if (life < smallAsteroidLifeHits) {
+				obj.transform.localScale = smallAsteroidScale;
+			}
 
 			if(life<=0)
 			{
@@ -76,10 +92,19 @@ public class Asteroids : MonoBehaviour {
 				}
 			}
 		}
+
+		void UpdateDebugText ()
+		{
+			if (obj.transform.FindChild ("textmesh") != null) {
+				lifeHitsLabel = obj.transform.FindChild ("textmesh").gameObject;
+				lifeHitsLabel.GetComponent<TextMesh> ().text = life.ToString ();
+			}
+		}
 	}
 
 	public enum AsteroidColorTypes
 	{
+		Unknown = -1,
 		Green = 0,
 		Red = 1,
 		Blue = 2
@@ -153,8 +178,10 @@ public class Asteroids : MonoBehaviour {
 		for(int i=0;i<count;i++)
 		{
 			int lifeHits = Random.Range(1,4);
-			yield return SpawnAsteroid (lifeHits);
+			SpawnAsteroid (lifeHits, Vector3.zero, (AsteroidColorTypes)Random.Range (0, 3), lifeHits);
 		}
+
+		yield return null;
 	}
 
 	public IEnumerator SpawnAsteroids(int count) {
@@ -165,46 +192,84 @@ public class Asteroids : MonoBehaviour {
 			int smallRocks = levelInfo.selectedLevelNodeInfo.smallRocks;
 			int allRocks = bigRocks + smallRocks;
 
-			int allAsteroidSizes = 1 + 2;
 			int asteroid = Random.Range(0, allRocks);
 
 			int multiplier = levelInfo.selectedLevelNodeInfo.multiplier;
-			int lifeHits = 0;
+			float lifeHits = 0;
+
+			float smallLifeHits = 0.75f * multiplier;
+
+			AsteroidColorTypes asteroidColor = GetAsteroidColor (allRocks);
 
 			if (asteroid < bigRocks) {
 				levelInfo.selectedLevelNodeInfo.bigRocks--;
-				lifeHits = (int) (1.3125f * multiplier);
+				lifeHits = 1.3125f * multiplier;
+
+				SpawnAsteroid(lifeHits, bigAsteroidScale, asteroidColor, smallLifeHits);
 			}
-			else if (asteroid > bigRocks && asteroid <= smallRocks) {
+			else if (asteroid >= bigRocks && asteroid <= allRocks) {
 				levelInfo.selectedLevelNodeInfo.smallRocks--;
-				 lifeHits = (int) (0.75f * multiplier);
-			}
+				lifeHits = smallLifeHits;
 
-			levelInfo.selectedLevelNodeInfo.totalRocks--;
-
-			yield return SpawnAsteroid(lifeHits);
-		}
-	}
-
-	private IEnumerator SpawnAsteroid (int lifeHits)
-	{
-		GameObject asteroid = (GameObject)Instantiate (asteroidRef, new Vector3 (Random.Range (-1.8f, 2.0f), Random.Range (2.6f, 2.8f), -1.0f), Quaternion.identity);
-
-		currentAsteroids.Add (new Asteroid ((AsteroidColorTypes)Random.Range (0, 3), lifeHits, asteroid));
-		asteroid.transform.localScale = new Vector3 (0, 0, 1);
-		asteroid.transform.Rotate (new Vector3 (0, 0, Random.Range (0, 361)));
-
-		for (int j = 0; j < lifeHits; j++) {
-			for (int k = 0; k < 5; k++) {
-				asteroid.transform.localScale += new Vector3 (0.1f, 0.1f, 0);
-				yield return 0;
+				SpawnAsteroid(lifeHits, smallAsteroidScale, asteroidColor, smallLifeHits);
 			}
 		}
-
-		asteroid.transform.localScale = new Vector3 (0.5f * lifeHits, 0.5f * lifeHits, 1);
-		asteroid.transform.parent = INIT.transform;
 
 		yield return null;
+	}
+
+	private void SpawnAsteroid (float lifeHits, Vector3 scale, AsteroidColorTypes asteroidColor,
+	                            float smallAsteroidsLifeHits)
+	{
+		GameObject asteroid = (GameObject)Instantiate (asteroidRef, new Vector3 (Random.Range (-1.8f, 2.0f), Random.Range (2.6f, 2.8f), -1.0f), Quaternion.identity);
+		currentAsteroids.Add (new Asteroid (asteroidColor, lifeHits, asteroid, smallAsteroidsLifeHits, smallAsteroidScale));
+
+		asteroid.transform.parent = INIT.transform;
+
+		if (scale == Vector3.zero) {
+			asteroid.transform.localScale = new Vector3 (0, 0, 1);
+			asteroid.transform.Rotate (new Vector3 (0, 0, Random.Range (0, 361)));
+
+			for (int j = 0; j < lifeHits; j++) {
+				for (int k = 0; k < 5; k++) {
+					asteroid.transform.localScale += new Vector3 (0.1f, 0.1f, 0);
+				}
+			}
+
+			asteroid.transform.localScale = new Vector3 (0.5f * lifeHits, 0.5f * lifeHits, 1);
+		}
+		else {
+			asteroid.transform.localScale = scale;
+		} 
+	}
+
+	AsteroidColorTypes GetAsteroidColor (int allRocks)
+	{
+		AsteroidColorTypes asteroidColor = AsteroidColorTypes.Unknown;
+
+		int totalRocks = levelInfo.selectedLevelNodeInfo.totalRocks;
+		float basePercent = 100.0f / totalRocks;
+		int percentModifier = Random.Range (1, allRocks);
+
+		float redPercent = levelInfo.selectedLevelNodeInfo.redPercent;
+		float bluePercent = redPercent + levelInfo.selectedLevelNodeInfo.bluePercent;
+		float greenPercent = bluePercent + levelInfo.selectedLevelNodeInfo.greenPercent;
+
+		float percent = Random.Range (0, greenPercent);
+
+		if (percent < redPercent) {
+			asteroidColor = AsteroidColorTypes.Red;
+			levelInfo.selectedLevelNodeInfo.redPercent -= basePercent;
+		}
+		else if (percent >= redPercent && percent < bluePercent) {
+			asteroidColor = AsteroidColorTypes.Blue;
+			levelInfo.selectedLevelNodeInfo.bluePercent -= basePercent;
+		}
+		else if (percent >= bluePercent && percent <= greenPercent) {
+			asteroidColor = AsteroidColorTypes.Green;
+			levelInfo.selectedLevelNodeInfo.greenPercent -= basePercent;
+		}
+		return asteroidColor;
 	}
 
 	public bool CheckIfAnyExists()
@@ -256,7 +321,7 @@ public class Asteroids : MonoBehaviour {
 	IEnumerator NotifyProgressBarForAsteriodSpawn(int numberOfAsteriodsSpawned)
 	{
 		yield return new WaitForSeconds (0.15f);
-		StartCoroutine(GameObject.Find("MAIN").GetComponent<LevelManager>().UpdateLevelProgressBarForAsteriodsSpawned(numberOfAsteriodsSpawned));
+//		StartCoroutine(GameObject.Find("MAIN").GetComponent<LevelManager>().UpdateLevelProgressBarForAsteriodsSpawned(numberOfAsteriodsSpawned));
 	}
 
 
