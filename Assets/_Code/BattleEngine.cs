@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class BattleEngine : MonoBehaviour {
@@ -71,6 +71,7 @@ public class BattleEngine : MonoBehaviour {
 		yield return StartCoroutine(asteroids.SpawnAsteroids(100));
 		
 		progressBarManager.UpdateProgressBar (0);
+		progressBarManager.StartTimer ();
 
 		//yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC()));
 		categorySelect.PlaceCategories(0);
@@ -93,10 +94,11 @@ public class BattleEngine : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown(KeyCode.M)) {
-			int totalRocks = levelInfo.selectedLevelNodeInfo.totalRocks;
+			int totalRocks = levelInfo.selectedNodeInfo.totalRocks;
 			if(asteroids.asteroidsDestroyed >= totalRocks)
 			{
-				WinBattle();
+				progressBarManager.StopTimer();
+				WinBattle(progressBarManager.GetCompletionTimeSeconds());
 			}
 		}
 	}
@@ -143,13 +145,14 @@ public class BattleEngine : MonoBehaviour {
 
 //		bool isAnyLeft = asteroids.CheckIfAnyExists();
 //		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
-		int totalRocks = levelInfo.selectedLevelNodeInfo.totalRocks;
+		int totalRocks = levelInfo.selectedNodeInfo.totalRocks;
 
 		//New Changes ***
 		//if(isLevelProgressFull)
 		if(asteroids.asteroidsDestroyed >= totalRocks)
 		{
-			WinBattle();
+			progressBarManager.StopTimer();
+			WinBattle(progressBarManager.GetCompletionTimeSeconds());
 		}
 		//
 		else
@@ -189,11 +192,11 @@ public class BattleEngine : MonoBehaviour {
 		progressBarManager.UpdateProgressBar (asteroids.asteroidsDestroyed);
 	}
 
-	private void WinBattle()
+	private void WinBattle(int score)
 	{
 		isEndGame = true;
 		soundmanager.GetComponent<SoundManager>().mutemaintheme_sound();
-		StartCoroutine(buttonmanager.GetComponent<ButtonManager>().showrewardsscreen());
+		StartCoroutine(buttonmanager.GetComponent<ButtonManager>().showrewardsscreen(score));
 		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
 		isgamewon=true;
 		ButtonManager.gameover=true;

@@ -37,24 +37,31 @@ public class MainMenuManager : MonoBehaviour {
 	private int maxPages;
 
 	private bool draggingPage;
+
 	private bool animatingPage;
+	private int nextPageIndex;
+
 	private bool performingUnlock;
 
+	private int currentLevel;
+
 	void Start () {
-		//PlayerPrefs.SetInt (PlayerData.CurrentLevelDataLabel, 5);
+		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 9);
 
 		subPage2Nodes = subPage2.transform.FindChild ("Buttons_Location").gameObject;
 		mainPageNodes = mainMenu.transform.FindChild ("Buttons_Location").gameObject;
 		subPage1Nodes = subPage1.transform.FindChild ("Buttons_Location").gameObject;
 
-		int currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelDataLabel);
+		currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey);
 		if (currentLevel == 0) {
 			currentLevel = 1;
-			PlayerPrefs.SetInt(PlayerData.CurrentLevelDataLabel, currentLevel);
+			PlayerPrefs.SetInt(PlayerData.CurrentLevelKey, currentLevel);
 		}
 
 		maxPages = (int) ((float) maxLevels / (float) levelNodesPerPage);
-		pageIndex = currentLevel / levelNodesPerPage;;
+
+		pageIndex = (currentLevel - 1) / levelNodesPerPage;
+		pageIndex = (9 - 1) / levelNodesPerPage;
 		UpdateLevelNodes(pageIndex);
 
 		Bounds spriteBounds = mainMenu.GetComponent<SpriteRenderer>().sprite.bounds;
@@ -64,22 +71,11 @@ public class MainMenuManager : MonoBehaviour {
 
 		//// get the gameobject from the game level to get new unlocked level;
 		performingUnlock = true;
-		StartCoroutine (CheckForLevelUnlock (currentLevel));
+
+		StartCoroutine (CheckForLevelUnlock (9));
 	}
 	
 	void Update () {
-
-		int currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelDataLabel);
-		int currentPage = currentLevel / levelNodesPerPage;
-//		if (!animatingPage && !performingUnlock && pageIndex < currentPage) {
-//			animatingPage = true;
-//			pageScrollSpeed = pageAnimationSpeed;
-//		}
-//
-//		if (animatingPage && pageIndex == currentPage) {
-//			animatingPage = false;
-//		}
-
 		if (Input.GetMouseButtonDown(0) && !draggingPage && !animatingPage && !performingUnlock) {
 			touchPosition = Input.mousePosition;
 			draggingPage = true;
@@ -181,11 +177,6 @@ public class MainMenuManager : MonoBehaviour {
 
 	private void UpdatePageLevelNodes (GameObject levelNodesRoot, int pageOffset)
 	{
-		int activeLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelDataLabel);
-		if (activeLevel == 0) {
-			PlayerPrefs.SetInt(PlayerData.CurrentLevelDataLabel, 1);
-		}
-
 		List<LevelNode> levelNodes = new List<LevelNode> (levelNodesRoot.GetComponentsInChildren<LevelNode> ());
 
 		for (int index = 0; index < levelNodes.Count; index++) {
@@ -203,12 +194,12 @@ public class MainMenuManager : MonoBehaviour {
 
 					textMesh.GetComponent<TextMesh> ().text = levelLabel;
 
-					if (levelNode.level == activeLevel) {
-						UpdateActiveLevelOverlay (levelNode, activeLevel);
+					if (levelNode.level == currentLevel) {
+						UpdateActiveLevelOverlay (levelNode, currentLevel);
 					}
 
 					GameObject lockedLevelOverlay = levelNode.transform.FindChild("Level_Locked").gameObject;
-					if (level > activeLevel) {
+					if (level > currentLevel) {
 						lockedLevelOverlay.GetComponent<LockManager>().Lock();
 					}
 					else {
@@ -219,28 +210,36 @@ public class MainMenuManager : MonoBehaviour {
 		}
 	}
 	
-	private IEnumerator CheckForLevelUnlock(int activeLevel)
+	private IEnumerator CheckForLevelUnlock(int nextLevel)
 	{
-		int lastLockedLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelDataLabel);
-		int levelDelta = activeLevel - lastLockedLevel;
+		yield return StartCoroutine (UnlockPageNodes (subPage1Nodes, nextLevel));
+		yield return StartCoroutine (UnlockPageNodes (mainPageNodes, nextLevel));
+		yield return StartCoroutine (UnlockPageNodes (subPage2Nodes, nextLevel));
 
-		List<LevelNode> levelNodes = new List<LevelNode> (mainPageNodes.GetComponentsInChildren<LevelNode> ());
+		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, nextLevel);
+		currentLevel = nextLevel;
 
+		performingUnlock = false;
+	}
+
+	private IEnumerator UnlockPageNodes (GameObject pageNodes, int nextLevel)
+	{
+		int levelDelta = nextLevel - currentLevel;
+
+		List<LevelNode> levelNodes = new List<LevelNode> (pageNodes.GetComponentsInChildren<LevelNode> ());
 		for (int levelIndex = 1; levelIndex <= levelDelta; levelIndex++) {
-			int level = lastLockedLevel + levelIndex;
-			LevelNode levelNode = levelNodes.Find(x => x.level == level);
+			int level = currentLevel + levelIndex;
+			LevelNode levelNode = levelNodes.Find (x => x.level == level);
 			if (levelNode != null) {
-				GameObject levelUnlocked = levelNode.transform.FindChild("Level_Locked").gameObject;
-				yield return StartCoroutine(levelUnlocked.GetComponent<LockManager>().BeginUnlock());
+				GameObject levelUnlocked = levelNode.transform.FindChild ("Level_Locked").gameObject;
+				yield return StartCoroutine (levelUnlocked.GetComponent<LockManager> ().BeginUnlock ());
 			}
 		}
 
-		LevelNode activeLevelNode = levelNodes.Find(x => x.level == activeLevel);
-		UpdateActiveLevelOverlay (activeLevelNode, activeLevel);
-
-		PlayerPrefs.SetInt (PlayerData.CurrentLevelDataLabel, activeLevel);
-
-		performingUnlock = false;
+		LevelNode activeLevelNode = levelNodes.Find (x => x.level == nextLevel);
+		if (activeLevelNode != null) {
+			UpdateActiveLevelOverlay (activeLevelNode, nextLevel);
+		}
 	}
 
 	private void UpdateActiveLevelOverlay (LevelNode levelNode, int activeLevel)

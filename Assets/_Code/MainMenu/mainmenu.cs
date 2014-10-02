@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -10,6 +10,7 @@ public class mainmenu : MonoBehaviour {
 	private RaycastHit2D hit;
 
 	public LevelNodeInfoCollection levelNodeInfos;
+	public NodeRewardInfoCollection rewardNodeInfos;
 	public LevelNodeInfoManager levelNodeInfoManager;
 
 	public enum state{settings,store,facebook,mainmenu,powerups,leaderboard,buylives};
@@ -104,8 +105,7 @@ public class mainmenu : MonoBehaviour {
 	private GameObject fbPreLogin;
 	private GameObject fbPostLogin;
 
-	// level node
-	private LevelNodeInfoCollection.LevelNodeInfo selectedLevelNodeInfo;
+	private LevelNode selectedLevelNode;
 	
 	void Awake()
 	{
@@ -305,16 +305,15 @@ public class mainmenu : MonoBehaviour {
 	        if(lastTouchedButtonName.Equals(hit.collider.gameObject.name))
 		        return;  //don't process the same button more than one time
 
-			LevelNode levelNode = hit.collider.gameObject.GetComponent<LevelNode>();
-			if (levelNode != null) {
-				Debug.Log("Level " + levelNode.level + " selected.");
+			if (selectedLevelNode == null)
+				selectedLevelNode = hit.collider.gameObject.GetComponent<LevelNode>();
 
-				LevelNodeInfoCollection.LevelNodeInfo levelNodeInfo = levelNodeInfos.GetLevelNodeInfo(levelNode.level);
-				selectedLevelNodeInfo = levelNodeInfo;
-					
+			if (selectedLevelNode != null) {
+				Debug.Log("Level " + selectedLevelNode.level + " selected.");
+
 				StartCoroutine(showpowerupswindow());
 
-				levelselected = levelNode.level;
+				levelselected = selectedLevelNode.level;
 
 				fadebg.renderer.enabled = false;
 
@@ -361,36 +360,6 @@ public class mainmenu : MonoBehaviour {
 					       StartCoroutine("showcoinstore");
 					       buttonclickeffect();
 				        }
-//				        else if(hit.collider.gameObject.name=="Location_01_Level1")
-//					    {
-//							Debug.Log("Location 1 works");	
-//							StartCoroutine("showpowerupswindow");
-//							levelselected=1;
-//							fadebg.renderer.enabled=false;
-//							buttonclickeffect();
-//						}
-//						else if(hit.collider.gameObject.name=="Location_01_Level2")
-//						{
-//							StartCoroutine("showpowerupswindow");
-//							StartCoroutine("showpowerupswindow");
-//							levelselected=2;
-//							fadebg.renderer.enabled=false;
-//							buttonclickeffect();
-//						}
-//						else if(hit.collider.gameObject.name=="Location_01_Level3")
-//						{
-//							StartCoroutine("showpowerupswindow");
-//							levelselected=3;
-//							fadebg.renderer.enabled=false;
-//							buttonclickeffect();
-//						}
-//						else if(hit.collider.gameObject.name=="Location_01_Level4")
-//									{
-//										StartCoroutine("showpowerupswindow");
-//										levelselected=4;
-//										fadebg.renderer.enabled=false;
-//										buttonclickeffect();
-//								}
 						else if(hit.collider.gameObject.name=="lives_bar_empty")
 								{
 							//Show buy lives popup
@@ -506,13 +475,21 @@ public class mainmenu : MonoBehaviour {
 								PlayerPrefs.SetInt("changequestioncategorypowerupcount",changequestioncategorypowerupcount);
 								PlayerPrefs.SetInt("totalgold",totalgold);
 								
-								if (selectedLevelNodeInfo != null) {
+								if (selectedLevelNode != null) {
 									LevelInfo levelInfo = levelNodeInfoManager.gameObject.AddComponent<LevelInfo>();
-									levelInfo.selectedLevelNodeInfo = selectedLevelNodeInfo; 
-								}
 
-								//loadnewlevel(levelselected);
-								Application.LoadLevel("MainScene");
+									LevelNodeInfoCollection.NodeInfo nodeInfo = levelNodeInfos.GetLevelNodeInfo(
+																								selectedLevelNode.level);
+									NodeRewardInfoCollection.NodeRewardInfo nodeRewardInfo = rewardNodeInfos.GetLevelNodeRewardInfo(
+																								selectedLevelNode.level);
+
+									levelInfo.selectedNodeInfo = nodeInfo;
+									levelInfo.selectedNodeRewardInfo = nodeRewardInfo;
+
+									Application.LoadLevel("MainScene");
+
+									selectedLevelNode = null;
+								}
 							}
 							else
 							{

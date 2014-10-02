@@ -83,14 +83,7 @@ public class Asteroids : MonoBehaviour {
 				isDead = true;
 			}
 
-			for(int i=0;i<hitPoints;i++)
-			{
-				for(int j=0;j<5;j++)
-				{
-					obj.transform.localScale -= new Vector3(0.1f,0.1f,0);
-					yield return 0;
-				}
-			}
+			yield return null;
 		}
 
 		void UpdateDebugText ()
@@ -185,16 +178,16 @@ public class Asteroids : MonoBehaviour {
 	}
 
 	public IEnumerator SpawnAsteroids(int count) {
-		count = Mathf.Clamp (count, count, levelInfo.selectedLevelNodeInfo.totalRocks);
+		count = Mathf.Clamp (count, count, levelInfo.selectedNodeInfo.totalRocks);
 
 		for (int index = 0; index < count; index++) {
-			int bigRocks = levelInfo.selectedLevelNodeInfo.bigRocks;
-			int smallRocks = levelInfo.selectedLevelNodeInfo.smallRocks;
+			int bigRocks = levelInfo.selectedNodeInfo.bigRocks;
+			int smallRocks = levelInfo.selectedNodeInfo.smallRocks;
 			int allRocks = bigRocks + smallRocks;
 
 			int asteroid = Random.Range(0, allRocks);
 
-			int multiplier = levelInfo.selectedLevelNodeInfo.multiplier;
+			int multiplier = levelInfo.selectedNodeInfo.multiplier;
 			float lifeHits = 0;
 
 			float smallLifeHits = 0.75f * multiplier;
@@ -202,13 +195,13 @@ public class Asteroids : MonoBehaviour {
 			AsteroidColorTypes asteroidColor = GetAsteroidColor (allRocks);
 
 			if (asteroid < bigRocks) {
-				levelInfo.selectedLevelNodeInfo.bigRocks--;
+				levelInfo.selectedNodeInfo.bigRocks--;
 				lifeHits = 1.3125f * multiplier;
 
 				SpawnAsteroid(lifeHits, bigAsteroidScale, asteroidColor, smallLifeHits);
 			}
 			else if (asteroid >= bigRocks && asteroid <= allRocks) {
-				levelInfo.selectedLevelNodeInfo.smallRocks--;
+				levelInfo.selectedNodeInfo.smallRocks--;
 				lifeHits = smallLifeHits;
 
 				SpawnAsteroid(lifeHits, smallAsteroidScale, asteroidColor, smallLifeHits);
@@ -247,27 +240,27 @@ public class Asteroids : MonoBehaviour {
 	{
 		AsteroidColorTypes asteroidColor = AsteroidColorTypes.Unknown;
 
-		int totalRocks = levelInfo.selectedLevelNodeInfo.totalRocks;
+		int totalRocks = levelInfo.selectedNodeInfo.totalRocks;
 		float basePercent = 100.0f / totalRocks;
 		int percentModifier = Random.Range (1, allRocks);
 
-		float redPercent = levelInfo.selectedLevelNodeInfo.redPercent;
-		float bluePercent = redPercent + levelInfo.selectedLevelNodeInfo.bluePercent;
-		float greenPercent = bluePercent + levelInfo.selectedLevelNodeInfo.greenPercent;
+		float redPercent = levelInfo.selectedNodeInfo.redPercent;
+		float bluePercent = redPercent + levelInfo.selectedNodeInfo.bluePercent;
+		float greenPercent = bluePercent + levelInfo.selectedNodeInfo.greenPercent;
 
 		float percent = Random.Range (0, greenPercent);
 
 		if (percent < redPercent) {
 			asteroidColor = AsteroidColorTypes.Red;
-			levelInfo.selectedLevelNodeInfo.redPercent -= basePercent;
+			levelInfo.selectedNodeInfo.redPercent -= basePercent;
 		}
 		else if (percent >= redPercent && percent < bluePercent) {
 			asteroidColor = AsteroidColorTypes.Blue;
-			levelInfo.selectedLevelNodeInfo.bluePercent -= basePercent;
+			levelInfo.selectedNodeInfo.bluePercent -= basePercent;
 		}
 		else if (percent >= bluePercent && percent <= greenPercent) {
 			asteroidColor = AsteroidColorTypes.Green;
-			levelInfo.selectedLevelNodeInfo.greenPercent -= basePercent;
+			levelInfo.selectedNodeInfo.greenPercent -= basePercent;
 		}
 		return asteroidColor;
 	}

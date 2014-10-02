@@ -6,7 +6,7 @@ public class LevelNodeInfoCollection : MonoBehaviour {
 
 	public TextAsset levelNodeCSVTextAsset;
 
-	private List<LevelNodeInfo> levelNodeInfos;
+	private List<NodeInfo> levelNodeInfos;
 
 	// Use this for initialization
 	void Start () {
@@ -18,8 +18,8 @@ public class LevelNodeInfoCollection : MonoBehaviour {
 	
 	}
 
-	public LevelNodeInfo GetLevelNodeInfo(int level) {
-		LevelNodeInfo result = null;
+	public NodeInfo GetLevelNodeInfo(int level) {
+		NodeInfo result = null;
 
 		if (levelNodeInfos != null) {
 			result = levelNodeInfos.Find(x => x.level == level);
@@ -30,7 +30,7 @@ public class LevelNodeInfoCollection : MonoBehaviour {
 
 	private void ParseLevelNodeCsvFile ()
 	{
-		levelNodeInfos = new List<LevelNodeInfo> ();
+		levelNodeInfos = new List<NodeInfo> ();
 
 		string[] levelInfoCsvLines = CSVReader.SplitCsvLines (levelNodeCSVTextAsset.text);
 		if (levelInfoCsvLines != null) {
@@ -38,7 +38,7 @@ public class LevelNodeInfoCollection : MonoBehaviour {
 			for (int index = 1; index < levelInfoCsvLines.Length - 1; index++) {
 				string levelInfoSCsvLine = levelInfoCsvLines [index];
 				string[] levelInfo = CSVReader.SplitCsvLine (levelInfoSCsvLine);
-				LevelNodeInfo levelNodeInfo = new LevelNodeInfo ();
+				NodeInfo levelNodeInfo = new NodeInfo ();
 				levelNodeInfo.tier = levelInfo [0];
 				levelNodeInfo.theme = levelInfo [1];
 				levelNodeInfo.level = int.Parse (levelInfo [2]);
@@ -59,7 +59,7 @@ public class LevelNodeInfoCollection : MonoBehaviour {
 		}
 	}
 
-	public class LevelNodeInfo {
+	public class NodeInfo {
 		
 		public string tier;
 		public string theme;

@@ -73,6 +73,8 @@ public class ButtonManager : MonoBehaviour {
 
 	public int totaltimrfornewlife_onresume;
 
+	private LevelInfo levelInfo;
+
 	int runcounter;
 
 	int newlifetimer_minutes;
@@ -85,6 +87,8 @@ public class ButtonManager : MonoBehaviour {
 
 	void Awake()
 	{
+		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
+
 		fromthis=0;
 		gameover=false;
 		canmovemarker=true;
@@ -544,8 +548,26 @@ public class ButtonManager : MonoBehaviour {
 
 
 	//show the rewards screen 
-	public IEnumerator showrewardsscreen()
+	public IEnumerator showrewardsscreen(int score)
 	{
+		GameObject goldRewardText = rewardscreen.transform.FindChild ("gold_reward_text").gameObject;
+		goldRewardText.GetComponent<TextMesh> ().text = levelInfo.selectedNodeRewardInfo.goldPayout.ToString ();
+
+		int currentTotalGold = PlayerPrefs.GetInt (PlayerData.TotalGoldKey, 0);
+		PlayerPrefs.SetInt(PlayerData.TotalGoldKey, currentTotalGold + levelInfo.selectedNodeRewardInfo.goldPayout);
+		
+		GameObject xpRewardText = rewardscreen.transform.FindChild ("xp_reward_text").gameObject;
+		xpRewardText.GetComponent<TextMesh> ().text = levelInfo.selectedNodeRewardInfo.xpPayout.ToString ();
+
+		int currentTotalXP = PlayerPrefs.GetInt (PlayerData.TotalXPKey, 0);
+		PlayerPrefs.SetInt (PlayerData.TotalXPKey, currentTotalXP + levelInfo.selectedNodeRewardInfo.xpPayout);
+
+		GameObject scoreText = rewardscreen.transform.FindChild ("score_text").gameObject;
+		scoreText.GetComponent<TextMesh> ().text = score.ToString();
+
+		int currentTotalScore = PlayerPrefs.GetInt (PlayerData.TotalScoreKey, 0);
+		PlayerPrefs.SetInt (PlayerData.TotalScoreKey, currentTotalScore + score);
+
 		for(int i=0;i<20;i++)
 		{
 			Vector3 oldposition=rewardscreen.transform.position;

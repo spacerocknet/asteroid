@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class LevelInfo : MonoBehaviour {
-	public LevelNodeInfoCollection.LevelNodeInfo selectedLevelNodeInfo;
+	public LevelNodeInfoCollection.NodeInfo selectedNodeInfo;
+	public NodeRewardInfoCollection.NodeRewardInfo selectedNodeRewardInfo;
 
 	// Use this for initialization
 	void Start () {

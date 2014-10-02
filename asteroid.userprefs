@@ -1,15 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Code\BattleEngine.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\_Code\MainMenu\mainmenu.cs">
     <Files>
-      <File FileName="Assets\_Code\Main\ProgressBarManager.cs" Line="32" Column="3" />
-      <File FileName="Assets\_Code\BattleEngine.cs" Line="83" Column="3" />
-      <File FileName="Assets\_Code\Asteroids.cs" Line="321" Column="23" />
-      <File FileName="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" Line="57" Column="49" />
-      <File FileName="Assets\_Code\LevelManager.cs" Line="80" Column="21" />
+      <File FileName="Assets\_Code\Asteroids.cs" Line="84" Column="5" />
+      <File FileName="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" Line="75" Column="41" />
       <File FileName="Assets\_Code\MainMenu\mainmenu.cs" Line="201" Column="1" />
-      <File FileName="Assets\_Code\Questions.cs" Line="556" Column="31" />
-      <File FileName="Assets\_Code\AttackSystem.cs" Line="27" Column="1" />
+      <File FileName="Assets\_Code\BattleEngine.cs" Line="197" Column="1" />
+      <File FileName="Assets\_Code\ButtonManager.cs" Line="569" Column="76" />
+      <File FileName="Assets\_Code\PlayerData.cs" Line="9" Column="36" />
+      <File FileName="Assets\_Code\Main\ProgressBarManager.cs" Line="45" Column="16" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -19,8 +18,8 @@
               <Node name="Main" expanded="True" />
               <Node name="MainMenu" expanded="True">
                 <Node name="GUI" expanded="True" />
+                <Node name="mainmenu.cs" selected="True" />
               </Node>
-              <Node name="BattleEngine.cs" selected="True" />
             </Node>
           </Node>
         </State>
