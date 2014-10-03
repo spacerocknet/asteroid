@@ -703,7 +703,9 @@ public class mainmenu : MonoBehaviour {
 						}
 						else if(hit.collider.gameObject.name=="button_help_feedback")
 						{
-							Debug.Log("Works");
+							Debug.Log("Button Help Feedback");
+							SendEmail();
+							
 							buttonclickeffect();
 						}
 						else if(hit.collider.gameObject.name=="buttonstatemusic")
@@ -818,13 +820,15 @@ public class mainmenu : MonoBehaviour {
 			{
 				for(int i=0;i<20;i++)
 				{
-				Vector3 oldposition=settings.transform.position;
-				float newposition=Mathf.Lerp(oldposition.x,-0.04f,0.25f);
-				settings.transform.position=new Vector3(newposition,settings.transform.position.y,0f);
-				yield return null;
+					Vector3 oldposition=settings.transform.position;
+					float newposition=Mathf.Lerp(oldposition.x,-0.04f,0.25f);
+					settings.transform.position=new Vector3(newposition,settings.transform.position.y,0f);
+					yield return null;
 				}
-			yield return new WaitForEndOfFrame();
-			gamestate=state.settings;
+
+				yield return new WaitForEndOfFrame();
+
+				gamestate=state.settings;
 			}
 		
 			IEnumerator hidesettings()
@@ -1187,8 +1191,27 @@ public class mainmenu : MonoBehaviour {
 		yield return new WaitForEndOfFrame();
 	}
 
-	
-	
+	private void SendEmail() {
+		string userID = "User ID - ";
+		if (FB.IsLoggedIn)
+			userID += FB.UserId;
+
+		string deviceId = "Device ID - " + SystemInfo.deviceUniqueIdentifier;
+		string operatingSystem = "OS Version - " + SystemInfo.operatingSystem;
+
+		string emailTo = EncodeURLString("support@spacerock.net");
+		string subject = EncodeURLString("Subject: Homeworld Heroes - user feedback");
+		string body = EncodeURLString("\n\n--\n" + userID + "\n" + deviceId + "\n" + operatingSystem);
+
+		string url = "mailto:" + emailTo + "?subject=" + subject + "&body=" + body;
+
+		Application.OpenURL(url);
+
+	}
+
+	private string EncodeURLString(string url) {
+		return WWW.EscapeURL (url).Replace ("+", "%20");
+	}
 }
 
 
