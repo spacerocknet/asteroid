@@ -1,1 +1,5 @@
+#Unity files
+*.csproj
+
+#binary generated file
 asteroid.apk
