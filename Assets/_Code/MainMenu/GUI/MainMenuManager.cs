@@ -46,7 +46,19 @@ public class MainMenuManager : MonoBehaviour {
 	private int currentLevel;
 
 	void Start () {
-		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 9);
+		ScreenSizeManager ssm = GameObject.FindObjectOfType<ScreenSizeManager> ();
+		//ssm.LoadSprites (768, 1024);
+
+		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 8);
+
+		Vector3 scale = mainMenu.transform.localScale;
+		Bounds spriteBounds = mainMenu.GetComponent<SpriteRenderer>().sprite.bounds;
+		Vector3 menuBounds = new Vector3 (spriteBounds.extents.x * 2 * scale.x, spriteBounds.extents.y * 2 * scale.y, 0);
+		menuBoundsUpper = menuBounds;
+		menuBoundsLower = mainMenu.transform.position - menuBounds;
+		
+		subPage2.transform.position = new Vector3 (0, menuBoundsLower.y, 0);
+		subPage1.transform.position = new Vector3 (0, menuBoundsUpper.y, 0);
 
 		subPage2Nodes = subPage2.transform.FindChild ("Buttons_Location").gameObject;
 		mainPageNodes = mainMenu.transform.FindChild ("Buttons_Location").gameObject;
@@ -59,20 +71,15 @@ public class MainMenuManager : MonoBehaviour {
 		}
 
 		maxPages = (int) ((float) maxLevels / (float) levelNodesPerPage);
-
 		pageIndex = (currentLevel - 1) / levelNodesPerPage;
-		pageIndex = (9 - 1) / levelNodesPerPage;
-		UpdateLevelNodes(pageIndex);
 
-		Bounds spriteBounds = mainMenu.GetComponent<SpriteRenderer>().sprite.bounds;
-		Vector3 menuBounds = new Vector3 (spriteBounds.extents.x * 2, spriteBounds.extents.y * 2, 0);
-		menuBoundsUpper = menuBounds;
-		menuBoundsLower = transform.position - menuBounds;
+		//pageIndex = (26 - 1) / levelNodesPerPage;
+		UpdateLevelNodes(pageIndex);
 
 		//// get the gameobject from the game level to get new unlocked level;
 		performingUnlock = true;
 
-		StartCoroutine (CheckForLevelUnlock (9));
+		StartCoroutine (CheckForLevelUnlock (8));
 	}
 	
 	void Update () {
@@ -116,7 +123,7 @@ public class MainMenuManager : MonoBehaviour {
 		if (transform.position.y >= menuBoundsUpper.y) {
 			transform.position = Vector3.zero;
 
-			pageIndex -= 1;
+			pageIndex--;
 			UpdateLevelNodes(pageIndex);
 
 			if (!animatingPage)
@@ -125,7 +132,7 @@ public class MainMenuManager : MonoBehaviour {
 		else if (transform.position.y <= menuBoundsLower.y) {
 			transform.position = Vector3.zero;
 
-			pageIndex += 1;
+			pageIndex++;
 			UpdateLevelNodes(pageIndex);
 
 			if (!animatingPage)
@@ -143,7 +150,7 @@ public class MainMenuManager : MonoBehaviour {
 		// main menu page
 		UpdatePageLevelNodes (mainPageNodes, 0);
 
-		// sub menu page 2
+		// sub menu page 1
 		UpdatePageLevelNodes (subPage1Nodes, 1);
 
 		UpdateNodeConnectorCurves ();
@@ -189,7 +196,7 @@ public class MainMenuManager : MonoBehaviour {
 
 					string levelLabel = level.ToString();
 
-					textMesh.transform.position = levelNode.TextStartPosition + textMeshOffsets[levelLabel.Length - 1];
+					textMesh.transform.localPosition = levelNode.TextStartPosition + textMeshOffsets[levelLabel.Length - 1];
 					textMesh.GetComponent<TextMesh>().fontSize = fontSizes[levelLabel.Length - 1];
 
 					textMesh.GetComponent<TextMesh> ().text = levelLabel;
@@ -244,9 +251,9 @@ public class MainMenuManager : MonoBehaviour {
 
 	private void UpdateActiveLevelOverlay (LevelNode levelNode, int activeLevel)
 	{
-		Vector3 nodePosition = levelNode.transform.position;
-		currentLevelOverlay.transform.position = new Vector3 (nodePosition.x, nodePosition.y, -5);
 		currentLevelOverlay.transform.parent = levelNode.gameObject.transform;
+		float zPosition = levelNode.transform.localPosition.z;
+		currentLevelOverlay.transform.localPosition = new Vector3 (0, 0, -2);
 
 		currentLevelOverlay.SetActive (true);
 	}

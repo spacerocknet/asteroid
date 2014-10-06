@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Editor\ExportAssetBundle.cs" />
      <Compile Include="Assets\Facebook\Editor\FacebookPostprocess.cs" />
      <Compile Include="Assets\Facebook\Editor\FacebookSettingsEditor.cs" />
      <Compile Include="Assets\Facebook\Editor\android\FacebookAndroidUtil.cs" />

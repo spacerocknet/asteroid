@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Asteroids : MonoBehaviour {
 
+	public Sprite[] defaultSizeAsteroids;
+
 	public Vector3 bigAsteroidScale = Vector3.zero;
 	public Vector3 smallAsteroidScale = Vector3.zero;
 
@@ -15,6 +17,8 @@ public class Asteroids : MonoBehaviour {
 	private static int ASTEROID_LIMIT = 8;
 	private List<float> lifeList = new List<float>();
 	private LevelInfo levelInfo;
+
+	private ScreenSizeManager screenSizeManager;
 
 	public class Asteroid
 	{
@@ -29,8 +33,9 @@ public class Asteroids : MonoBehaviour {
 		private Vector3 smallAsteroidScale;
 
 		private GameObject lifeHitsLabel;
-		
-		public Asteroid(AsteroidColorTypes _colorType, float _life, GameObject _obj, float smallLifeHits, Vector3 smallScale)
+
+		public Asteroid(AsteroidColorTypes _colorType, Sprite colorSprite, float _life, GameObject _obj, 
+		                float smallLifeHits, Vector3 smallScale)
 		{
 			isDead = false;
 			colorType = _colorType;
@@ -42,26 +47,8 @@ public class Asteroids : MonoBehaviour {
 
 			UpdateDebugText ();
 
-			DefineColor();
-		}
-
-		private void DefineColor()
-		{
-			switch(colorType)
-			{
-				case AsteroidColorTypes.Red:
-				this.colorsprite=Resources.Load("Rocks/rock_red",typeof(Sprite)) as Sprite; 
-					break;
-				case AsteroidColorTypes.Green:
-				this.colorsprite=Resources.Load("Rocks/rock_green",typeof(Sprite)) as Sprite; 
-					break;
-				case AsteroidColorTypes.Blue:
-				this.colorsprite=Resources.Load("Rocks/rock_blue",typeof(Sprite)) as Sprite; 
-					break;
-				default: break;
-			}
-
-			obj.GetComponent<SpriteRenderer>().sprite=this.colorsprite;
+			this.colorsprite = colorSprite;
+			obj.GetComponent<SpriteRenderer>().sprite = this.colorsprite;
 		}
 
 		public IEnumerator DoDamage(float hitPoints)
@@ -113,6 +100,7 @@ public class Asteroids : MonoBehaviour {
 		lifeList.Add(1.5f);
 
 		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
+		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
 	}
 
 	public IEnumerator MoveAsteroids()
@@ -214,8 +202,10 @@ public class Asteroids : MonoBehaviour {
 	private void SpawnAsteroid (float lifeHits, Vector3 scale, AsteroidColorTypes asteroidColor,
 	                            float smallAsteroidsLifeHits)
 	{
+		Sprite colorSprite = screenSizeManager.LoadSpriteScreenSize (defaultSizeAsteroids [(int) asteroidColor]);
 		GameObject asteroid = (GameObject)Instantiate (asteroidRef, new Vector3 (Random.Range (-1.8f, 2.0f), Random.Range (2.6f, 2.8f), -1.0f), Quaternion.identity);
-		currentAsteroids.Add (new Asteroid (asteroidColor, lifeHits, asteroid, smallAsteroidsLifeHits, smallAsteroidScale));
+		currentAsteroids.Add (new Asteroid (asteroidColor, colorSprite, lifeHits, asteroid, smallAsteroidsLifeHits, 
+		                                    smallAsteroidScale));
 
 		asteroid.transform.parent = INIT.transform;
 

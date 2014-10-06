@@ -304,22 +304,26 @@ public class mainmenu : MonoBehaviour {
 				
 	        if(lastTouchedButtonName.Equals(hit.collider.gameObject.name))
 		        return;  //don't process the same button more than one time
+		
+			LevelNode levelNode = hit.collider.gameObject.GetComponent<LevelNode>();
+			if (levelNode != null) {
+				selectedLevelNode = levelNode;
 
-			if (selectedLevelNode == null)
-				selectedLevelNode = hit.collider.gameObject.GetComponent<LevelNode>();
+				if (selectedLevelNode != null) {
+					GameObject levelLocked = selectedLevelNode.transform.FindChild("Level_Locked").gameObject;
+					if (!levelLocked.GetComponent<LockManager>().isLocked) {
+						Debug.Log("Level " + selectedLevelNode.level + " selected.");
 
-			if (selectedLevelNode != null) {
-				Debug.Log("Level " + selectedLevelNode.level + " selected.");
+						StartCoroutine(showpowerupswindow());
 
-				StartCoroutine(showpowerupswindow());
+						levelselected = selectedLevelNode.level;
 
-				levelselected = selectedLevelNode.level;
+						fadebg.renderer.enabled = false;
 
-				fadebg.renderer.enabled = false;
-
-				buttonclickeffect();
+						buttonclickeffect();
+					}
+				}
 			}
-
 					
 			if(gamestate==state.mainmenu)
 					{
@@ -427,7 +431,7 @@ public class mainmenu : MonoBehaviour {
 					{
 						if(hit.collider.gameObject.name=="button_hidepowerups")
 						{
-							StartCoroutine("hidepowerupwindow");
+							StartCoroutine(hidepowerupwindow());
 							int tempvaluetogetbackgold=0;
 							if(bombpowerup_count_cachevalue!=0)
 							{
@@ -458,6 +462,8 @@ public class mainmenu : MonoBehaviour {
 							totalgold+=tempvaluetogetbackgold;
 							updatetotalgoldmesh();
 							fadebg.renderer.enabled=false;
+
+							selectedLevelNode = null;
 						}
 						else if(hit.collider.gameObject.name=="button_play")
 						{
@@ -861,7 +867,8 @@ public class mainmenu : MonoBehaviour {
 			IEnumerator hidepowerupwindow()
 				{
 				gamestate=state.mainmenu;
-				for(int i=0;i<20;i++)
+		
+				for(int i=0;i<30;i++)
 				{
 					Vector3 oldposition=powerups.transform.position;
 					float newposition=Mathf.Lerp(oldposition.y,9.50314f,0.15f);

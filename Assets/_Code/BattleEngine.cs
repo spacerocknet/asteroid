@@ -7,6 +7,7 @@ public class BattleEngine : MonoBehaviour {
 
 	public CategorySelect categorySelect;
 
+	public Sprite[] defaultSizeAsteroids;
 	public Asteroids asteroids;
 	public Vector3 bigAsteroidScale;
 	public Vector3 smallAsteroidScale;
@@ -53,6 +54,7 @@ public class BattleEngine : MonoBehaviour {
 		asteroids = (Asteroids) this.gameObject.AddComponent<Asteroids>();
 		asteroids.bigAsteroidScale = bigAsteroidScale;
 		asteroids.smallAsteroidScale = smallAsteroidScale;
+		asteroids.defaultSizeAsteroids = defaultSizeAsteroids;
 
 		AtkSystem = (AttackSystem) this.gameObject.AddComponent<AttackSystem>();
 		character = (Characters) this.gameObject.AddComponent<Characters>();

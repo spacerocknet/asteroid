@@ -1,0 +1,1 @@
+Get-ChildItem *.png -Recurse | Rename-Item -newname { $_.Name -replace ' -x-', '-x-' }

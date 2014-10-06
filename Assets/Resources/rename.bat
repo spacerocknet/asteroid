@@ -1,0 +1,1 @@
+get-childitem *.png | foreach { rename-item $_ $_.Name.Replace("640-x-960", "") }

@@ -13,7 +13,7 @@ public class LevelNode : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		textStartPosition = transform.FindChild ("textmesh").position;
+		textStartPosition = transform.FindChild ("textmesh").localPosition;
 	}
 	
 	// Update is called once per frame
