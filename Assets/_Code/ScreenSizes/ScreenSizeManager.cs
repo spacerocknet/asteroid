@@ -11,7 +11,7 @@ public class ScreenSizeManager : MonoBehaviour {
 
 	void Awake() {
 		//UpdateAllSprites (Screen.width, Screen.height);
-		UpdateAllSprites (640, 960);
+		UpdateAllSprites (768, 1024);
 	}
 
 	// Use this for initialization
@@ -58,8 +58,9 @@ public class ScreenSizeManager : MonoBehaviour {
 	private string GetSpriteSizeName (Sprite defaultSprite, int screenWidth, int screenHeight) 
 	{
 		if (defaultSprite != null) {
+			string path = "Sprites/" + screenWidth + " x " + screenHeight;
 			string spriteBaseName = defaultSprite.name.Replace (defaultSpriteSizeLabel, "");
-			string spriteSizeName = spriteBaseName + screenWidth + "-x-" + screenHeight + ".png";
+			string spriteSizeName = path + "/" + spriteBaseName + screenWidth + "-x-" + screenHeight;
 
 			return spriteSizeName;
 		}
