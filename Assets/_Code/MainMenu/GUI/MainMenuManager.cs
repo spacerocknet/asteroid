@@ -25,10 +25,15 @@ public class MainMenuManager : MonoBehaviour {
 	private GameObject mainPageNodes;
 	private GameObject subPage2Nodes;
 
+	private GameObject subButtons1;
+	private GameObject mainButtons;
+	private GameObject subButtons2;
+
 	private int levelsUnlocked;
 
 	private Vector3 menuBoundsUpper;
 	private Vector3 menuBoundsLower;
+
 	private Bounds menuBounds;
 	private Vector3 touchPosition;
 	private int pageIndex;
@@ -36,7 +41,7 @@ public class MainMenuManager : MonoBehaviour {
 	private int maxLevels = 200;
 	private int maxPages;
 
-	private bool draggingPage;
+	public bool draggingPage;
 
 	private bool animatingPage;
 	private int nextPageIndex;
@@ -45,24 +50,28 @@ public class MainMenuManager : MonoBehaviour {
 
 	private int currentLevel;
 
+	private ScreenSizeManager screenSizeManager;
+
 	void Start () {
-		ScreenSizeManager ssm = GameObject.FindObjectOfType<ScreenSizeManager> ();
-		//ssm.LoadSprites (768, 1024);
+		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
+		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 4);
 
-		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 8);
+		float scaleX = screenSizeManager.scaleX;
+		float scaleY = screenSizeManager.scaleY;
 
-		Vector3 scale = mainMenu.transform.localScale;
-		Bounds spriteBounds = mainMenu.GetComponent<SpriteRenderer>().sprite.bounds;
-		Vector3 menuBounds = new Vector3 (spriteBounds.extents.x * 2 * scale.x, spriteBounds.extents.y * 2 * scale.y, 0);
+		GameObject mainBackground = mainMenu.transform.FindChild ("Background").gameObject;
+		mainButtons = mainMenu.transform.FindChild ("Buttons").gameObject;
+
+		GameObject sub1Background = subPage1.transform.FindChild ("Background").gameObject;
+		subButtons1 = subPage1.transform.FindChild ("Buttons").gameObject;
+
+		GameObject sub2Background = subPage2.transform.FindChild ("Background").gameObject;
+		subButtons2 = subPage2.transform.FindChild ("Buttons").gameObject;
+
+		Bounds spriteBounds = mainBackground.GetComponent<SpriteRenderer>().sprite.bounds;
+		Vector3 menuBounds = new Vector3 (spriteBounds.extents.x * 2 * scaleY, spriteBounds.extents.y * 2 * scaleY, 0);
 		menuBoundsUpper = menuBounds;
 		menuBoundsLower = mainMenu.transform.position - menuBounds;
-		
-		subPage2.transform.position = new Vector3 (0, menuBoundsLower.y, 0);
-		subPage1.transform.position = new Vector3 (0, menuBoundsUpper.y, 0);
-
-		subPage2Nodes = subPage2.transform.FindChild ("Buttons_Location").gameObject;
-		mainPageNodes = mainMenu.transform.FindChild ("Buttons_Location").gameObject;
-		subPage1Nodes = subPage1.transform.FindChild ("Buttons_Location").gameObject;
 
 		currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey);
 		if (currentLevel == 0) {
@@ -144,14 +153,14 @@ public class MainMenuManager : MonoBehaviour {
 
 		currentLevelOverlay.SetActive (false);
 
-		// sub menu page 2
-		UpdatePageLevelNodes (subPage2Nodes, -1);
+		// sub menu page 1
+		UpdatePageLevelNodes (subButtons1, 1);
 
 		// main menu page
-		UpdatePageLevelNodes (mainPageNodes, 0);
+		UpdatePageLevelNodes (mainButtons, 0);
 
-		// sub menu page 1
-		UpdatePageLevelNodes (subPage1Nodes, 1);
+		// sub menu page 2
+		UpdatePageLevelNodes (subButtons2, -1);
 
 		UpdateNodeConnectorCurves ();
 	}
@@ -159,20 +168,27 @@ public class MainMenuManager : MonoBehaviour {
 	private void UpdateNodeConnectorCurves() {
 		string curve8Name = "curveline_8_9";
 		
-		GameObject curvesRoot = subPage1.transform.FindChild ("Curves").gameObject;
-		GameObject level8CurveSub1 = curvesRoot.transform.FindChild (curve8Name).gameObject;
+		//GameObject curvesRoot = subPage1.transform.FindChild ("Curves").gameObject;
+		GameObject level8CurveSub1 = subButtons1.transform.FindChild (curve8Name).gameObject;
 		
-		curvesRoot = mainMenu.transform.FindChild ("Curves").gameObject;
-		GameObject level8CurveMain = curvesRoot.transform.FindChild (curve8Name).gameObject;
+		//curvesRoot = mainMenu.transform.FindChild ("Curves").gameObject;
+		GameObject level8CurveMain = mainButtons.transform.FindChild (curve8Name).gameObject;
 
-		curvesRoot = subPage2.transform.FindChild ("Curves").gameObject;
-		GameObject level8CurveSub2 = curvesRoot.transform.FindChild (curve8Name).gameObject;
+		//curvesRoot = subPage2.transform.FindChild ("Curves").gameObject;
+		GameObject level8CurveSub2 = subButtons2.transform.FindChild (curve8Name).gameObject;
+		GameObject level8CurveSub2a = subButtons2.transform.FindChild (curve8Name + "a").gameObject;
 		if (pageIndex <= 0) {
 			level8CurveSub2.SetActive(false);
-				
 		}
 		else {
 			level8CurveSub2.SetActive(true);
+		}
+
+		if (pageIndex <= 1) {
+			level8CurveSub2a.SetActive(false);
+		}
+		else {
+			level8CurveSub2a.SetActive(true);
 		}
 		
 		if (pageIndex >= maxPages - 1) {
@@ -196,16 +212,21 @@ public class MainMenuManager : MonoBehaviour {
 
 					string levelLabel = level.ToString();
 
+					Vector3 parentScale = textMesh.transform.parent.localScale;
+					textMesh.transform.localScale = new Vector3(1 / parentScale.x, 1 / parentScale.y, 1);
+
+					float scaleX = screenSizeManager.scaleX;
 					textMesh.transform.localPosition = levelNode.TextStartPosition + textMeshOffsets[levelLabel.Length - 1];
 					textMesh.GetComponent<TextMesh>().fontSize = fontSizes[levelLabel.Length - 1];
-
 					textMesh.GetComponent<TextMesh> ().text = levelLabel;
 
 					if (levelNode.level == currentLevel) {
 						UpdateActiveLevelOverlay (levelNode, currentLevel);
 					}
 
-					GameObject lockedLevelOverlay = levelNode.transform.FindChild("Level_Locked").gameObject;
+					string lockedLevelName = "Level_Locked_Level" + (index + 1);
+					GameObject lockedLevelOverlay = levelNode.transform.FindChild(lockedLevelName).gameObject;
+					//lockedLevelOverlay.transform.localScale = new Vector3(1, 1, 1);
 					if (level > currentLevel) {
 						lockedLevelOverlay.GetComponent<LockManager>().Lock();
 					}
@@ -219,9 +240,9 @@ public class MainMenuManager : MonoBehaviour {
 	
 	private IEnumerator CheckForLevelUnlock(int nextLevel)
 	{
-		yield return StartCoroutine (UnlockPageNodes (subPage1Nodes, nextLevel));
-		yield return StartCoroutine (UnlockPageNodes (mainPageNodes, nextLevel));
-		yield return StartCoroutine (UnlockPageNodes (subPage2Nodes, nextLevel));
+		yield return StartCoroutine (UnlockPageNodes (subButtons1, nextLevel));
+		yield return StartCoroutine (UnlockPageNodes (mainButtons, nextLevel));
+		//yield return StartCoroutine (UnlockPageNodes (subPage2Nodes, nextLevel));
 
 		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, nextLevel);
 		currentLevel = nextLevel;
@@ -238,7 +259,8 @@ public class MainMenuManager : MonoBehaviour {
 			int level = currentLevel + levelIndex;
 			LevelNode levelNode = levelNodes.Find (x => x.level == level);
 			if (levelNode != null) {
-				GameObject levelUnlocked = levelNode.transform.FindChild ("Level_Locked").gameObject;
+				string levelLockName = "Level_Locked_Level" + (levelNode.levelIndex + 1);
+				GameObject levelUnlocked = levelNode.transform.FindChild (levelLockName).gameObject;
 				yield return StartCoroutine (levelUnlocked.GetComponent<LockManager> ().BeginUnlock ());
 			}
 		}
@@ -254,6 +276,7 @@ public class MainMenuManager : MonoBehaviour {
 		currentLevelOverlay.transform.parent = levelNode.gameObject.transform;
 		float zPosition = levelNode.transform.localPosition.z;
 		currentLevelOverlay.transform.localPosition = new Vector3 (0, 0, -2);
+		currentLevelOverlay.transform.localScale = new Vector3 (1.1f, 1.1f, 1);
 
 		currentLevelOverlay.SetActive (true);
 	}

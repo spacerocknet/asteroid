@@ -69,7 +69,7 @@ public class BattleEngine : MonoBehaviour {
 
 	private IEnumerator Start()
 	{	
-		int spawnCount = Random.Range ((int) asteroidSpawnStartRange.x, (int) asteroidSpawnStartRange.y);
+		int spawnCount = Random.Range (2, 4);
 		yield return StartCoroutine(asteroids.SpawnAsteroids(100));
 		
 		progressBarManager.UpdateProgressBar (0);
@@ -163,7 +163,7 @@ public class BattleEngine : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.1f);
 
-			int spawnCount = Random.Range((int) asteroidSpawnStartRange.x, (int) asteroidSpawnStartRange.y);
+			int spawnCount = Random.Range(2, 4);
 			StartCoroutine(asteroids.SpawnAsteroids(spawnCount));
 
 //			int spawnINC = levels.GetSpawnCountAutoINC();

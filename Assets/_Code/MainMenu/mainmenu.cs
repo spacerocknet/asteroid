@@ -106,40 +106,57 @@ public class mainmenu : MonoBehaviour {
 	private GameObject fbPostLogin;
 
 	private LevelNode selectedLevelNode;
+
+	private ScreenSizeManager screenSizeManager;
+	private MainMenuManager mainMenuManager;
+
+	private Vector3 settingsMenuStartPosition;
+	private Vector3 coinsMenuStartPosition;
+	private Vector3 powerUpsStartPosition;
 	
 	void Awake()
 	{
 		fromthis=0;
 		launchcount=PlayerPrefs.GetInt("launchcount",0);
 		gamestate=state.mainmenu;
+
+		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
+		mainMenuManager = GameObject.FindObjectOfType<MainMenuManager> ();
 	}
 
 	void Start()
 	{
 		
 		//facebook=PlayerPrefs.GetInt("facebook",0);
+		facebook=PlayerPrefs.GetInt("facebook",1);
 		sound=PlayerPrefs.GetInt("sound",1);
 
+		button_on = screenSizeManager.GetSpriteSize (button_on);
+		button_off = screenSizeManager.GetSpriteSize (button_off);
 
-		//if(facebook==1)
-		//{
-		//	facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;		
-		//}
-		//else
-		//{
-		//	facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
-		//}
+		if(facebook==1)
+		{
+			facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;		
+		}
+		else
+		{
+			facebook_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
+		}
+
+		facebook_sprite.gameObject.GetComponent<OnOffButton> ().SetButtonState (Convert.ToBoolean (facebook));
 
 		if(sound==1)
 		{
-			sound_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;
+			sound_sprite.gameObject.GetComponent<SpriteRenderer>().sprite = button_on;
 			unmuteallaudiosourcesinscene();
 		}
 		else
 		{
-			sound_sprite.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
+			sound_sprite.gameObject.GetComponent<SpriteRenderer>().sprite = button_off;
 			muteallaudiosourcesinscene();
 		}
+
+		sound_sprite.gameObject.GetComponent<OnOffButton>().SetButtonState(Convert.ToBoolean(sound));
 
 		//PlayerPrefs.DeleteAll();
 		runcounter=PlayerPrefs.GetInt("runcounter",0);
@@ -147,7 +164,8 @@ public class mainmenu : MonoBehaviour {
 		levelselected=0;
 		gamestate=state.mainmenu;
 		totalgold=PlayerPrefs.GetInt("totalgold",2500);
-		totallives=PlayerPrefs.GetInt("totallives",5);
+		totallives=PlayerPrefs.GetInt("totallives",1);
+		//totallives=PlayerPrefs.GetInt("totallives",5);
 		bombpowerupcount=PlayerPrefs.GetInt("bombpowerupcount",10);
 		doublebastradiuspowerupcount=PlayerPrefs.GetInt("doubleblastradiuspowerupcount",10);
 		reversetimepowerupcount=PlayerPrefs.GetInt("reversetimepowerupcount",10);
@@ -206,11 +224,12 @@ public class mainmenu : MonoBehaviour {
 	
 	void Update()
 	{
-		
-		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) 
+		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) 
 		{
-			touchposition=Input.GetTouch(0).position;
-			touchended();
+			if (mainMenuManager.pageScrollSpeed == Vector3.zero) {
+				touchposition=Input.GetTouch(0).position;
+				touchended();
+			}
 		}
 		
 		if(Input.GetKeyUp(KeyCode.Escape))
@@ -248,8 +267,10 @@ public class mainmenu : MonoBehaviour {
 	
 		if(Input.GetMouseButtonUp(0))
 	    {
-		   touchposition=Input.mousePosition;
-		   touchended();
+			if (mainMenuManager.pageScrollSpeed == Vector3.zero) {
+		   		touchposition=Input.mousePosition;
+		   		touchended();
+			}
 		}
 	
 	
@@ -302,25 +323,29 @@ public class mainmenu : MonoBehaviour {
 		if(hit.collider!=null)
 		{
 				
-	        if(lastTouchedButtonName.Equals(hit.collider.gameObject.name))
-		        return;  //don't process the same button more than one time
+	       // if(lastTouchedButtonName.Equals(hit.collider.gameObject.name))
+		        //return;  //don't process the same button more than one time
 		
-			LevelNode levelNode = hit.collider.gameObject.GetComponent<LevelNode>();
-			if (levelNode != null) {
-				selectedLevelNode = levelNode;
+			if (gamestate == state.mainmenu) {
+				LevelNode levelNode = hit.collider.gameObject.GetComponent<LevelNode>();
+				if (levelNode != null) {
+					selectedLevelNode = levelNode;
 
-				if (selectedLevelNode != null) {
-					GameObject levelLocked = selectedLevelNode.transform.FindChild("Level_Locked").gameObject;
-					if (!levelLocked.GetComponent<LockManager>().isLocked) {
-						Debug.Log("Level " + selectedLevelNode.level + " selected.");
+					if (selectedLevelNode != null) {
+						string lockButtonName = "Level_Locked_Level" + (levelNode.levelIndex + 1);
+						GameObject levelLocked = selectedLevelNode.transform.FindChild(lockButtonName).gameObject;
+						if (!levelLocked.GetComponent<LockManager>().isLocked) {
+							Debug.Log("Level " + selectedLevelNode.level + " selected.");
 
-						StartCoroutine(showpowerupswindow());
+							powerUpsStartPosition = powerups.transform.position;
+							StartCoroutine(showpowerupswindow());
 
-						levelselected = selectedLevelNode.level;
+							levelselected = selectedLevelNode.level;
 
-						fadebg.renderer.enabled = false;
+							fadebg.renderer.enabled = false;
 
-						buttonclickeffect();
+							buttonclickeffect();
+						}
 					}
 				}
 			}
@@ -329,6 +354,10 @@ public class mainmenu : MonoBehaviour {
 					{
 						if(hit.collider.gameObject.name=="button_settings")
 						{
+
+					settingsMenuStartPosition = settings.transform.position;
+
+
 							//fadebg.renderer.enabled=true;
 							StartCoroutine("showsettings");
 							buttonclickeffect();
@@ -336,6 +365,8 @@ public class mainmenu : MonoBehaviour {
 						
 				else if(hit.collider.gameObject.name=="button_store")
 						{
+
+					coinsMenuStartPosition = coinstore.transform.position;
 							//fadebg.renderer.enabled=false;
 							StartCoroutine("showcoinstore");
 							buttonclickeffect();
@@ -355,7 +386,7 @@ public class mainmenu : MonoBehaviour {
 				else if(hit.collider.gameObject.name =="button_fb_post_login")
 				        {
 					       Debug.Log ("fbpostlogin works!!!");
-					       StartCoroutine("showleaderboardui");
+					       StartCoroutine(showleaderboardui());
 					       buttonclickeffect();
 				        }
 				        else if(hit.collider.gameObject.name=="coins_bar_empty")
@@ -680,32 +711,48 @@ public class mainmenu : MonoBehaviour {
 						}
 						else if(hit.collider.gameObject.name=="buttononstatefacebook")
 						{
-							if(hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite.name=="button_off")
+							OnOffButton onOffbutton = hit.collider.gameObject.GetComponent<OnOffButton>();
+							if (onOffbutton != null) 
 							{
-							hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;
-							PlayerPrefs.SetInt("facebook",1);
-							facebook=PlayerPrefs.GetInt("facebook",1);
+								if (!onOffbutton.ButtonIsOn()) {
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_on;
+									PlayerPrefs.SetInt("facebook",1);
+									facebook=PlayerPrefs.GetInt("facebook",1);
+								}
+								else
+						        {
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_off;
+									PlayerPrefs.SetInt("facebook",0);
+									facebook=PlayerPrefs.GetInt("facebook",1);
+								}
+
+								onOffbutton.ToggleButtonState();
+
+                           		screenSizeManager.UpdateSpriteRenderer(hit.collider.gameObject.GetComponent<SpriteRenderer>());
+								buttonclickeffect();
 							}
-							else if(hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite.name=="button_on")
-					        {
-							hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
-							PlayerPrefs.SetInt("facebook",0);
-							facebook=PlayerPrefs.GetInt("facebook",1);
-							}
-							buttonclickeffect();
 						}
 						else if(hit.collider.gameObject.name=="buttononstategoogle")
 						{
-							Debug.Log("Working");
-							if(hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite.name=="button_off")
+							OnOffButton onOffbutton = hit.collider.gameObject.GetComponent<OnOffButton>();
+							if (onOffbutton != null) 
 							{
-								hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;
+								if(!onOffbutton.ButtonIsOn())
+								{
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_on;
+								}
+
+								else
+								{
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_off;
+									
+								}
+
+								onOffbutton.ToggleButtonState();
+
+								screenSizeManager.UpdateSpriteRenderer(hit.collider.gameObject.GetComponent<SpriteRenderer>());
+								buttonclickeffect();
 							}
-							else if(hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite.name=="button_on")
-							{
-								hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
-							}
-							buttonclickeffect();
 						}
 						else if(hit.collider.gameObject.name=="button_help_feedback")
 						{
@@ -716,23 +763,31 @@ public class mainmenu : MonoBehaviour {
 						}
 						else if(hit.collider.gameObject.name=="buttonstatemusic")
 						{
-							if(hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite.name=="button_off")
+							OnOffButton onOffbutton = hit.collider.gameObject.GetComponent<OnOffButton>();
+							if (onOffbutton != null) 
 							{
-								hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite=button_on;
-								unmuteallaudiosourcesinscene();	
-								//unmuteaudiolistener();
-								PlayerPrefs.SetInt("sound",1);
-								sound=PlayerPrefs.GetInt("sound",1);
+								if(!onOffbutton.ButtonIsOn())
+								{
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_on;
+									unmuteallaudiosourcesinscene();	
+									//unmuteaudiolistener();
+									PlayerPrefs.SetInt("sound",1);
+									sound=PlayerPrefs.GetInt("sound",1);
+								}
+								else
+								{
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_off;
+									muteallaudiosourcesinscene();
+									//muteaudiolistener();
+									PlayerPrefs.SetInt("sound",0);
+									sound=PlayerPrefs.GetInt("sound",1);
+								}
+
+								onOffbutton.ToggleButtonState();
+
+                           		screenSizeManager.UpdateSpriteRenderer(hit.collider.gameObject.GetComponent<SpriteRenderer>());
+								buttonclickeffect();
 							}
-							else if(hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite.name=="button_on")
-							{
-								hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite=button_off;
-								muteallaudiosourcesinscene();
-								//muteaudiolistener();
-								PlayerPrefs.SetInt("sound",0);
-								sound=PlayerPrefs.GetInt("sound",1);
-							}
-							buttonclickeffect();
 						}
 						else if(hit.collider.gameObject.name=="button_about")
 						{
@@ -797,10 +852,11 @@ public class mainmenu : MonoBehaviour {
 
 			IEnumerator showcoinstore()
 			{
+
 				for(int i=0;i<20;i++)
 				{
 					Vector3 oldposition=coinstore.transform.position;
-					float newposition=Mathf.Lerp(oldposition.x,-0.538f,0.25f);
+					float newposition=Mathf.Lerp(oldposition.x, 0.0f, 0.25f);
 					coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,0f);
 					yield return null;
 				}
@@ -814,7 +870,7 @@ public class mainmenu : MonoBehaviour {
 				for(int i=0;i<20;i++)
 				{
 				Vector3 oldposition=coinstore.transform.position;
-				float newposition=Mathf.Lerp(oldposition.x,-7.55f,0.25f);
+				float newposition=Mathf.Lerp(oldposition.x,coinsMenuStartPosition.x, 0.25f);
 				coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,0f);
 				yield return null;
 				}
@@ -824,10 +880,11 @@ public class mainmenu : MonoBehaviour {
 		
 			IEnumerator showsettings()
 			{
+
 				for(int i=0;i<20;i++)
 				{
 					Vector3 oldposition=settings.transform.position;
-					float newposition=Mathf.Lerp(oldposition.x,-0.04f,0.25f);
+					float newposition=Mathf.Lerp(oldposition.x,0,0.25f);
 					settings.transform.position=new Vector3(newposition,settings.transform.position.y,0f);
 					yield return null;
 				}
@@ -842,7 +899,7 @@ public class mainmenu : MonoBehaviour {
 				for(int i=0;i<20;i++)
 				{
 					Vector3 oldposition=settings.transform.position;
-					float newposition=Mathf.Lerp(oldposition.x,7.231156f,0.25f);
+					float newposition=Mathf.Lerp(oldposition.x, settingsMenuStartPosition.x, 0.25f);
 					settings.transform.position=new Vector3(newposition,settings.transform.position.y,0f);
 					yield return null;
 				}
@@ -852,6 +909,8 @@ public class mainmenu : MonoBehaviour {
 
 			IEnumerator showpowerupswindow()
 			{
+				
+
 				gamestate=state.powerups;
 				for(int i=0;i<20;i++)
 				{
@@ -871,7 +930,7 @@ public class mainmenu : MonoBehaviour {
 				for(int i=0;i<30;i++)
 				{
 					Vector3 oldposition=powerups.transform.position;
-					float newposition=Mathf.Lerp(oldposition.y,9.50314f,0.15f);
+					float newposition=Mathf.Lerp(oldposition.y, powerUpsStartPosition.y, 0.15f);
 					powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,0f);
 					yield return null;
 				}
@@ -917,7 +976,7 @@ public class mainmenu : MonoBehaviour {
 			for(int i=0;i<20;i++)
 			{
 				Vector3 oldposition=LeaderBoard.transform.position;
-				float newposition=Mathf.Lerp(oldposition.y,-9f,0.15f);
+				float newposition=Mathf.Lerp(oldposition.y,-10.25f,0.15f);
 				LeaderBoard.transform.position=new Vector3(LeaderBoard.transform.position.x,newposition,0f);
 				yield return null;
 			}
@@ -1184,7 +1243,7 @@ public class mainmenu : MonoBehaviour {
 		Debug.Log ("Facebook info: " + result.Text);
 		Debug.Log("Facebook " + profile["first_name"]);
 		//friends = Util.DeserializeJSONFriends(result.Text);
-		StartCoroutine("showleaderboardui");
+		StartCoroutine(showleaderboardui());
 		StartCoroutine ("flipFacebookButtons");
 	}
 

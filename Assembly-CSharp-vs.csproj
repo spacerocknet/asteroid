@@ -120,6 +120,7 @@
      <Compile Include="Assets\_Code\MainMenu\GUI\LevelOverlay.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\LockManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" />
+     <Compile Include="Assets\_Code\MainMenu\GUI\OnOffButton.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\CSVReader.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelInfo.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelNode.cs" />

@@ -8,7 +8,7 @@ public class Settings : MonoBehaviour {
 
 	private void Start()
 	{
-		Screen.SetResolution(480,800,false);
+		Screen.SetResolution(600,1024,false);
 		Application.targetFrameRate = 60;
 		cam = (Camera) this.gameObject.GetComponent<Camera>();
 		SetOrthoSize();
