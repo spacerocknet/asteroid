@@ -19,6 +19,10 @@ public class CategorySelect : MonoBehaviour {
 	//private GameObject battleengineobject;
 	private GameObject soundmanager;
 
+	public Sprite[] defaultCategorySprites;
+
+	private ScreenSizeManager screenSizeManager;
+
 	public enum CategoryTypes
 	{
 		Sport = 0,
@@ -42,53 +46,34 @@ public class CategorySelect : MonoBehaviour {
 		public Color color;
 		public Sprite colorsprite;
 		public GameObject obj;
-		
 
-		public Category(int _id, CategoryTypes _categoryType, ColorTypes _colorType, GameObject _obj)
+		public Category(int _id, CategoryTypes _categoryType, Sprite categorySprite, float scaleX, float scaleY, ColorTypes _colorType, GameObject _obj)
 		{
 			id = _id;
 			categoryType = _categoryType;
 			colorType = _colorType;
 			obj = _obj;
 
-			DefineColor();
-			DefineLabel();
-			DefineSize();
+			this.colorsprite = categorySprite;
+			obj.GetComponent<SpriteRenderer>().sprite=this.colorsprite;
+
+			DefineLabel(scaleX, scaleY);
+			//DefineSize();
 			DefinePosition();
 		}
 
-		private void DefineColor()
-		{
-			switch(colorType)
-			{
-				case ColorTypes.Red:
-					this.colorsprite=Resources.Load("Category/button_red",typeof(Sprite)) as Sprite;
-					break;
-				case ColorTypes.Green:
-					this.colorsprite=Resources.Load("Category/button_green",typeof(Sprite)) as Sprite;
-					this.color = Color.green;
-					break;
-				case ColorTypes.Blue:
-					this.colorsprite=Resources.Load("Category/button_blue",typeof(Sprite)) as Sprite;
-					break;
-				default: break;
-			}
-
-			obj.GetComponent<SpriteRenderer>().sprite=this.colorsprite;
-		}
-
-		private void DefineLabel()
+		private void DefineLabel(float scaleX, float scaleY)
 		{
 			TextMesh textM = (TextMesh) obj.GetComponentInChildren<TextMesh>();
 			textM.font=BattleEngine.font1;
 			textM.renderer.material=BattleEngine.material1[0];
 			textM.text = categoryType.ToString();
-			textM.fontSize=33;
-			textM.characterSize=0.45f;
+			textM.fontSize = 15;
+			textM.characterSize= 0.2f;
 			textM.fontStyle=FontStyle.Normal;
 			textM.color=Color.white;
-			textM.gameObject.transform.localScale=textM.gameObject.transform.localScale/2;
-			textM.gameObject.transform.position=new Vector3(textM.transform.position.x,textM.transform.position.y-0.15f,textM.transform.position.z);
+			textM.transform.localScale = new Vector3 (1 / scaleX, 1 / scaleY, 1);
+			textM.gameObject.transform.position=new Vector3(textM.transform.position.x,0,textM.transform.position.z);
 
 			if(textM.text.Length>6)
 			{
@@ -109,7 +94,8 @@ public class CategorySelect : MonoBehaviour {
 
 		private void DefinePosition()
 		{
-			obj.transform.localPosition = new Vector3(98.40041f+(id*1.6f),-4.691885f,-1f);
+			float offsetX = obj.renderer.bounds.extents.x * 2;
+			obj.transform.localPosition = new Vector3(98f + (id * (offsetX + 0.03f)), -4.5f, -1f);
 		}
 	}
 
@@ -141,14 +127,17 @@ public class CategorySelect : MonoBehaviour {
 		QE = (Questions) GameObject.Find("MAIN").AddComponent<Questions>();
 		//battleengineobject=GameObject.Find("MAIN");
 		soundmanager=GameObject.Find("Secondary_SoundManager");
+
+		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
 	}
 
 	public void PlaceCategories(int diff)
 	{
-		if(currentCategories.Count>0)
-		{
-			currentCategories.Clear();
+		foreach (Category category in currentCategories) {
+			GameObject.Destroy(category.obj);
 		}
+
+		currentCategories.Clear ();
 	
 		int bitmap = catBitmap [Random.Range(0, catCount)];
 		int index = 0;
@@ -160,9 +149,13 @@ public class CategorySelect : MonoBehaviour {
    			  GameObject newCatObj = (GameObject) Instantiate(catRef,new Vector3(-10,0,-1),Quaternion.identity);
 			  newCatObj.name = index.ToString();
 			  newCatObj.transform.parent = INIT.transform;
-				
-			  currentCategories.Add(new Category(index,(CategoryTypes)i,(ColorTypes)index,newCatObj));
-			  StartCoroutine(PlaceCategoryToPlace(index,newCatObj));
+
+			  currentCategories.Add(new Category(index,(CategoryTypes)i, defaultCategorySprites[index], 
+				                                   screenSizeManager.scaleX, screenSizeManager.scaleY, (ColorTypes)index,newCatObj));
+			  screenSizeManager.UpdateSpriteRenderer(newCatObj.GetComponent<SpriteRenderer>());
+
+			  canSelect = true;
+			  //StartCoroutine(PlaceCategoryToPlace(index,newCatObj));
 			  index++;
 			}
 		}
@@ -176,11 +169,14 @@ public class CategorySelect : MonoBehaviour {
 		{
 			for(int i=0;i<currentCategories.Count;i++)
 			{
-			Category tempcategory=currentCategories[i];
-			tempcategory.colorType=ColorTypes.Red;
-			tempcategory.colorsprite=Resources.Load("Category/button_red",typeof(Sprite)) as Sprite;
-			tempcategory.obj.GetComponent<SpriteRenderer>().sprite=Resources.Load("Category/button_red",typeof(Sprite)) as Sprite;
-			currentCategories[i]=tempcategory;
+
+				Category tempcategory=currentCategories[i];
+				tempcategory.colorType=ColorTypes.Red;
+				tempcategory.colorsprite = defaultCategorySprites[1];
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = defaultCategorySprites[1];
+				currentCategories[i]=tempcategory;
+
+				screenSizeManager.UpdateSpriteRenderer(tempcategory.obj.GetComponent<SpriteRenderer>());
 			}
 		}
 		else if(color=="blue")
@@ -189,9 +185,11 @@ public class CategorySelect : MonoBehaviour {
 			{
 				Category tempcategory=currentCategories[i];
 				tempcategory.colorType=ColorTypes.Blue;
-				tempcategory.colorsprite=Resources.Load("Category/button_blue",typeof(Sprite)) as Sprite;
-				tempcategory.obj.GetComponent<SpriteRenderer>().sprite=Resources.Load("Category/button_blue",typeof(Sprite)) as Sprite;
+				tempcategory.colorsprite = defaultCategorySprites[2];
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = defaultCategorySprites[2];
 				currentCategories[i]=tempcategory;
+
+				screenSizeManager.UpdateSpriteRenderer(tempcategory.obj.GetComponent<SpriteRenderer>());
 			}
 		}
 		else if(color=="green")
@@ -200,9 +198,11 @@ public class CategorySelect : MonoBehaviour {
 			{
 				Category tempcategory=currentCategories[i];
 				tempcategory.colorType=ColorTypes.Green;
-				tempcategory.colorsprite=Resources.Load("Category/button_green",typeof(Sprite)) as Sprite;
-				tempcategory.obj.GetComponent<SpriteRenderer>().sprite=Resources.Load("Category/button_green",typeof(Sprite)) as Sprite;
+				tempcategory.colorsprite = defaultCategorySprites[0];
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = defaultCategorySprites[0];
 				currentCategories[i]=tempcategory;
+
+				screenSizeManager.UpdateSpriteRenderer(tempcategory.obj.GetComponent<SpriteRenderer>());
 			}
 		}
 	}
@@ -285,7 +285,7 @@ public class CategorySelect : MonoBehaviour {
 					    Category cat = (Category) GetCategoryByIndex(index);
 					    
 						canSelect = false;
-						StartCoroutine(HideCategories());
+						//StartCoroutine(HideCategories());
 						QE.ShowAnswersByCategory(cat.categoryType,cat.colorType);
 
 					}

@@ -54,7 +54,7 @@ public class MainMenuManager : MonoBehaviour {
 
 	void Start () {
 		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
-		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 4);
+		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 8);
 
 		float scaleX = screenSizeManager.scaleX;
 		float scaleY = screenSizeManager.scaleY;
@@ -215,8 +215,8 @@ public class MainMenuManager : MonoBehaviour {
 					Vector3 parentScale = textMesh.transform.parent.localScale;
 					textMesh.transform.localScale = new Vector3(1 / parentScale.x, 1 / parentScale.y, 1);
 
-					float scaleX = screenSizeManager.scaleX;
-					textMesh.transform.localPosition = levelNode.TextStartPosition + textMeshOffsets[levelLabel.Length - 1];
+					float scaleX = 1 / screenSizeManager.scaleX;
+					textMesh.transform.localPosition = levelNode.TextStartPosition + textMeshOffsets[levelLabel.Length - 1] * scaleX;
 					textMesh.GetComponent<TextMesh>().fontSize = fontSizes[levelLabel.Length - 1];
 					textMesh.GetComponent<TextMesh> ().text = levelLabel;
 

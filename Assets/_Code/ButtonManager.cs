@@ -121,15 +121,15 @@ public class ButtonManager : MonoBehaviour {
 
 	void Start()
 	{
-	if(mainmenu.sound==1)
+		if(mainmenu.sound==1)
 		{
 			unmuteallaudiosourcesinscene();
 		}
-	else if(mainmenu.sound==0)
+		else if(mainmenu.sound==0)
 		{
 			muteallaudiosourcesinscene();
 		}
-	Invoke("thememusicplay",0.12f);
+		Invoke("thememusicplay",0.12f);
 	}
 
 	

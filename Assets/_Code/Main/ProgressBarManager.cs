@@ -12,13 +12,20 @@ public class ProgressBarManager : MonoBehaviour {
 	private System.DateTime startTimeStamp;
 	private System.DateTime endTimeStamp;
 
+	private ScreenSizeManager screenSizeManager;
+
 	// Use this for initialization
 	void Start () {
 		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
+		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
 
 		progressBarScaleMaxY = 1;
 		int segments = levelInfo.selectedNodeInfo.totalRocks;
 		segmentScaleY = progressBarScaleMaxY / segments;
+
+		Vector3 position = transform.position;
+		position.y -= renderer.bounds.extents.y;
+		asteroidsDestroyedBar.transform.position = position;
 	}
 	
 	// Update is called once per frame

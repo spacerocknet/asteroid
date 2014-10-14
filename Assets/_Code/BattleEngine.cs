@@ -13,6 +13,8 @@ public class BattleEngine : MonoBehaviour {
 	public Vector3 smallAsteroidScale;
 	public Vector2 asteroidSpawnStartRange;
 
+	public Sprite[] defaultCategorySprites;
+
 	private LevelManager levels;
 	[HideInInspector]
 	public bool canTarget;
@@ -50,6 +52,7 @@ public class BattleEngine : MonoBehaviour {
 		isMouseDown = false;
 		canTarget = false;
 		categorySelect = (CategorySelect) this.gameObject.AddComponent<CategorySelect>();
+		categorySelect.defaultCategorySprites = defaultCategorySprites;
 
 		asteroids = (Asteroids) this.gameObject.AddComponent<Asteroids>();
 		asteroids.bigAsteroidScale = bigAsteroidScale;
@@ -70,7 +73,7 @@ public class BattleEngine : MonoBehaviour {
 	private IEnumerator Start()
 	{	
 		int spawnCount = Random.Range (2, 4);
-		yield return StartCoroutine(asteroids.SpawnAsteroids(100));
+		yield return StartCoroutine(asteroids.SpawnAsteroids(spawnCount));
 		
 		progressBarManager.UpdateProgressBar (0);
 		progressBarManager.StartTimer ();

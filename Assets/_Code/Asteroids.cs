@@ -206,10 +206,10 @@ public class Asteroids : MonoBehaviour {
 		GameObject asteroid = (GameObject)Instantiate (asteroidRef, new Vector3 (Random.Range (-1.8f, 2.0f), Random.Range (2.6f, 2.8f), -1.0f), Quaternion.identity);
 		Asteroid ast = new Asteroid (asteroidColor, colorSprite, lifeHits, asteroid, smallAsteroidsLifeHits, 
 		                             smallAsteroidScale);
-		ast.obj.transform.localScale *= scale.x;
+		//ast.obj.transform.localScale *= scale.x;
 		screenSizeManager.UpdateSpriteRenderer(ast.obj.GetComponent<SpriteRenderer> ());
 		CircleCollider2D circleCollider = ast.obj.AddComponent<CircleCollider2D> ();
-		circleCollider.radius = 0.6f;
+		circleCollider.radius = 0.7f;
 		currentAsteroids.Add (ast);
 
 		asteroid.transform.parent = INIT.transform;

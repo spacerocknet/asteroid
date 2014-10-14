@@ -16,8 +16,8 @@ public class ScreenSizeManager : MonoBehaviour {
 	private Vector2 closestScreenSize;
 
 	void Awake() {
-		ScreenWidth = Screen.width;
-		ScreenHeight = Screen.height;
+		ScreenWidth = 1600;
+		ScreenHeight = 2560;
 
 		Vector2 screenSize = new Vector2 (ScreenWidth, ScreenHeight);
 
@@ -41,6 +41,15 @@ public class ScreenSizeManager : MonoBehaviour {
 	
 	}
 
+	public void OnGUI() {
+		GUIStyle style = new GUIStyle ();
+		style.fontSize = 28;
+
+		GUI.Label (new Rect(20, 20, 200, 40), ScreenWidth.ToString(), style);
+		GUI.Label (new Rect (20, 60, 200, 40), ScreenHeight.ToString(), style);
+
+	}
+
 	public void UpdateAllSprites()
 	{
 		SpriteRenderer[] allSpriteRenderers = GameObject.FindObjectsOfType<SpriteRenderer> ();
@@ -58,9 +67,11 @@ public class ScreenSizeManager : MonoBehaviour {
 			Sprite spriteSize = Resources.Load<Sprite> (spriteSizeName);
 			if (spriteSize != null) {
 				spriteRenderer.sprite = spriteSize;
-				Vector3 scale = GetSpriteScaleScreenSize (spriteRenderer, (int) closestScreenSize.x, (int) closestScreenSize.y);
+
+				Vector3 scale = GetSpriteScaleScreenSize (spriteRenderer, (int) (closestScreenSize.x), (int) (closestScreenSize.y));
 				Transform parent = spriteRenderer.gameObject.transform.parent;
 				if (!parent || parent.transform.GetComponent<SpriteRenderer>() == null) {
+
 					spriteRenderer.transform.localScale = Vector3.Scale(spriteRenderer.transform.localScale, scale);
 					//spriteRenderer.transform.position = Vector3.Scale(spriteRenderer.transform.position, scale);
 
@@ -121,7 +132,8 @@ public class ScreenSizeManager : MonoBehaviour {
 		return null;
 	}
 
-	private Vector3 GetSpriteScaleScreenSize(SpriteRenderer spriteRenderer, int screenWidth, int screenHeight) {		
-		return new Vector3(scaleX, scaleY, 1f);
+	private Vector3 GetSpriteScaleScreenSize(SpriteRenderer spriteRenderer, int screenWidth, int screenHeight) {
+		float pixelUnitScale = spriteRenderer.sprite.rect.width / spriteRenderer.sprite.bounds.size.x / 100;
+		return new Vector3(scaleX * pixelUnitScale, scaleY * pixelUnitScale, 1f);
 	}
 }

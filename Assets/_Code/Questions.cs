@@ -54,6 +54,7 @@ public class Questions : MonoBehaviour {
 	private int maxWordsPerLine = 35;
 	private CategorySelect.ColorTypes currentColorType;
 
+	private Vector3 questionStartScale;
 
 	//GameObject PowerUp References
 	private GameObject powerup1;
@@ -65,6 +66,8 @@ public class Questions : MonoBehaviour {
 
 
 	private GameObject soundmanager;
+
+	private ScreenSizeManager screenSizeManager;
 
 	private void Awake()
 	{
@@ -86,6 +89,8 @@ public class Questions : MonoBehaviour {
 
 		//Related to soundmanager
 		soundmanager=GameObject.Find("Secondary_SoundManager");
+
+		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
 
 		// temporary for testing
 		//Movies
@@ -169,6 +174,17 @@ public class Questions : MonoBehaviour {
 		geography.Add(new Question(309,CategorySelect.CategoryTypes.Geography,"What was the only country ever to have archdukes, although it doesn't anymore",GenerateAnswerList("Germany","Netherlands","Austria","Sweden"),3));
 	*/
 
+	}
+
+	void Start() {
+
+		questionStartScale = questionBoxRef.transform.localScale;
+
+		Vector3 textScale = new Vector3(1 / screenSizeManager.scaleX, 1 / screenSizeManager.scaleY, 1);
+		TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
+		tm.transform.localScale = Vector3.Scale (tm.transform.localScale, textScale);
+		float ofsetY = questionBoxRef.transform.localPosition.y + questionBoxRef.renderer.bounds.extents.y * 0.7f;
+		tm.transform.position = new Vector3(tm.transform.position.x, ofsetY, tm.transform.position.z);
 	}
 
 	//temp
@@ -266,6 +282,9 @@ public class Questions : MonoBehaviour {
 				currentQuestion = gameResource.GetQuizzes (cat, 1);
 				Debug.Log ("currentQuestion: " + currentQuestion.title);
 			}
+
+			
+
 		    //yield return currentQuestion;
 		    yield return StartCoroutine(ShowQuestionBox());
 	}
@@ -370,19 +389,23 @@ public class Questions : MonoBehaviour {
 		if(!isHide)
 		{
 
+
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
 			//tm.fontSize = 13;
 			tm.text = ResolveTextSize(currentQuestion.title, maxWordsPerLine) + '?';
+
 			//Debug.Log(tm.text);
-			questionBoxRef.transform.position = new Vector3(0f,0f,-2f); // Changed The Value To ,x.Zero, Y.Zero to center The Question Box in The screen  
-			questionBoxRef.transform.localScale = new Vector3(0.04f,0.05f,0.1f);
+			questionBoxRef.transform.position = new Vector3(0f,0f,-8f); // Changed The Value To ,x.Zero, Y.Zero to center The Question Box in The screen  
+			//questionBoxRef.transform.localScale = new Vector3(0.04f,0.05f,0.1f);
 		}
 
 		for(int i=0;i<6;i++)
 		{
 			if(!isHide)
 			{
-				questionBoxRef.transform.localScale += new Vector3(0.1f,0.1f,0);
+				if (questionBoxRef.transform.localScale.x < questionStartScale.x) {
+					questionBoxRef.transform.localScale += new Vector3(0.1f,0.1f,0);
+				}
 			}
 			else
 			{
@@ -504,13 +527,19 @@ public class Questions : MonoBehaviour {
 
 		currentAnswers.Clear();
 
+		float offset = answerObjRef.renderer.bounds.extents.y + 0.45f;
+		Vector3 scale = new Vector3 (1 / screenSizeManager.scaleX, 1 / screenSizeManager.scaleY, 1);
+
 		for(int i=0;i<4;i++)
 		{	
-			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,0.25f+(-0.67f*i),-2.1f),answerObjRef.transform.rotation); // Changed the value of y to center the answers
+			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,0.65f+(-offset*i),-8f),answerObjRef.transform.rotation); // Changed the value of y to center the answers
 			obj.name = i.ToString();
+			screenSizeManager.UpdateSpriteRenderer(obj.GetComponent<SpriteRenderer>());
 			currentAnswers.Add(obj);
 			TextMesh tm = (TextMesh) obj.GetComponentInChildren<TextMesh>();
 			tm.text = ResolveTextSize(currentQuestion.answers[i], maxWordsPerLine);
+			tm.transform.localScale = Vector3.Scale(tm.transform.localScale, scale);
+
 			//tm.fontSize = 9; 
 			StartCoroutine(SpawnAnswer(i,currentQuestion.answers[i],obj));
 		}
