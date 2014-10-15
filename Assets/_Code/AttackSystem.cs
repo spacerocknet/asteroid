@@ -76,7 +76,7 @@ public class AttackSystem : MonoBehaviour {
 
 			if(currentAsteroids[destroyIndex[i]].isDead)
 			{
-				Destroy(currentAsteroids[destroyIndex[i]].obj,2);
+				Destroy(currentAsteroids[destroyIndex[i]].obj,0);
 				currentAsteroids.RemoveAt(destroyIndex[i]);
 
 				BATTLE_ENGINE.OnAsteroidDestroyed();

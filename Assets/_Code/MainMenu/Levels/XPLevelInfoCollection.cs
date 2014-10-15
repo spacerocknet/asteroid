@@ -10,6 +10,8 @@ public class XPLevelInfoCollection : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		DontDestroyOnLoad (this.gameObject);
+
 		xpLevelInfos = new List<XPLevelInfo>();
 
 		string[] xpLevelInfoCsvLines = CSVReader.SplitCsvLines (xpLevelCSVTextAsset.text);

@@ -16,8 +16,8 @@ public class ScreenSizeManager : MonoBehaviour {
 	private Vector2 closestScreenSize;
 
 	void Awake() {
-		ScreenWidth = 1600;
-		ScreenHeight = 2560;
+		ScreenWidth = 800;
+		ScreenHeight = 1280;
 
 		Vector2 screenSize = new Vector2 (ScreenWidth, ScreenHeight);
 
@@ -39,15 +39,6 @@ public class ScreenSizeManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-	}
-
-	public void OnGUI() {
-		GUIStyle style = new GUIStyle ();
-		style.fontSize = 28;
-
-		GUI.Label (new Rect(20, 20, 200, 40), ScreenWidth.ToString(), style);
-		GUI.Label (new Rect (20, 60, 200, 40), ScreenHeight.ToString(), style);
-
 	}
 
 	public void UpdateAllSprites()

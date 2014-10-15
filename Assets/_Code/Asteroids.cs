@@ -203,7 +203,12 @@ public class Asteroids : MonoBehaviour {
 	                            float smallAsteroidsLifeHits)
 	{
 		Sprite colorSprite = defaultSizeAsteroids [(int)asteroidColor];
-		GameObject asteroid = (GameObject)Instantiate (asteroidRef, new Vector3 (Random.Range (-1.8f, 2.0f), Random.Range (2.6f, 2.8f), -1.0f), Quaternion.identity);
+
+		float spawnX = Random.Range (-2.0f, 2.0f);
+		float spawnY = Random.Range (3.5f, 4f);
+		Vector3 spawnPosition = new Vector3 (spawnX, spawnY, -1);
+
+		GameObject asteroid = (GameObject)Instantiate (asteroidRef, spawnPosition, Quaternion.identity);
 		Asteroid ast = new Asteroid (asteroidColor, colorSprite, lifeHits, asteroid, smallAsteroidsLifeHits, 
 		                             smallAsteroidScale);
 		//ast.obj.transform.localScale *= scale.x;

@@ -135,12 +135,18 @@ public class ButtonManager : MonoBehaviour {
 	
 	void Update () {
 
-		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) 
+		if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) 
 		{
 			touchposition=Input.GetTouch(0).position;
 			touchended();
 		}
 
+#if UNITY_EDITOR
+		if (Input.GetMouseButtonUp(0)) {
+			touchposition = Input.mousePosition;
+			touchended();
+		}
+#endif
 		//For testing with the mouse
 
 		/*
@@ -509,7 +515,7 @@ public class ButtonManager : MonoBehaviour {
 		for(int i=0;i<40;i++)
 		{
 			Vector3 oldposition=changequestioncategorycolor.transform.position;
-			float newposition=Mathf.Lerp(oldposition.x,-0.10f,0.15f);
+			float newposition=Mathf.Lerp(oldposition.x,0f,0.25f);
 			changequestioncategorycolor.transform.position=new Vector3(newposition,changequestioncategorycolor.transform.position.y,changequestioncategorycolor.transform.position.z);
 			yield return null;
 		}
@@ -523,7 +529,7 @@ public class ButtonManager : MonoBehaviour {
 		for(int i=0;i<40;i++)
 		{
 			Vector3 oldposition=changequestioncategorycolor.transform.position;
-			float newposition=Mathf.Lerp(oldposition.x,5.21f,0.15f);
+			float newposition=Mathf.Lerp(oldposition.x,7f,0.25f);
 			changequestioncategorycolor.transform.position=new Vector3(newposition,changequestioncategorycolor.transform.position.y,changequestioncategorycolor.transform.position.z);
 			yield return null;
 		}
@@ -649,6 +655,7 @@ public class ButtonManager : MonoBehaviour {
 
 	void button_okay_rewardsscreen_clicked()
 	{
+		GameObject.Destroy (levelInfo.gameObject);
 		Application.LoadLevel(0);
 	}
 

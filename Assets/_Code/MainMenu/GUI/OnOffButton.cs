@@ -5,9 +5,13 @@ public class OnOffButton : MonoBehaviour {
 
 	private bool buttonOn;
 
+	void Awake() {
+		buttonOn = false;
+	}
+
 	// Use this for initialization
 	void Start () {
-		buttonOn = false;
+
 	}
 	
 	// Update is called once per frame

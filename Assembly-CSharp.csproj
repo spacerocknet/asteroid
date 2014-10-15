@@ -123,6 +123,7 @@
      <Compile Include="Assets\_Code\MainMenu\GUI\OnOffButton.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\XPBarManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\CSVReader.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\LevelCompleteInfo.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelInfo.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelNode.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelNodeInfoCollection.cs" />

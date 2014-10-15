@@ -35,7 +35,7 @@ public class MainMenuManager : MonoBehaviour {
 	private Vector3 menuBoundsLower;
 
 	private Bounds menuBounds;
-	private Vector3 touchPosition;
+	private Vector3 startDragPosition;
 	private int pageIndex;
 	private int levelNodesPerPage = 8;
 	private int maxLevels = 200;
@@ -54,8 +54,6 @@ public class MainMenuManager : MonoBehaviour {
 
 	void Start () {
 		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
-		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 8);
-
 		float scaleX = screenSizeManager.scaleX;
 		float scaleY = screenSizeManager.scaleY;
 
@@ -73,28 +71,39 @@ public class MainMenuManager : MonoBehaviour {
 		menuBoundsUpper = menuBounds;
 		menuBoundsLower = mainMenu.transform.position - menuBounds;
 
-		currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey);
-		if (currentLevel == 0) {
-			currentLevel = 1;
-			PlayerPrefs.SetInt(PlayerData.CurrentLevelKey, currentLevel);
-		}
-
+		currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey, 1);
 		maxPages = (int) ((float) maxLevels / (float) levelNodesPerPage);
 		pageIndex = (currentLevel - 1) / levelNodesPerPage;
-
-		//pageIndex = (26 - 1) / levelNodesPerPage;
 		UpdateLevelNodes(pageIndex);
 
-		//// get the gameobject from the game level to get new unlocked level;
-		performingUnlock = true;
+		LevelCompleteInfo levelCompleteInfo = GameObject.FindObjectOfType<LevelCompleteInfo> ();
+		if (levelCompleteInfo != null) {
+			if (levelCompleteInfo.levelUnlocked > currentLevel) {
+				performingUnlock = true;
 
-		StartCoroutine (CheckForLevelUnlock (8));
+				int unlockedLevel = levelCompleteInfo.levelUnlocked;
+				pageIndex = (unlockedLevel - 1) / levelNodesPerPage;
+				UpdateLevelNodes(pageIndex);
+
+				StartCoroutine (CheckForLevelUnlock (unlockedLevel));
+			}
+
+			GameObject.Destroy(levelCompleteInfo.gameObject);
+		}
 	}
 	
 	void Update () {
-		if (Input.GetMouseButtonDown(0) && !draggingPage && !animatingPage && !performingUnlock) {
-			touchPosition = Input.mousePosition;
-			draggingPage = true;
+		Vector3 touchPosition = Input.mousePosition;
+		Camera camera = Camera.main;
+
+		RaycastHit2D hit=Physics2D.Raycast(camera.ScreenToWorldPoint(new Vector3(touchPosition.x, touchPosition.y, 0)), Vector2.zero);
+		if (hit.collider != null) {
+			if (hit.collider.name == "Background") {
+				if (Input.GetMouseButtonDown (0) && !draggingPage && !animatingPage && !performingUnlock) {
+						startDragPosition = Input.mousePosition;
+						draggingPage = true;
+				}
+			}
 		}
 
 		if (Input.GetMouseButtonUp(0)) {
@@ -104,7 +113,7 @@ public class MainMenuManager : MonoBehaviour {
 		if (!animatingPage && !performingUnlock) {
 			if (draggingPage) {
 				Vector3 deltaPosition = Vector3.zero;
-				deltaPosition.y = Input.mousePosition.y - touchPosition.y;
+				deltaPosition.y = Input.mousePosition.y - startDragPosition.y;
 				pageScrollSpeed = deltaPosition * Time.deltaTime * dragSpeedModifier;
 			}
 			else {

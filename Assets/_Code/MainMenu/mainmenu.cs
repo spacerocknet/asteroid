@@ -263,8 +263,7 @@ public class mainmenu : MonoBehaviour {
 			
 			//For testing with the mouse
 
-
-	
+#if UNITY_EDITOR
 		if(Input.GetMouseButtonUp(0))
 	    {
 			if (mainMenuManager.pageScrollSpeed == Vector3.zero) {
@@ -272,9 +271,7 @@ public class mainmenu : MonoBehaviour {
 		   		touchended();
 			}
 		}
-	
-	
-		
+#endif
 			//if(totallives>=5)
 		//	{
 		///		newlifetimer.GetComponent<TextMesh>().text="Full";
@@ -916,7 +913,7 @@ public class mainmenu : MonoBehaviour {
 				{
 					Vector3 oldposition=powerups.transform.position;
 					float newposition=Mathf.Lerp(oldposition.y,0f,0.15f);
-					powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,0f);
+					powerups.transform.position=new Vector3(powerups.transform.position.x,newposition, powerups.transform.position.z);
 					yield return null;
 				}
 
@@ -931,7 +928,7 @@ public class mainmenu : MonoBehaviour {
 				{
 					Vector3 oldposition=powerups.transform.position;
 					float newposition=Mathf.Lerp(oldposition.y, powerUpsStartPosition.y, 0.15f);
-					powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,0f);
+					powerups.transform.position=new Vector3(powerups.transform.position.x,newposition,  powerups.transform.position.z);
 					yield return null;
 				}
 			yield return new WaitForEndOfFrame();
@@ -1266,7 +1263,7 @@ public class mainmenu : MonoBehaviour {
 		string operatingSystem = "OS Version - " + SystemInfo.operatingSystem;
 
 		string emailTo = EncodeURLString("support@spacerock.net");
-		string subject = EncodeURLString("Subject: Homeworld Heroes - user feedback");
+		string subject = EncodeURLString("Homeworld Heroes - user feedback");
 		string body = EncodeURLString("\n\n--\n" + userID + "\n" + deviceId + "\n" + operatingSystem);
 
 		string url = "mailto:" + emailTo + "?subject=" + subject + "&body=" + body;

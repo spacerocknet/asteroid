@@ -250,10 +250,12 @@ public class CategorySelect : MonoBehaviour {
 		for(int i=0;i<currentCategories.Count;i++)
 		{
 			Category cat = (Category) currentCategories[i];
-
 			for(int j=0;j<5;j++)
 			{
-				cat.obj.transform.position -= new Vector3(0,0.12f,0);
+				if (cat != null) {
+					cat.obj.transform.position -= new Vector3(0,0.12f,0);
+				}
+
 				yield return 0;
 			}
 		}

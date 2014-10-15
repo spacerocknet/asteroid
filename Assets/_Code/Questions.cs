@@ -55,6 +55,9 @@ public class Questions : MonoBehaviour {
 	private CategorySelect.ColorTypes currentColorType;
 
 	private Vector3 questionStartScale;
+	private Vector3 answerStartPosition;
+
+	private Vector3 indicatorPosition;
 
 	//GameObject PowerUp References
 	private GameObject powerup1;
@@ -177,14 +180,17 @@ public class Questions : MonoBehaviour {
 	}
 
 	void Start() {
-
 		questionStartScale = questionBoxRef.transform.localScale;
 
-		Vector3 textScale = new Vector3(1 / screenSizeManager.scaleX, 1 / screenSizeManager.scaleY, 1);
+		float offsetY = questionBoxRef.transform.localPosition.y + questionBoxRef.renderer.bounds.extents.y * 0.7f;
 		TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
-		tm.transform.localScale = Vector3.Scale (tm.transform.localScale, textScale);
-		float ofsetY = questionBoxRef.transform.localPosition.y + questionBoxRef.renderer.bounds.extents.y * 0.7f;
-		tm.transform.position = new Vector3(tm.transform.position.x, ofsetY, tm.transform.position.z);
+		tm.transform.position = new Vector3(tm.transform.position.x, offsetY, tm.transform.position.z);
+
+		offsetY = questionBoxRef.transform.localPosition.y - questionBoxRef.renderer.bounds.extents.y * 0.55f;
+		answerStartPosition = new Vector3 (-5f, offsetY, -8f);
+
+		offsetY = questionBoxRef.transform.position.y - questionBoxRef.renderer.bounds.extents.y * 1.4f;
+		indicatorPosition = new Vector3(0, offsetY, -2);
 	}
 
 	//temp
@@ -283,10 +289,8 @@ public class Questions : MonoBehaviour {
 				Debug.Log ("currentQuestion: " + currentQuestion.title);
 			}
 
-			
-
 		    //yield return currentQuestion;
-		    yield return StartCoroutine(ShowQuestionBox());
+		   	yield return StartCoroutine(ShowQuestionBox());
 	}
 	
 	private Question GetQuestionByCategoryLocal(CategorySelect.CategoryTypes cat)
@@ -357,7 +361,7 @@ public class Questions : MonoBehaviour {
 		if(!isHide)
 		{
 			indicatorColor.transform.localScale = new Vector3(8,1,1);
-			indicatorBG.transform.position = new Vector3(0f,-3f,-2f);
+			indicatorBG.transform.position = indicatorPosition;
 			indicatorBG.transform.localScale = new Vector3(0,0.73655f,1);
 		}
 
@@ -386,33 +390,31 @@ public class Questions : MonoBehaviour {
 	public IEnumerator ShowQuestionBox(bool isHide=false)
 	{
 		hidecharacter();
+
+		float scaleModifier = 0.333f;
+
 		if(!isHide)
 		{
-
-
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
 			//tm.fontSize = 13;
 			tm.text = ResolveTextSize(currentQuestion.title, maxWordsPerLine) + '?';
-
+			
 			//Debug.Log(tm.text);
 			questionBoxRef.transform.position = new Vector3(0f,0f,-8f); // Changed The Value To ,x.Zero, Y.Zero to center The Question Box in The screen  
-			//questionBoxRef.transform.localScale = new Vector3(0.04f,0.05f,0.1f);
+
+			while (questionBoxRef.transform.localScale.x < questionStartScale.x) {
+				questionBoxRef.transform.localScale += new Vector3(scaleModifier, scaleModifier, 0);
+
+				yield return null;
+			}
 		}
-
-		for(int i=0;i<6;i++)
+		else
 		{
-			if(!isHide)
-			{
-				if (questionBoxRef.transform.localScale.x < questionStartScale.x) {
-					questionBoxRef.transform.localScale += new Vector3(0.1f,0.1f,0);
-				}
-			}
-			else
-			{
-				questionBoxRef.transform.localScale -= new Vector3(0.1f,0.1f,0);
-			}
+			while (questionBoxRef.transform.localScale.x > 0.1f) {
+				questionBoxRef.transform.localScale -= new Vector3(scaleModifier, scaleModifier, 0);
 
-			yield return 0;
+				yield return null;
+			}
 		}
 
 		if(isHide)
@@ -532,15 +534,18 @@ public class Questions : MonoBehaviour {
 
 		for(int i=0;i<4;i++)
 		{	
-			GameObject obj = (GameObject) Instantiate(answerObjRef,new Vector3(-5f,0.65f+(-offset*i),-8f),answerObjRef.transform.rotation); // Changed the value of y to center the answers
+			Vector3 position = answerStartPosition;
+			position.y += -offset * i;
+
+			GameObject obj = (GameObject) Instantiate(answerObjRef, position, answerObjRef.transform.rotation); // Changed the value of y to center the answers
 			obj.name = i.ToString();
 			screenSizeManager.UpdateSpriteRenderer(obj.GetComponent<SpriteRenderer>());
 			currentAnswers.Add(obj);
 			TextMesh tm = (TextMesh) obj.GetComponentInChildren<TextMesh>();
 			tm.text = ResolveTextSize(currentQuestion.answers[i], maxWordsPerLine);
-			tm.transform.localScale = Vector3.Scale(tm.transform.localScale, scale);
+			//tm.transform.localScale = new Vector3(1, 1, 1);
 
-			//tm.fontSize = 9; 
+			tm.fontSize *= (int) (1 / screenSizeManager.scaleX); 
 			StartCoroutine(SpawnAnswer(i,currentQuestion.answers[i],obj));
 		}
 	}
