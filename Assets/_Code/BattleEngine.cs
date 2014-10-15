@@ -42,6 +42,8 @@ public class BattleEngine : MonoBehaviour {
 
 	private LevelInfo levelInfo;
 
+	private XPLevelInfoCollection xpLevelInfoCollection;
+
 	private void Awake()
 	{
 		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
@@ -68,6 +70,8 @@ public class BattleEngine : MonoBehaviour {
 		font1=font;
 		material1=FontMats;
 		soundmanager=GameObject.Find("Secondary_SoundManager");
+
+		xpLevelInfoCollection = GameObject.FindObjectOfType<XPLevelInfoCollection> ();
 	}
 
 	private IEnumerator Start()
@@ -96,6 +100,8 @@ public class BattleEngine : MonoBehaviour {
 
 			StartCoroutine(AtkSystem.AttackTarget(asteroid.obj.transform.position,asteroids.currentAsteroids, 
 			                                      levels, color));
+
+			StartCoroutine(NextRound(true,color));
 		}
 
 		if (Input.GetKeyDown(KeyCode.M)) {
@@ -104,6 +110,8 @@ public class BattleEngine : MonoBehaviour {
 			{
 				progressBarManager.StopTimer();
 				WinBattle(progressBarManager.GetCompletionTimeSeconds());
+
+				UpdateXPLevel();
 			}
 		}
 	}
@@ -158,6 +166,8 @@ public class BattleEngine : MonoBehaviour {
 		{
 			progressBarManager.StopTimer();
 			WinBattle(progressBarManager.GetCompletionTimeSeconds());
+
+			UpdateXPLevel ();
 		}
 		//
 		else
@@ -240,6 +250,15 @@ public class BattleEngine : MonoBehaviour {
 			mainmenu.resettimerfornewlife();
 			mainmenu.managetimerfornewlife(true);
 			}
+		}
+	}
+
+	void UpdateXPLevel ()
+	{
+		ulong totalXP = ulong.Parse (PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
+		XPLevelInfo currentXPLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (totalXP);
+		if (currentXPLevelInfo != null) {
+			PlayerPrefs.SetInt (PlayerData.CurrentXPLevel, currentXPLevelInfo.level);
 		}
 	}
 

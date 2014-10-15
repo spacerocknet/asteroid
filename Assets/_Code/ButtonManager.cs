@@ -559,8 +559,9 @@ public class ButtonManager : MonoBehaviour {
 		GameObject xpRewardText = rewardscreen.transform.FindChild ("xp_reward_text").gameObject;
 		xpRewardText.GetComponent<TextMesh> ().text = levelInfo.selectedNodeRewardInfo.xpPayout.ToString ();
 
-		int currentTotalXP = PlayerPrefs.GetInt (PlayerData.TotalXPKey, 0);
-		PlayerPrefs.SetInt (PlayerData.TotalXPKey, currentTotalXP + levelInfo.selectedNodeRewardInfo.xpPayout);
+		ulong currentTotalXP = ulong.Parse(PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
+		ulong cumulativeXP = currentTotalXP + (ulong) levelInfo.selectedNodeRewardInfo.xpPayout;
+		PlayerPrefs.GetString (PlayerData.TotalXPKey, cumulativeXP.ToString());
 
 		GameObject scoreText = rewardscreen.transform.FindChild ("score_text").gameObject;
 		scoreText.GetComponent<TextMesh> ().text = score.ToString();

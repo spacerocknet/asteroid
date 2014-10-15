@@ -121,12 +121,15 @@
      <Compile Include="Assets\_Code\MainMenu\GUI\LockManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\OnOffButton.cs" />
+     <Compile Include="Assets\_Code\MainMenu\GUI\XPBarManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\CSVReader.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelInfo.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelNode.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelNodeInfoCollection.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\LevelNodeInfoManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\Levels\NodeRewardInfoCollection.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\XPLevelInfo.cs" />
+     <Compile Include="Assets\_Code\MainMenu\Levels\XPLevelInfoCollection.cs" />
      <Compile Include="Assets\_Code\MainMenu\TimeTest.cs" />
      <Compile Include="Assets\_Code\MainMenu\dataforleaderboard.cs" />
      <Compile Include="Assets\_Code\MainMenu\mainmenu.cs" />
@@ -157,6 +160,7 @@
      <None Include="Assets\GameAnalytics\Plugins\iOS\iOS_Readme.txt" />
      <None Include="Assets\GameAnalytics\Plugins\WebPlayer\crossdomain.xml" />
      <None Include="Assets\GameAnalytics\Plugins\Android\Android_Readme.txt" />
+     <None Include="Assets\Resources\xp_levels.txt" />
      <None Include="Assets\Resources\level_nodes.txt" />
      <None Include="Assets\Resources\rewards.txt" />
  <Reference Include="Ionic.Zlib">
