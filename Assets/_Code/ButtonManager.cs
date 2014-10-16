@@ -171,7 +171,9 @@ public class ButtonManager : MonoBehaviour {
 			}
 			else
 			{
+				GameObject.Destroy(levelInfo.gameObject);
 				playerDataManager.PostPlayerData();
+
 				Application.LoadLevel(0);
 			}
 		}
@@ -391,6 +393,7 @@ public class ButtonManager : MonoBehaviour {
 						}
 					}
 
+						GameObject.Destroy(levelInfo.gameObject);
 						playerDataManager.PostPlayerData();
 						Application.LoadLevel(0);
 					}
@@ -432,7 +435,9 @@ public class ButtonManager : MonoBehaviour {
 
 				else if(hit.collider.gameObject.name=="home")
 				{
+					GameObject.Destroy(levelInfo.gameObject);
 					playerDataManager.PostPlayerData();
+
 					Application.LoadLevel(0);
 				}
 
@@ -462,6 +467,7 @@ public class ButtonManager : MonoBehaviour {
 					if(mainmenu.totallives==0)
 					{
 						basic_button_click.audio.Play();
+						GameObject.Destroy(levelInfo.gameObject);
 						Application.LoadLevel(0);
 					}
 					else
@@ -596,6 +602,9 @@ public class ButtonManager : MonoBehaviour {
 
 	public IEnumerator showlosescreen()
 	{
+		GameObject levelFailedText = losescreen.transform.FindChild ("Level Failed").gameObject;
+		levelFailedText.GetComponent<TextMesh> ().text = levelInfo.selectedNodeInfo.level.ToString();
+
 		for(int i=0;i<20;i++)
 		{
 			Vector3 oldposition=losescreen.transform.position;

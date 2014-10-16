@@ -395,7 +395,7 @@ public class BattleEngine : MonoBehaviour {
 
 	private void GoToMainMenu()
 	{
-
+		GameObject.Destroy(levelInfo.gameObject);
 		Application.LoadLevel(0);
 	}
 
