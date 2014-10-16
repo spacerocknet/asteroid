@@ -395,6 +395,7 @@ public class BattleEngine : MonoBehaviour {
 
 	private void GoToMainMenu()
 	{
+
 		Application.LoadLevel(0);
 	}
 

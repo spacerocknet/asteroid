@@ -74,6 +74,7 @@ public class ButtonManager : MonoBehaviour {
 	public int totaltimrfornewlife_onresume;
 
 	private LevelInfo levelInfo;
+	private PlayerData playerDataManager;
 
 	int runcounter;
 
@@ -117,6 +118,8 @@ public class ButtonManager : MonoBehaviour {
 		Invoke("getcharacter",0.10f);
 		soundmanager=GameObject.Find("Powerup_SoundManager");
 		soundmanager1=GameObject.Find("Secondary_SoundManager");
+
+		playerDataManager = GameObject.FindObjectOfType<PlayerData> ();
 	}
 
 	void Start()
@@ -168,7 +171,8 @@ public class ButtonManager : MonoBehaviour {
 			}
 			else
 			{
-			Application.LoadLevel(0);
+				playerDataManager.PostPlayerData();
+				Application.LoadLevel(0);
 			}
 		}
 
@@ -387,7 +391,8 @@ public class ButtonManager : MonoBehaviour {
 						}
 					}
 
-					Application.LoadLevel(0);
+						playerDataManager.PostPlayerData();
+						Application.LoadLevel(0);
 					}
 
 				}
@@ -427,6 +432,7 @@ public class ButtonManager : MonoBehaviour {
 
 				else if(hit.collider.gameObject.name=="home")
 				{
+					playerDataManager.PostPlayerData();
 					Application.LoadLevel(0);
 				}
 
@@ -451,6 +457,8 @@ public class ButtonManager : MonoBehaviour {
 
 				else if(hit.collider.gameObject.name=="button_close")
 				{
+					playerDataManager.PostPlayerData();
+
 					if(mainmenu.totallives==0)
 					{
 						basic_button_click.audio.Play();
@@ -473,7 +481,7 @@ public class ButtonManager : MonoBehaviour {
 			mainmenu.bombpowerupcount--;
 			ButtonManager.powerupselected=String.Empty;
 			bombtextmesh.GetComponent<TextMesh>().text=mainmenu.bombpowerupcount.ToString();
-			PlayerPrefs.SetInt("bombpowerupcount",mainmenu.bombpowerupcount);
+			PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, mainmenu.bombpowerupcount);
 			hitpowerup_static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}
 			else if(powerup=="double_blast_radius")
@@ -482,7 +490,7 @@ public class ButtonManager : MonoBehaviour {
 			mainmenu.doublebastradiuspowerupcount--;
 			ButtonManager.powerupselected=String.Empty;
 			doubleblastradiustextmesh.GetComponent<TextMesh>().text=mainmenu.doublebastradiuspowerupcount.ToString();
-			PlayerPrefs.SetInt("doubleblastradiuspowerupcount",mainmenu.doublebastradiuspowerupcount);
+			PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, mainmenu.doublebastradiuspowerupcount);
 			doubleblastradius_static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}
 			else if(powerup=="reverse_time")
@@ -490,7 +498,7 @@ public class ButtonManager : MonoBehaviour {
 			ButtonManager.powerupselected=String.Empty;
 			mainmenu.reversetimepowerupcount--;
 			reversetimetextmesh.GetComponent<TextMesh>().text=mainmenu.reversetimepowerupcount.ToString();
-			PlayerPrefs.SetInt("reversetimepowerupcount",mainmenu.reversetimepowerupcount);
+			PlayerPrefs.SetInt(PlayerData.ReverseTimePowerUpsKey, mainmenu.reversetimepowerupcount);
 			reversetime_static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}
 			else if(powerup=="change_question_category")
@@ -498,7 +506,7 @@ public class ButtonManager : MonoBehaviour {
 			ButtonManager.powerupselected=String.Empty;
 			mainmenu.changequestioncategorypowerupcount--;
 			changequestioncategoriestextmesh.GetComponent<TextMesh>().text=mainmenu.changequestioncategorypowerupcount.ToString();
-			PlayerPrefs.SetInt("changequestioncategorypowerupcount",mainmenu.changequestioncategorypowerupcount);
+			PlayerPrefs.SetInt(PlayerData.ChageQuestionCategoryPowerUpsKey, mainmenu.changequestioncategorypowerupcount);
 			//Change Question Cat disable
 			changequestioncategory_Static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}
@@ -656,11 +664,14 @@ public class ButtonManager : MonoBehaviour {
 	void button_okay_rewardsscreen_clicked()
 	{
 		GameObject.Destroy (levelInfo.gameObject);
+		playerDataManager.PostPlayerData();
+
 		Application.LoadLevel(0);
 	}
 
 	void reloadscene()
 	{
+		playerDataManager.PostPlayerData();
 		Application.LoadLevel(Application.loadedLevel);
 	}
 
