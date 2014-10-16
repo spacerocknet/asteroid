@@ -41,8 +41,7 @@ public class Questions : MonoBehaviour {
 	private Dictionary<CategorySelect.CategoryTypes, List<Question>> AllQuestions = new Dictionary<CategorySelect.CategoryTypes, List<Question>>();
 	private GameObject answerObjRef;
 	private GameObject questionBoxRef;
-	private GameObject indicatorBG;
-	private GameObject indicatorColor;
+	private GameObject questionTimer;
 	private Question currentQuestion;
 	private GameObject fadeBG;
 	private bool canAnswer;
@@ -79,8 +78,8 @@ public class Questions : MonoBehaviour {
 		fadeBG = (GameObject) GameObject.Find("GFX/FadeBG");
 		answerObjRef = (GameObject) GameObject.Find("REFERENCES/answer_bg");
         questionBoxRef = (GameObject) GameObject.Find("REFERENCES/question_box");
-		indicatorBG = (GameObject) GameObject.Find("indicator_bg");
-		indicatorColor = (GameObject) GameObject.Find("indicator_bg/blank_color");
+		questionTimer = GameObject.Find ("Question Timer");
+
 		BATTLE_ENGINE = (BattleEngine) GameObject.Find("MAIN").GetComponent<BattleEngine>();
 
 
@@ -182,15 +181,7 @@ public class Questions : MonoBehaviour {
 	void Start() {
 		questionStartScale = questionBoxRef.transform.localScale;
 
-		float offsetY = questionBoxRef.transform.localPosition.y + questionBoxRef.renderer.bounds.extents.y * 0.7f;
-		TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
-		tm.transform.position = new Vector3(tm.transform.position.x, offsetY, tm.transform.position.z);
 
-		offsetY = questionBoxRef.transform.localPosition.y - questionBoxRef.renderer.bounds.extents.y * 0.55f;
-		answerStartPosition = new Vector3 (-5f, offsetY, -8f);
-
-		offsetY = questionBoxRef.transform.position.y - questionBoxRef.renderer.bounds.extents.y * 1.4f;
-		indicatorPosition = new Vector3(0, offsetY, -2);
 	}
 
 	//temp
@@ -250,8 +241,15 @@ public class Questions : MonoBehaviour {
 
 	private void UpdateIndicator(float timeLapse, float duration)
 	{
-		float barXSize = (timeLapse/duration) * 8.0f;
-		indicatorColor.transform.localScale = new Vector3(8.0f-barXSize,1,1);
+		//float barXSize = (timeLapse/duration) * 8.0f;
+		//indicatorColor.transform.localScale = new Vector3(8.0f-barXSize,1,1);
+		float timeRemainingSeconds = duration - timeLapse;
+		if (timeRemainingSeconds > 0) {
+			System.DateTime dateTime = new System.DateTime ();
+			dateTime = dateTime.AddSeconds (timeRemainingSeconds);
+
+			questionTimer.GetComponent<TextMesh> ().text = "Time: " + dateTime.ToString ("ss.ff");
+		}
 	}
 
 
@@ -288,6 +286,16 @@ public class Questions : MonoBehaviour {
 				currentQuestion = gameResource.GetQuizzes (cat, 1);
 				Debug.Log ("currentQuestion: " + currentQuestion.title);
 			}
+
+			float offsetY = questionBoxRef.transform.localPosition.y + questionBoxRef.renderer.bounds.extents.y * 0.7f;
+			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
+			tm.transform.position = new Vector3(tm.transform.position.x, offsetY, tm.transform.position.z);
+			
+			offsetY = questionBoxRef.transform.localPosition.y - questionBoxRef.renderer.bounds.extents.y * 0.55f;
+			answerStartPosition = new Vector3 (-5f, offsetY, -8f);
+			
+			offsetY = questionBoxRef.transform.position.y - questionBoxRef.renderer.bounds.extents.y * 1.4f;
+			indicatorPosition = new Vector3(0, offsetY, -2);
 
 		    //yield return currentQuestion;
 		   	yield return StartCoroutine(ShowQuestionBox());
@@ -352,37 +360,6 @@ public class Questions : MonoBehaviour {
 		}
 
 		sr.color = cl;
-
-		yield return 0;
-	}
-
-	public IEnumerator ShowIndicator(bool isHide=false)
-	{
-		if(!isHide)
-		{
-			indicatorColor.transform.localScale = new Vector3(8,1,1);
-			indicatorBG.transform.position = indicatorPosition;
-			indicatorBG.transform.localScale = new Vector3(0,0.73655f,1);
-		}
-
-		for(int i=0;i<8;i++)
-		{
-			if(!isHide)
-			{
-				indicatorBG.transform.localScale += new Vector3(0.1f,0,0);
-			}
-			else
-			{
-				indicatorBG.transform.localScale -= new Vector3(0.1f,0,0);
-			}
-
-			yield return 0;
-		}
-
-		if(isHide)
-		{
-			indicatorBG.transform.position = new Vector3(-7,-3f,0);
-		}
 
 		yield return 0;
 	}
@@ -513,7 +490,6 @@ public class Questions : MonoBehaviour {
 		StartCoroutine(GetQuestionByCategory(cat));
 
 		StartCoroutine(ShowFadeBG());
-		StartCoroutine(ShowIndicator());
 		StartCoroutine(TimerForAnswer(TIME_FOR_ANSWER));
 
 		//Disable the powerup buttonss
@@ -572,7 +548,6 @@ public class Questions : MonoBehaviour {
 		canAnswer = false;
 		StartCoroutine(ShowQuestionBox(true));
 		StartCoroutine(ShowFadeBG(true));
-		StartCoroutine(ShowIndicator(true));
 
 		yield return StartCoroutine(DiscardAnswers(index));
 
