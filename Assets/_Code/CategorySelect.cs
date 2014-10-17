@@ -22,6 +22,8 @@ public class CategorySelect : MonoBehaviour {
 	public Sprite[] defaultCategorySprites;
 
 	private ScreenSizeManager screenSizeManager;
+	private LevelInfo levelInfo;
+	private Categories categories;
 
 	public enum CategoryTypes
 	{
@@ -33,6 +35,7 @@ public class CategorySelect : MonoBehaviour {
 
 	public enum ColorTypes
 	{
+		Unknown = -1,
 		Green = 0,
 		Red = 1,
 		Blue = 2
@@ -64,7 +67,7 @@ public class CategorySelect : MonoBehaviour {
 
 		private void DefineLabel(float scaleX, float scaleY)
 		{
-			TextMesh textM = (TextMesh) obj.GetComponentInChildren<TextMesh>();
+			TextMesh textM = (TextMesh)obj.transform.FindChild ("label").GetComponent<TextMesh> ();
 			textM.font=BattleEngine.font1;
 			textM.renderer.material=BattleEngine.material1[0];
 			textM.text = categoryType.ToString();
@@ -74,6 +77,11 @@ public class CategorySelect : MonoBehaviour {
 			textM.color=Color.white;
 			textM.transform.localScale = new Vector3 (1 / scaleX, 1 / scaleY, 1);
 			textM.gameObject.transform.position=new Vector3(textM.transform.position.x,0,textM.transform.position.z);
+
+			Vector3 localPostion = textM.transform.localPosition;
+        	localPostion.y = 0;
+
+			textM.gameObject.transform.localPosition = localPostion;
 
 			if(textM.text.Length>6)
 			{
@@ -129,9 +137,14 @@ public class CategorySelect : MonoBehaviour {
 		soundmanager=GameObject.Find("Secondary_SoundManager");
 
 		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
+		categories = GameObject.FindObjectOfType<Categories> ();
+
+		categories.transform.localPosition = new Vector3(0,0,-1);
+
+		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
 	}
 
-	public void PlaceCategories(int diff)
+	public void PlaceCategories(int diff, bool start)
 	{
 		foreach (Category category in currentCategories) {
 			GameObject.Destroy(category.obj);
@@ -146,17 +159,29 @@ public class CategorySelect : MonoBehaviour {
 			bitmap = bitmap >> 1;
 	
 			if (flag) {
-   			  GameObject newCatObj = (GameObject) Instantiate(catRef,new Vector3(-10,0,-1),Quaternion.identity);
-			  newCatObj.name = index.ToString();
-			  newCatObj.transform.parent = INIT.transform;
+				Sprite sprite = null;
+				ColorTypes colorType = ColorTypes.Unknown;
 
-			  currentCategories.Add(new Category(index,(CategoryTypes)i, defaultCategorySprites[index], 
-				                                   screenSizeManager.scaleX, screenSizeManager.scaleY, (ColorTypes)index,newCatObj));
-			  screenSizeManager.UpdateSpriteRenderer(newCatObj.GetComponent<SpriteRenderer>());
+				if (levelInfo.selectedNodeInfo.level == 16 && start) {
+					sprite = defaultCategorySprites[2];
+					colorType = ColorTypes.Blue;
+				}
+				else {
+					sprite = defaultCategorySprites[index];
+					colorType = (ColorTypes) index;
+				}
 
-			  canSelect = true;
-			  //StartCoroutine(PlaceCategoryToPlace(index,newCatObj));
-			  index++;
+				GameObject newCatObj = (GameObject) Instantiate(catRef);
+				newCatObj.name = index.ToString();
+				newCatObj.transform.parent = categories.transform;
+
+				currentCategories.Add(new Category(index,(CategoryTypes)i, sprite, screenSizeManager.scaleX, 
+				                                   screenSizeManager.scaleY, colorType, newCatObj));
+				screenSizeManager.UpdateSpriteRenderer(newCatObj.GetComponent<SpriteRenderer>());
+
+				canSelect = true;
+				//StartCoroutine(PlaceCategoryToPlace(index,newCatObj));
+				index++;
 			}
 		}
 	}
@@ -173,10 +198,9 @@ public class CategorySelect : MonoBehaviour {
 				Category tempcategory=currentCategories[i];
 				tempcategory.colorType=ColorTypes.Red;
 				tempcategory.colorsprite = defaultCategorySprites[1];
-				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = defaultCategorySprites[1];
-				currentCategories[i]=tempcategory;
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(defaultCategorySprites[1]);;
 
-				screenSizeManager.UpdateSpriteRenderer(tempcategory.obj.GetComponent<SpriteRenderer>());
+				currentCategories[i]=tempcategory;
 			}
 		}
 		else if(color=="blue")
@@ -186,10 +210,8 @@ public class CategorySelect : MonoBehaviour {
 				Category tempcategory=currentCategories[i];
 				tempcategory.colorType=ColorTypes.Blue;
 				tempcategory.colorsprite = defaultCategorySprites[2];
-				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = defaultCategorySprites[2];
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(defaultCategorySprites[2]);
 				currentCategories[i]=tempcategory;
-
-				screenSizeManager.UpdateSpriteRenderer(tempcategory.obj.GetComponent<SpriteRenderer>());
 			}
 		}
 		else if(color=="green")
@@ -199,10 +221,8 @@ public class CategorySelect : MonoBehaviour {
 				Category tempcategory=currentCategories[i];
 				tempcategory.colorType=ColorTypes.Green;
 				tempcategory.colorsprite = defaultCategorySprites[0];
-				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = defaultCategorySprites[0];
+				tempcategory.obj.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(defaultCategorySprites[0]);
 				currentCategories[i]=tempcategory;
-
-				screenSizeManager.UpdateSpriteRenderer(tempcategory.obj.GetComponent<SpriteRenderer>());
 			}
 		}
 	}

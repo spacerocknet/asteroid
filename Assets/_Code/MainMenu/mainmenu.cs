@@ -113,6 +113,8 @@ public class mainmenu : MonoBehaviour {
 	private Vector3 settingsMenuStartPosition;
 	private Vector3 coinsMenuStartPosition;
 	private Vector3 powerUpsStartPosition;
+
+	private TutorialManager tutorialManager;
 	
 	void Awake()
 	{
@@ -122,6 +124,8 @@ public class mainmenu : MonoBehaviour {
 
 		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
 		mainMenuManager = GameObject.FindObjectOfType<MainMenuManager> ();
+
+		tutorialManager = GameObject.FindObjectOfType<TutorialManager> ();
 	}
 
 	void Start()
@@ -167,10 +171,10 @@ public class mainmenu : MonoBehaviour {
 		totallives=PlayerPrefs.GetInt("totallives",1);
 		//totallives=PlayerPrefs.GetInt("totallives",5);
 
-		bombpowerupcount=PlayerPrefs.GetInt("bombpowerupcount",10);
-		doublebastradiuspowerupcount=PlayerPrefs.GetInt("doubleblastradiuspowerupcount",10);
-		reversetimepowerupcount=PlayerPrefs.GetInt("reversetimepowerupcount",10);
-		changequestioncategorypowerupcount=PlayerPrefs.GetInt("changequestioncategorypowerupcount",10);
+		bombpowerupcount=PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey,0);
+		doublebastradiuspowerupcount=PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey,0);
+		reversetimepowerupcount=PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey,0);
+		changequestioncategorypowerupcount=PlayerPrefs.GetInt(PlayerData.ChageQuestionCategoryPowerUpsKey,0);
 		lives_textmesh.GetComponent<TextMesh>().text=totallives.ToString();
 		
 		bombpowerup_count_cachevalue=0;
@@ -335,12 +339,16 @@ public class mainmenu : MonoBehaviour {
 						if (!levelLocked.GetComponent<LockManager>().isLocked) {
 							Debug.Log("Level " + selectedLevelNode.level + " selected.");
 
-							powerUpsStartPosition = powerups.transform.position;
-							StartCoroutine(showpowerupswindow());
-
 							levelselected = selectedLevelNode.level;
-
 							fadebg.renderer.enabled = false;
+
+							if (levelNode.level >= tutorialManager.powerUpsLevelStart) {
+								powerUpsStartPosition = powerups.transform.position;
+								StartCoroutine(showpowerupswindow());
+							}
+							else {
+								StartGameLevel();
+							}
 
 							buttonclickeffect();
 						}
@@ -508,21 +516,7 @@ public class mainmenu : MonoBehaviour {
 								PlayerPrefs.SetInt(PlayerData.ChageQuestionCategoryPowerUpsKey, changequestioncategorypowerupcount);
 								PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
 								
-								if (selectedLevelNode != null) {
-									LevelInfo levelInfo = levelNodeInfoManager.gameObject.AddComponent<LevelInfo>();
-
-									LevelNodeInfoCollection.NodeInfo nodeInfo = levelNodeInfos.GetLevelNodeInfo(
-																								selectedLevelNode.level);
-									NodeRewardInfoCollection.NodeRewardInfo nodeRewardInfo = rewardNodeInfos.GetLevelNodeRewardInfo(
-																								selectedLevelNode.level);
-
-									levelInfo.selectedNodeInfo = nodeInfo;
-									levelInfo.selectedNodeRewardInfo = nodeRewardInfo;
-
-									Application.LoadLevel("MainScene");
-
-									selectedLevelNode = null;
-								}
+								StartGameLevel();
 							}
 							else
 							{
@@ -1287,6 +1281,24 @@ public class mainmenu : MonoBehaviour {
 
 	private string EncodeURLString(string url) {
 		return WWW.EscapeURL (url).Replace ("+", "%20");
+	}
+
+	private void StartGameLevel() {
+		if (selectedLevelNode != null) {
+			LevelInfo levelInfo = levelNodeInfoManager.gameObject.AddComponent<LevelInfo>();
+			
+			LevelNodeInfoCollection.NodeInfo nodeInfo = levelNodeInfos.GetLevelNodeInfo(
+				selectedLevelNode.level);
+			NodeRewardInfoCollection.NodeRewardInfo nodeRewardInfo = rewardNodeInfos.GetLevelNodeRewardInfo(
+				selectedLevelNode.level);
+			
+			levelInfo.selectedNodeInfo = nodeInfo;
+			levelInfo.selectedNodeRewardInfo = nodeRewardInfo;
+			
+			Application.LoadLevel("MainScene");
+			
+			selectedLevelNode = null;
+		}
 	}
 }
 

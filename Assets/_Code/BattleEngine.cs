@@ -19,7 +19,7 @@ public class BattleEngine : MonoBehaviour {
 	[HideInInspector]
 	public bool canTarget;
 	private bool isMouseDown;
-	private GameObject AtkTarget;
+	public GameObject AtkTarget;
 	private AttackSystem AtkSystem;
 	private Characters character;
 	private GameObject WinLoseTextAsset;
@@ -34,6 +34,8 @@ public class BattleEngine : MonoBehaviour {
 
 	public static Font font1;
 	public static Material[] material1;
+
+	public bool FinishedRound;
 
 	//Related to sound
 	GameObject soundmanager;
@@ -83,7 +85,7 @@ public class BattleEngine : MonoBehaviour {
 		progressBarManager.StartTimer ();
 
 		//yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC()));
-		categorySelect.PlaceCategories(0);
+		categorySelect.PlaceCategories(0, true);
 		canTarget = true;
 		yield return 0; 
 	}
@@ -125,7 +127,7 @@ public class BattleEngine : MonoBehaviour {
 
 	public IEnumerator NextRound(bool isHitTarget, CategorySelect.ColorTypes currentColorType)
 	{
-
+		FinishedRound = true;
 		if(ButtonManager.powerupselected=="double_blast_radius")
 		{
 			ButtonManager.reducepowerupcount("double_blast_radius");
@@ -140,7 +142,7 @@ public class BattleEngine : MonoBehaviour {
 		Vector3 target = AtkTarget.transform.position;
 		categorySelect.targetSelect = false;
 		AtkTarget.transform.position = new Vector3(-100,0,0);
-		categorySelect.PlaceCategories(0);
+		categorySelect.PlaceCategories(0, false);
 		canTarget = true;
 		isMouseDown = false;
 

@@ -116,7 +116,13 @@
      <Compile Include="Assets\_Code\GameResource.cs" />
      <Compile Include="Assets\_Code\InitialScene\LoadStreamingAssets.cs" />
      <Compile Include="Assets\_Code\LevelManager.cs" />
+     <Compile Include="Assets\_Code\Main\Categories.cs" />
      <Compile Include="Assets\_Code\Main\ProgressBarManager.cs" />
+     <Compile Include="Assets\_Code\Main\Tutorials\TutorialBase.cs" />
+     <Compile Include="Assets\_Code\Main\Tutorials\TutorialLevel1.cs" />
+     <Compile Include="Assets\_Code\Main\Tutorials\TutorialLevel16.cs" />
+     <Compile Include="Assets\_Code\Main\Tutorials\TutorialLevel4.cs" />
+     <Compile Include="Assets\_Code\Main\Tutorials\TutorialManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\LevelOverlay.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\LockManager.cs" />
      <Compile Include="Assets\_Code\MainMenu\GUI\MainMenuManager.cs" />

@@ -224,7 +224,7 @@ public class ButtonManager : MonoBehaviour {
 					{
 					if(powerupselected!="bomb")
 						{
-							if(mainmenu.bombpowerupcount>0)
+							if(PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey)>0)
 							{
 								if(powerupselected=="double_blast_radius")
 									{
@@ -252,7 +252,7 @@ public class ButtonManager : MonoBehaviour {
 					{
 					if(powerupselected!="double_blast_radius")
 						{
-						if(mainmenu.doublebastradiuspowerupcount>0)
+						if(PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey)>0)
 							{
 							powerupselected="double_blast_radius";
 							attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
@@ -276,7 +276,7 @@ public class ButtonManager : MonoBehaviour {
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_04")
 					{
-						if(mainmenu.reversetimepowerupcount>0)
+					if(PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey)>0)
 						{
 							if(powerupselected=="double_blast_radius")
 							{
@@ -298,7 +298,7 @@ public class ButtonManager : MonoBehaviour {
 					{
 						if(powerupselected!="change_question_category")
 						{
-							if(mainmenu.changequestioncategorypowerupcount>0)
+							if(PlayerPrefs.GetInt(PlayerData.ChageQuestionCategoryPowerUpsKey)>0)
 							{
 								if(powerupselected=="double_blast_radius")
 								{
@@ -484,35 +484,44 @@ public class ButtonManager : MonoBehaviour {
 	{
 			if(powerup=="bomb")
 			{
-			mainmenu.bombpowerupcount--;
+			int bombPowerUpCount = PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey);
+			bombPowerUpCount--;
 			ButtonManager.powerupselected=String.Empty;
-			bombtextmesh.GetComponent<TextMesh>().text=mainmenu.bombpowerupcount.ToString();
-			PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, mainmenu.bombpowerupcount);
+			bombtextmesh.GetComponent<TextMesh>().text = bombPowerUpCount.ToString();
+			PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, bombPowerUpCount);
 			hitpowerup_static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}
 			else if(powerup=="double_blast_radius")
 			{
 			attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
-			mainmenu.doublebastradiuspowerupcount--;
+
+			int doubleBlastPowerUpCount = PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey);
+
+			doubleBlastPowerUpCount--;
 			ButtonManager.powerupselected=String.Empty;
-			doubleblastradiustextmesh.GetComponent<TextMesh>().text=mainmenu.doublebastradiuspowerupcount.ToString();
-			PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, mainmenu.doublebastradiuspowerupcount);
+			doubleblastradiustextmesh.GetComponent<TextMesh>().text=doubleBlastPowerUpCount.ToString();
+			PlayerPrefs.SetInt(PlayerData.DoubleBlastRadiusPowerUpsKey, doubleBlastPowerUpCount);
 			doubleblastradius_static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}
 			else if(powerup=="reverse_time")
 			{
 			ButtonManager.powerupselected=String.Empty;
-			mainmenu.reversetimepowerupcount--;
-			reversetimetextmesh.GetComponent<TextMesh>().text=mainmenu.reversetimepowerupcount.ToString();
-			PlayerPrefs.SetInt(PlayerData.ReverseTimePowerUpsKey, mainmenu.reversetimepowerupcount);
+
+			int reversTimePowerUpCount = PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey);
+
+			reversTimePowerUpCount--;
+			reversetimetextmesh.GetComponent<TextMesh>().text=reversTimePowerUpCount.ToString();
+			PlayerPrefs.SetInt(PlayerData.ReverseTimePowerUpsKey, reversTimePowerUpCount);
 			reversetime_static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}
 			else if(powerup=="change_question_category")
 			{
 			ButtonManager.powerupselected=String.Empty;
-			mainmenu.changequestioncategorypowerupcount--;
-			changequestioncategoriestextmesh.GetComponent<TextMesh>().text=mainmenu.changequestioncategorypowerupcount.ToString();
-			PlayerPrefs.SetInt(PlayerData.ChageQuestionCategoryPowerUpsKey, mainmenu.changequestioncategorypowerupcount);
+
+			int changeCatPowerUpsCount = PlayerPrefs.GetInt(PlayerData.ChageQuestionCategoryPowerUpsKey);
+			changeCatPowerUpsCount--;
+			changequestioncategoriestextmesh.GetComponent<TextMesh>().text=changeCatPowerUpsCount.ToString();
+			PlayerPrefs.SetInt(PlayerData.ChageQuestionCategoryPowerUpsKey, changeCatPowerUpsCount);
 			//Change Question Cat disable
 			changequestioncategory_Static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 			}

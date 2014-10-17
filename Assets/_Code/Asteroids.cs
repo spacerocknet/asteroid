@@ -180,7 +180,13 @@ public class Asteroids : MonoBehaviour {
 
 			float smallLifeHits = 0.75f * multiplier;
 
-			AsteroidColorTypes asteroidColor = GetAsteroidColor (allRocks);
+			AsteroidColorTypes forcedColorType = AsteroidColorTypes.Unknown;
+			if (levelInfo.selectedNodeInfo.level == 16 && index == 0) {
+				forcedColorType = AsteroidColorTypes.Red;
+				asteroid = 0;
+			}
+
+			AsteroidColorTypes asteroidColor = GetAsteroidColor (allRocks, forcedColorType);
 
 			if (asteroid < bigRocks) {
 				levelInfo.selectedNodeInfo.bigRocks--;
@@ -236,7 +242,7 @@ public class Asteroids : MonoBehaviour {
 		} 
 	}
 
-	AsteroidColorTypes GetAsteroidColor (int allRocks)
+	AsteroidColorTypes GetAsteroidColor (int allRocks, AsteroidColorTypes colorType)
 	{
 		AsteroidColorTypes asteroidColor = AsteroidColorTypes.Unknown;
 
@@ -247,6 +253,22 @@ public class Asteroids : MonoBehaviour {
 		float redPercent = levelInfo.selectedNodeInfo.redPercent;
 		float bluePercent = redPercent + levelInfo.selectedNodeInfo.bluePercent;
 		float greenPercent = bluePercent + levelInfo.selectedNodeInfo.greenPercent;
+
+		if (colorType != AsteroidColorTypes.Unknown) {
+			asteroidColor = colorType;
+
+			if (asteroidColor == AsteroidColorTypes.Red) {
+				levelInfo.selectedNodeInfo.redPercent -= basePercent;
+			}
+			else if (asteroidColor == AsteroidColorTypes.Green) {
+				levelInfo.selectedNodeInfo.bluePercent -= basePercent;
+			}
+			else {
+				levelInfo.selectedNodeInfo.greenPercent -= basePercent;
+			}
+
+			return asteroidColor;
+		}
 
 		float percent = Random.Range (0, greenPercent);
 
@@ -262,6 +284,7 @@ public class Asteroids : MonoBehaviour {
 			asteroidColor = AsteroidColorTypes.Green;
 			levelInfo.selectedNodeInfo.greenPercent -= basePercent;
 		}
+
 		return asteroidColor;
 	}
 
