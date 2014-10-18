@@ -268,6 +268,11 @@ public class BattleEngine : MonoBehaviour {
 		ulong totalXP = ulong.Parse (PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
 		XPLevelInfo currentXPLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (totalXP);
 		if (currentXPLevelInfo != null) {
+			int oldXPLevel = PlayerPrefs.GetInt(PlayerData.CurrentXPLevel, 1);
+			if (currentXPLevelInfo.level > oldXPLevel) {
+				PlayerPrefs.SetInt("totallives", 5);
+			}
+
 			PlayerPrefs.SetInt (PlayerData.CurrentXPLevel, currentXPLevelInfo.level);
 		}
 	}

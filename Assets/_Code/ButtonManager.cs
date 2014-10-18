@@ -590,7 +590,7 @@ public class ButtonManager : MonoBehaviour {
 
 		ulong currentTotalXP = ulong.Parse(PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
 		ulong cumulativeXP = currentTotalXP + (ulong) levelInfo.selectedNodeRewardInfo.xpPayout;
-		PlayerPrefs.GetString (PlayerData.TotalXPKey, cumulativeXP.ToString());
+		PlayerPrefs.SetString (PlayerData.TotalXPKey, cumulativeXP.ToString());
 
 		GameObject scoreText = rewardscreen.transform.FindChild ("score_text").gameObject;
 		scoreText.GetComponent<TextMesh> ().text = score.ToString();

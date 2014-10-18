@@ -180,8 +180,7 @@ public class Questions : MonoBehaviour {
 
 	void Start() {
 		questionStartScale = questionBoxRef.transform.localScale;
-
-
+		questionBoxRef.transform.localScale = new Vector3 (0.1f, 0.1f, 0.1f);
 	}
 
 	//temp
@@ -366,7 +365,7 @@ public class Questions : MonoBehaviour {
 	{
 		hidecharacter();
 
-		float scaleModifier = 0.333f;
+		float scaleModifier = 0.1f;
 
 		if(!isHide)
 		{
