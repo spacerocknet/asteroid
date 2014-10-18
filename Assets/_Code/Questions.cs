@@ -287,16 +287,14 @@ public class Questions : MonoBehaviour {
 				Debug.Log ("currentQuestion: " + currentQuestion.title);
 			}
 
+			float scaleY = screenSizeManager.scaleY;
 			float offsetY = questionBoxRef.transform.localPosition.y + questionBoxRef.renderer.bounds.extents.y * 0.7f;
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
 			tm.transform.position = new Vector3(tm.transform.position.x, offsetY, tm.transform.position.z);
 			
-			offsetY = questionBoxRef.transform.localPosition.y - questionBoxRef.renderer.bounds.extents.y * 0.55f;
-			answerStartPosition = new Vector3 (-5f, offsetY, -8f);
+			GameObject answersStart = GameObject.Find ("Answers Start");
+			answerStartPosition = new Vector3 (-5f, answersStart.transform.localPosition.y, -8f);
 			
-			offsetY = questionBoxRef.transform.position.y - questionBoxRef.renderer.bounds.extents.y * 1.4f;
-			indicatorPosition = new Vector3(0, offsetY, -2);
-
 		    //yield return currentQuestion;
 		   	yield return StartCoroutine(ShowQuestionBox());
 	}

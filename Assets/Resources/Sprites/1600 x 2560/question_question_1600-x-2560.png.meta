@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b9d4b2b24b79a8042a4d8e9b7d4b5532
+guid: b3ace6c2193a6e1459a5029091e3674f
 TextureImporter:
   fileIDToRecycleName: {}
   serializedVersion: 2
@@ -25,9 +25,9 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: -1
-    aniso: 1
+    aniso: -1
     mipBias: -1
-    wrapMode: 1
+    wrapMode: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -41,10 +41,6 @@ TextureImporter:
   alphaIsTransparency: 1
   textureType: 8
   buildTargetSettings:
-  - buildTarget: iPhone
-    maxTextureSize: 1024
-    textureFormat: -2
-    compressionQuality: 50
   - buildTarget: Android
     maxTextureSize: 4096
     textureFormat: -1
