@@ -73,8 +73,6 @@ public class MainMenuManager : MonoBehaviour {
 
 		currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey, 1);
 
-		currentLevel = 16;
-
 		maxPages = (int) ((float) maxLevels / (float) levelNodesPerPage);
 		pageIndex = (currentLevel - 1) / levelNodesPerPage;
 		UpdateLevelNodes(pageIndex);
