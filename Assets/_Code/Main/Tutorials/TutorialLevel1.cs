@@ -8,6 +8,7 @@ public class TutorialLevel1 : TutorialBase {
 	private Asteroids.Asteroid targetAsteroid;
 	private Categories categories;
 
+	private GameObject stage1;
 	private GameObject stage2;
 	private bool lastStage;
 
@@ -30,12 +31,12 @@ public class TutorialLevel1 : TutorialBase {
 			GameObject attackTarget = battleEngine.AtkTarget;
 
 			if (targetAsteroid == null) {
-				if (stage2 != null || !lastStage) {
+				if (stage1 == null || !lastStage) {
 					ShowStage1(asteroid);
 				}
 			}
 
-			if (targetAsteroid == null) {
+			if (targetAsteroid == null && stage2 == null) {
 				Sprite asteroidSprite = asteroid.obj.GetComponent<SpriteRenderer>().sprite;
 				if (asteroidRect.Contains(attackTarget.transform.position)) {
 					targetAsteroid = asteroid;
@@ -43,21 +44,23 @@ public class TutorialLevel1 : TutorialBase {
 
 					lastStage = true;
 
-					HideStage1 ();
+					GameObject.Destroy (stage1);
 					ShowStage2();
 				}
 			}
 
-			if (targetAsteroid != null) {
+			if (targetAsteroid != null && stage2 != null) {
 				if (!asteroidRect.Contains(attackTarget.transform.position)) {
 					targetAsteroid = null;
 					CategoriesSetActive(false);
+
+					GameObject.Destroy(stage2);
 
 					lastStage = false;
 				}
 			}
 
-			if (targetAsteroid == null && battleEngine.FinishedRound) {
+			if (stage2 != null && battleEngine.FinishedRound) {
 				End();
 			}
 		}
@@ -77,21 +80,25 @@ public class TutorialLevel1 : TutorialBase {
 		base.End ();
 
 		CategoriesSetActive (true);
-		HideStage1 ();
-		HideStage2 ();
+		GameObject.Destroy (stage1);
+		GameObject.Destroy (stage2);
 	}
 	
 	private void ShowStage1 (Asteroids.Asteroid asteroid) {
-		if (pointer == null) {
+		if (stage1 == null) {
+			stage1 = new GameObject();
+
 			Vector3 pointerOffset = new Vector3 (0, asteroid.obj.renderer.bounds.extents.y * 2f, 0);
 			Vector3 pointerPostition = asteroid.obj.transform.position - pointerOffset;
 			pointer = (GameObject)GameObject.Instantiate (pointerPrefab, pointerPostition, Quaternion.identity);
+
+			pointer.transform.parent = stage1.transform;
 
 			GameObject instruction = (GameObject)GameObject.Instantiate (instructionTextPrefab);
 			GameObject text = instruction.transform.FindChild ("Instruction Text").gameObject;
 			text.GetComponent<TextMesh> ().text = ResolveTextSize ("Select this asteroid for targeting.", 40);
 
-			instruction.transform.parent = pointer.transform;
+			instruction.transform.parent = stage1.transform;
 		}
 	}
 
@@ -99,23 +106,21 @@ public class TutorialLevel1 : TutorialBase {
 		if (stage2 == null) {
 			stage2 = new GameObject();
 
+			Categories categories = GameObject.FindObjectOfType<Categories>();
+			GameObject middleCat = categories.transform.Find("1").gameObject;
+
+			Vector3 pointerOffset = new Vector3 (0, -middleCat.renderer.bounds.extents.y * 2f, 0);
+			Vector3 pointerPostition = middleCat.transform.position - pointerOffset;
+			pointer = (GameObject)GameObject.Instantiate (pointerPrefab, pointerPostition, Quaternion.identity);
+			pointer.transform.RotateAround(pointerPostition, Vector3.forward, 180);
+
+			pointer.transform.parent = stage2.transform;
+
 			GameObject instruction = (GameObject)GameObject.Instantiate (instructionTextPrefab);
 			GameObject text = instruction.transform.FindChild ("Instruction Text").gameObject;
 			text.GetComponent<TextMesh> ().text = ResolveTextSize ("Pick a question category.", 40);
 			
 			instruction.transform.parent = stage2.transform;
-		}
-	}
-
-	private void HideStage2() {
-		if (stage2 != null) {
-			GameObject.Destroy(stage2);
-		}
-	}
-
-	private void HideStage1 () {
-		if (pointer != null) {
-			GameObject.Destroy (pointer);
 		}
 	}
 

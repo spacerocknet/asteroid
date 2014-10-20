@@ -13,13 +13,23 @@ public class AttackSystem : MonoBehaviour {
 
 	private GameObject soundmanager;
 
+	private ProgressBarManager progressBarManager;
+
 	private void Awake()
 	{
 		soundmanager=GameObject.Find("Powerup_SoundManager");
 		weapons = (Weapons) this.gameObject.AddComponent<Weapons>();
 		label_ref = (GameObject) GameObject.Find("REFERENCES/label_ref");
 		BATTLE_ENGINE = (BattleEngine) GameObject.Find("MAIN").GetComponent<BattleEngine>();
+
+		progressBarManager = GameObject.FindObjectOfType<ProgressBarManager> ();
+
 		currentWeapon = 0;
+	}
+
+	void Start() {
+		progressBarManager.UpdateProgressBar (BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone);
+		
 	}
 
 	public IEnumerator AttackTarget(Vector3 target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
@@ -70,7 +80,11 @@ public class AttackSystem : MonoBehaviour {
 		
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
-	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)		
+	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)
+			asteroidDamage = Mathf.Clamp(asteroidDamage, asteroidDamage, currentAsteroids[destroyIndex[i]].life);
+			BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone += asteroidDamage;
+			progressBarManager.UpdateProgressBar(BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone);
+
 			StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(asteroidDamage));
 			//StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(DamageCalcByColor(currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType)));
 
@@ -78,8 +92,6 @@ public class AttackSystem : MonoBehaviour {
 			{
 				Destroy(currentAsteroids[destroyIndex[i]].obj,0);
 				currentAsteroids.RemoveAt(destroyIndex[i]);
-
-				BATTLE_ENGINE.OnAsteroidDestroyed();
 
 				//New Changes ***
 				//GameObject.Find("MAIN").GetComponent<LevelManager>().StartCoroutine("UpdateLevelProgressBarForAsteroidsDestroyed");
@@ -197,5 +209,14 @@ public class AttackSystem : MonoBehaviour {
 	public void SelectWeapon(int id)
 	{
 		currentWeapon = id;
+	}
+
+	private float GetAsteroidHitPointsRemaining() {
+		float remaining = 0;
+
+		remaining += BATTLE_ENGINE.levelInfo.selectedNodeInfo.smallRocks * 0.75f * BATTLE_ENGINE.levelInfo.selectedNodeInfo.multiplier;
+		remaining += BATTLE_ENGINE.levelInfo.selectedNodeInfo.bigRocks * 1.3125f * BATTLE_ENGINE.levelInfo.selectedNodeInfo.multiplier;
+
+		return remaining;
 	}
 }

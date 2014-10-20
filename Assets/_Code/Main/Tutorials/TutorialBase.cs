@@ -6,7 +6,7 @@ public class TutorialBase : MonoBehaviour {
 	public GameObject instructionTextPrefab;
 
 	public int tutorialLevel;
-	protected bool isRunning;
+	public bool isRunning;
 
 	public virtual void Begin(int currentLevel) {
 		isRunning = true;

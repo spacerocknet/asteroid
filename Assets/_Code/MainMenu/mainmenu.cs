@@ -168,8 +168,7 @@ public class mainmenu : MonoBehaviour {
 		levelselected=0;
 		gamestate=state.mainmenu;
 		totalgold=PlayerPrefs.GetInt("totalgold",2500);
-		totallives=PlayerPrefs.GetInt("totallives",1);
-		//totallives=PlayerPrefs.GetInt("totallives",5);
+		totallives=PlayerPrefs.GetInt("totallives",5);
 
 		bombpowerupcount=PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey,0);
 		doublebastradiuspowerupcount=PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey,0);
@@ -344,6 +343,17 @@ public class mainmenu : MonoBehaviour {
 
 							if (levelNode.level >= tutorialManager.powerUpsLevelStart) {
 								powerUpsStartPosition = powerups.transform.position;
+
+								int playedLevel4 = PlayerPrefs.GetInt ("playedLevel4", 0);
+								if (levelNode.level == 4 && playedLevel4 == 0) {
+									bombpowerupcount = 2;
+									doublebastradiuspowerupcount = 2;
+									reversetimepowerupcount = 2;
+									changequestioncategorypowerupcount = 2;
+
+									PlayerPrefs.SetInt("playedlevel4", 1);
+								}
+
 								StartCoroutine(showpowerupswindow());
 							}
 							else {
@@ -907,7 +917,10 @@ public class mainmenu : MonoBehaviour {
 
 			IEnumerator showpowerupswindow()
 			{
-				
+				GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().text = bombpowerupcount.ToString();
+				GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().text = doublebastradiuspowerupcount.ToString();
+				GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().text = reversetimepowerupcount.ToString();
+				GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().text = changequestioncategorypowerupcount.ToString();
 
 				gamestate=state.powerups;
 				for(int i=0;i<20;i++)

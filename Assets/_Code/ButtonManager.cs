@@ -12,6 +12,7 @@ public class ButtonManager : MonoBehaviour {
 	//Data from the old scene
 
 	public static string powerupselected;
+	public static bool usedReversTime;
 
 	public static GameObject bombtextmesh;
 	public static GameObject doubleblastradiustextmesh;
@@ -223,60 +224,66 @@ public class ButtonManager : MonoBehaviour {
 					else if(hit.collider.gameObject.name=="button_power_up_02")
 					{
 					if(powerupselected!="bomb")
-						{
+					{
 							if(PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey)>0)
 							{
 								if(powerupselected=="double_blast_radius")
-									{
+								{
 									attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
 									double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-									}
-								powerupselected="bomb";
-								//ToggleHere	
-								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
-								soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();	
-							}
-							else
-								{
-								Debug.Log("Bomb powerup is finished");
 								}
-						}
+									powerupselected="bomb";
+									//ToggleHere
+									TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();
+									if (tutorial4 == null || !tutorial4.isRunning) {
+										hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+										soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();
+									}
+								}
+								else
+								{
+									Debug.Log("Bomb powerup is finished");
+								}
+							}
 						else
 						{
-						//This will toggle if it already selected
-						double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-						powerupselected=string.Empty;
+								//This will toggle if it already selected
+								double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+								powerupselected=string.Empty;
+							}
 						}
-					}
 					else if(hit.collider.gameObject.name=="button_power_up_03")
 					{
-					if(powerupselected!="double_blast_radius")
+						if(powerupselected!="double_blast_radius")
 						{
-						if(PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey)>0)
-							{
-							powerupselected="double_blast_radius";
-							attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
-							//ToggleHere
-							hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
-							double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-							soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();
-							}
-						else
-							{
-							Debug.Log("Double Blast radius powerup is finished");
-							}
+							if(PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey)>0)
+								{
+									powerupselected="double_blast_radius";
+									TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();
+									if (tutorial4 == null || !tutorial4.isRunning) {
+										attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+										//ToggleHere
+										hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+										double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+										soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();
+									}
+								}
+							else
+								{
+								Debug.Log("Double Blast radius powerup is finished");
+								}
 						}
-					else 
+						else 
 						{
-						//This will toggle if already selected
-						double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-						powerupselected=string.Empty;
-						attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
+							//This will toggle if already selected
+							double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+							powerupselected=string.Empty;
+							attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
 						}
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_04")
 					{
-					if(PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey)>0)
+						if(PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey)>0)
 						{
 							if(powerupselected=="double_blast_radius")
 							{
@@ -285,14 +292,18 @@ public class ButtonManager : MonoBehaviour {
 							}
 							double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							powerupselected="reverse_time";
-							soundmanager.audio.Play();
-							MAIN.GetComponent<BattleEngine>().asteroids.StartCoroutine("ReverseTimePowerUp");
-							reducepowerupcount(powerupselected);
+
+							TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();	
+							if (tutorial4 == null || !tutorial4.isRunning) {
+								soundmanager.audio.Play();
+								MAIN.GetComponent<BattleEngine>().asteroids.StartCoroutine("ReverseTimePowerUp");
+								reducepowerupcount(powerupselected);
+							}
 						}
 						else
-							{
+						{
 							Debug.Log("ReverseTimePowerUp is Finsihed");
-							}
+						}
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_05")
 					{
@@ -309,15 +320,18 @@ public class ButtonManager : MonoBehaviour {
 								character.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled=false;
 								MAIN.GetComponent<BattleEngine>().categorySelect.disablequestioncollidersandtriggers();
 								powerupselected="change_question_category";
-								fadebg.GetComponent<BoxCollider2D>().enabled=true;
-								StartCoroutine("showquestionchangecatwindow");
-								fadebgcolor=fadebg.GetComponent<SpriteRenderer>().color;
-								fadebgcolor.a=1;
-								fadebg.GetComponent<SpriteRenderer>().color=fadebgcolor;
-								//state=gamestate.changequestioncategory;
-								double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-								double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+
+								TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();
+								if (tutorial4 == null || !tutorial4.isRunning) {
+									fadebg.GetComponent<BoxCollider2D>().enabled=true;
+									fadebgcolor=fadebg.GetComponent<SpriteRenderer>().color;
+									fadebgcolor.a=1;
+									fadebg.GetComponent<SpriteRenderer>().color=fadebgcolor;
+									//state=gamestate.changequestioncategory;
+									double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+									double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+								}
 							}
 							else
 							{
@@ -505,7 +519,7 @@ public class ButtonManager : MonoBehaviour {
 			}
 			else if(powerup=="reverse_time")
 			{
-			ButtonManager.powerupselected=String.Empty;
+
 
 			int reversTimePowerUpCount = PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey);
 
@@ -513,6 +527,7 @@ public class ButtonManager : MonoBehaviour {
 			reversetimetextmesh.GetComponent<TextMesh>().text=reversTimePowerUpCount.ToString();
 			PlayerPrefs.SetInt(PlayerData.ReverseTimePowerUpsKey, reversTimePowerUpCount);
 			reversetime_static_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+			ButtonManager.powerupselected=String.Empty;
 			}
 			else if(powerup=="change_question_category")
 			{

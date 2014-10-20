@@ -16,6 +16,12 @@ public class TutorialLevel4 : TutorialBase {
 
 	private bool started;
 
+	private bool doneStage1;
+	private bool doneStage2;
+	private bool doneStage3;
+	private bool doneStage4;
+	private bool doneStage5;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -24,71 +30,64 @@ public class TutorialLevel4 : TutorialBase {
 	// Update is called once per frame
 	void Update () {
 		if (isRunning) {
-			if (stage1 == null && !started) {
+			if (stage1 == null && !doneStage1) {
 				StartStage1();
-
-				started = true;
 			}
 
-			int bombPowerUpCount = PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey);
-			if (stage1 != null && bombPowerUpCount <= 0) {
+			if (stage1 != null) {
 				if (Input.GetMouseButtonDown(0)) {
-					PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, 2);
 					GameObject.Destroy(stage1);
+
+					doneStage1 = true;
 				}
 			}
 
-			if (stage2 == null) {
-				if (bombPowerUpCount >= 2) {
-					StartStage2();
-				}
+			if (stage2 == null && doneStage1 && !doneStage2) {
+				StartStage2();
 			}
 
 			if (stage2 != null) {
-				if (bombPowerUpCount < 2) {
-					PlayerPrefs.SetInt(PlayerData.DoubleBlastRadiusPowerUpsKey, 2);
+				if (ButtonManager.powerupselected == "bomb") {
 					GameObject.DestroyObject(stage2);
+
+					doneStage2 = true;
 				}
 			}
 
-			int doubleRadiusPowerUpCount = PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey);
-			if (stage3 == null) {
-				if (doubleRadiusPowerUpCount >= 2) {
-					StartStage3();
-				}
+			if (stage3 == null && doneStage2 && !doneStage3) {
+				StartStage3();
 			}
 
 			if (stage3 != null) {
-				if (doubleRadiusPowerUpCount < 2) {
-					PlayerPrefs.SetInt(PlayerData.ReverseTimePowerUpsKey, 2);
+				if (ButtonManager.powerupselected == "double_blast_radius") {
 					GameObject.Destroy(stage3);
+
+					doneStage3 = true;
 				}
 			}
 
-			int reverseTimePowerUpCount = PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey);
-			if (stage4 == null) {
-				if (reverseTimePowerUpCount >= 2) {
-					StartStage4();
-				}
+			if (stage4 == null && doneStage3 && !doneStage4) {
+				StartStage4();
 			}
 
 			if (stage4 != null) {
-				if (reverseTimePowerUpCount < 2) {
-					PlayerPrefs.SetInt(PlayerData.ChageQuestionCategoryPowerUpsKey, 2);
+				if (ButtonManager.powerupselected == "reverse_time" || ButtonManager.usedReversTime) {
 					GameObject.Destroy(stage4);
+
+					doneStage4 = true;
 				}
 			}
 
-			int changeCategoryPowerUpCount = PlayerPrefs.GetInt(PlayerData.ChageQuestionCategoryPowerUpsKey);
-			if (stage5 == null) {
-				if (changeCategoryPowerUpCount >= 2) {
-					StartStage5();
-				}
+			if (stage5 == null && doneStage4 && !doneStage5) {
+				StartStage5();
 			}
 
 			if (stage5 != null) {
-				if (changeCategoryPowerUpCount < 2) {
+				if (ButtonManager.powerupselected == "change_question_category") {
 					GameObject.Destroy(stage5);
+
+					doneStage5 = true;
+					ButtonManager.powerupselected = "";
 
 					End();
 				}
@@ -110,11 +109,6 @@ public class TutorialLevel4 : TutorialBase {
 		doubleBlastRadiusPowerUps.SetActive (false);
 		reverseTimePowerUps.SetActive (false);
 		changeCategoryPowerUps.SetActive (false);
-
-		PlayerPrefs.SetInt (PlayerData.BombPowerUpsKey, 0);
-		PlayerPrefs.SetInt (PlayerData.DoubleBlastRadiusPowerUpsKey, 0);
-		PlayerPrefs.SetInt (PlayerData.ReverseTimePowerUpsKey, 0);
-		PlayerPrefs.SetInt (PlayerData.ChageQuestionCategoryPowerUpsKey, 0);
 	}
 
 	public override void End () {

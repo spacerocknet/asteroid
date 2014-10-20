@@ -58,7 +58,7 @@ public class TutorialLevel16 : TutorialBase {
 	private void StartStage1(Asteroids.Asteroid bigRedAsteroid) {
 		stage1 = new GameObject ();
 
-		Vector3 pointerOffset = new Vector3 (0, bigRedAsteroid.obj.renderer.bounds.extents.y * 2f, 0);
+		Vector3 pointerOffset = new Vector3 (0, bigRedAsteroid.obj.renderer.bounds.extents.y * 1.6f, 0);
 		Vector3 pointerPostition = bigRedAsteroid.obj.transform.position - pointerOffset;
 		GameObject pointer = (GameObject)GameObject.Instantiate (pointerPrefab, pointerPostition, Quaternion.identity);
 		

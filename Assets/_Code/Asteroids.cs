@@ -53,11 +53,6 @@ public class Asteroids : MonoBehaviour {
 
 		public IEnumerator DoDamage(float hitPoints)
 		{
-			if(life<hitPoints)
-			{
-				hitPoints = life;
-			}
-
 			life -= hitPoints;
 			UpdateDebugText ();
 
@@ -173,7 +168,7 @@ public class Asteroids : MonoBehaviour {
 			int smallRocks = levelInfo.selectedNodeInfo.smallRocks;
 			int allRocks = bigRocks + smallRocks;
 
-			int asteroid = Random.Range(0, allRocks);
+			int asteroid = Random.Range(1, allRocks);
 
 			int multiplier = levelInfo.selectedNodeInfo.multiplier;
 			float lifeHits = 0;
@@ -188,13 +183,13 @@ public class Asteroids : MonoBehaviour {
 
 			AsteroidColorTypes asteroidColor = GetAsteroidColor (allRocks, forcedColorType);
 
-			if (asteroid < bigRocks) {
+			if (asteroid <= bigRocks) {
 				levelInfo.selectedNodeInfo.bigRocks--;
 				lifeHits = 1.3125f * multiplier;
 
 				SpawnAsteroid(lifeHits, bigAsteroidScale, asteroidColor, smallLifeHits);
 			}
-			else if (asteroid >= bigRocks && asteroid <= allRocks) {
+			else if (asteroid > bigRocks && asteroid <= allRocks) {
 				levelInfo.selectedNodeInfo.smallRocks--;
 				lifeHits = smallLifeHits;
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -55,6 +55,7 @@ public class Questions : MonoBehaviour {
 
 	private Vector3 questionStartScale;
 	private Vector3 answerStartPosition;
+	private Bounds questionBoxBounds;
 
 	private Vector3 indicatorPosition;
 
@@ -68,6 +69,8 @@ public class Questions : MonoBehaviour {
 
 
 	private GameObject soundmanager;
+	private int startQuestionFontSize;
+	private int startTimerFontSize;
 
 	private ScreenSizeManager screenSizeManager;
 
@@ -180,7 +183,15 @@ public class Questions : MonoBehaviour {
 
 	void Start() {
 		questionStartScale = questionBoxRef.transform.localScale;
-		questionBoxRef.transform.localScale = new Vector3 (0.1f, 0.1f, 0.1f);
+		questionBoxBounds = questionBoxRef.renderer.bounds;
+		questionBoxRef.transform.localScale = new Vector3 (0.0f, 0.0f, 1);
+		questionBoxRef.transform.position = new Vector3(0f,0f,questionBoxRef.transform.position.z);
+
+		startQuestionFontSize = questionBoxRef.GetComponentInChildren<TextMesh> ().fontSize;
+
+		startTimerFontSize = questionTimer.GetComponent<TextMesh>().fontSize;
+		questionTimer.GetComponent<TextMesh> ().fontSize = startTimerFontSize * (int) (1 / screenSizeManager.scaleX);
+		questionTimer.GetComponent<TextMesh> ().text = "Time: " + new System.DateTime().ToString ("ss.ff");
 	}
 
 	//temp
@@ -286,14 +297,24 @@ public class Questions : MonoBehaviour {
 				Debug.Log ("currentQuestion: " + currentQuestion.title);
 			}
 
+			questionBoxRef.transform.position = new Vector3(0f,0f,questionBoxRef.transform.position.z);
+
 			float scaleY = screenSizeManager.scaleY;
-			float offsetY = questionBoxRef.transform.localPosition.y + questionBoxRef.renderer.bounds.extents.y * 0.7f;
+			float scaleX = screenSizeManager.scaleX;
+			float offsetY = questionBoxRef.transform.position.y + questionBoxBounds.extents.y * 0.65f / scaleY;
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
-			tm.transform.position = new Vector3(tm.transform.position.x, offsetY, tm.transform.position.z);
-			
+			tm.transform.localPosition = new Vector3(tm.transform.localPosition.x, offsetY, tm.transform.localPosition.z);
+			int fontSize = scaleY < 1 ? startQuestionFontSize * (int) (1 / scaleY) : startQuestionFontSize;	
+			tm.fontSize = fontSize;
+
 			GameObject answersStart = GameObject.Find ("Answers Start");
-			answerStartPosition = new Vector3 (-5f, answersStart.transform.localPosition.y, -8f);
-			
+			offsetY = questionBoxRef.transform.position.y + questionBoxBounds.extents.y * 0.065f / scaleY;
+			answerStartPosition = new Vector3 (-5f, offsetY, -8f);
+
+			offsetY = questionBoxRef.transform.position.y - questionBoxBounds.extents.y * 0.785f / scaleY;
+			float offsetX = questionBoxRef.transform.position.x - 0.8f / scaleX;
+			questionTimer.transform.localPosition = new Vector3 (offsetX, offsetY, questionTimer.transform.localPosition.z);
+				
 		    //yield return currentQuestion;
 		   	yield return StartCoroutine(ShowQuestionBox());
 	}
@@ -369,12 +390,13 @@ public class Questions : MonoBehaviour {
 
 		if(!isHide)
 		{
+			questionBoxRef.transform.position = new Vector3(0f,0f, -8); 
+
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
 			//tm.fontSize = 13;
 			tm.text = ResolveTextSize(currentQuestion.title, maxWordsPerLine) + '?';
 			
 			//Debug.Log(tm.text);
-			questionBoxRef.transform.position = new Vector3(0f,0f,-8f); // Changed The Value To ,x.Zero, Y.Zero to center The Question Box in The screen  
 
 			while (questionBoxRef.transform.localScale.x < questionStartScale.x) {
 				questionBoxRef.transform.localScale += new Vector3(scaleModifier, scaleModifier, 0);

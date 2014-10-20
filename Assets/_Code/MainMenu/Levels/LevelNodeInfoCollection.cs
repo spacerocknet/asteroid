@@ -75,5 +75,7 @@ public class LevelNodeInfoCollection : MonoBehaviour {
 		public float redPercent;
 		public float greenPercent;
 		public float totalPercent;
+
+		public float hitPointsDone;
 	}
 }

@@ -42,7 +42,7 @@ public class BattleEngine : MonoBehaviour {
 
 	public GameObject buttonmanager;
 
-	private LevelInfo levelInfo;
+	public LevelInfo levelInfo;
 
 	private XPLevelInfoCollection xpLevelInfoCollection;
 
@@ -81,7 +81,7 @@ public class BattleEngine : MonoBehaviour {
 		int spawnCount = Random.Range (2, 4);
 		yield return StartCoroutine(asteroids.SpawnAsteroids(spawnCount));
 		
-		progressBarManager.UpdateProgressBar (0);
+
 		progressBarManager.StartTimer ();
 
 		//yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC()));
@@ -104,15 +104,12 @@ public class BattleEngine : MonoBehaviour {
 			                                      levels, color));
 
 			StartCoroutine(NextRound(true,color));
-		}
 
-		if (Input.GetKeyDown(KeyCode.M)) {
-			int totalRocks = levelInfo.selectedNodeInfo.totalRocks;
-			if(asteroids.asteroidsDestroyed >= totalRocks)
+			if(levelInfo.selectedNodeInfo.hitPointsDone >= progressBarManager.totalLevelAsteroidHitPoints)
 			{
 				progressBarManager.StopTimer();
 				WinBattle(progressBarManager.GetCompletionTimeSeconds());
-
+				
 				UpdateXPLevel();
 			}
 		}
@@ -164,7 +161,7 @@ public class BattleEngine : MonoBehaviour {
 
 		//New Changes ***
 		//if(isLevelProgressFull)
-		if(asteroids.asteroidsDestroyed >= totalRocks)
+		if(levelInfo.selectedNodeInfo.hitPointsDone >= progressBarManager.totalLevelAsteroidHitPoints)
 		{
 			progressBarManager.StopTimer();
 			WinBattle(progressBarManager.GetCompletionTimeSeconds());
@@ -204,11 +201,6 @@ public class BattleEngine : MonoBehaviour {
 		yield return 0;
 	}
 
-	public void OnAsteroidDestroyed() {
-		asteroids.asteroidsDestroyed++;
-		progressBarManager.UpdateProgressBar (asteroids.asteroidsDestroyed);
-	}
-
 	private void WinBattle(int score)
 	{
 		isEndGame = true;
@@ -233,10 +225,12 @@ public class BattleEngine : MonoBehaviour {
 	private void LoseBattle()
 	{
 		isgamewon=false;
-		if(mainmenu.totallives!=0)
+		if(mainmenu.totallives > 0)
 		{
-		mainmenu.totallives--;
+			mainmenu.totallives--;
 		}
+
+		StartCoroutine(categorySelect.HideCategories());
 
 		soundmanager.GetComponent<SoundManager>().mutemaintheme_sound();
 
@@ -246,7 +240,7 @@ public class BattleEngine : MonoBehaviour {
 		ButtonManager.gameover=true;
 		isEndGame = true;
 		StartCoroutine(categorySelect.QE.ShowFadeBG(false,true));
-		StartCoroutine(categorySelect.HideCategories());
+
 		StartCoroutine(soundmanager.GetComponent<SoundManager>().lostbattle_soundplay());
 		StartCoroutine(ShowEndBattleText("YOU LOSE!",false));
 

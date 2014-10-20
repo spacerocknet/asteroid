@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class MainMenuManager : MonoBehaviour {
 	public GameObject currentLevelOverlay;
 
+	public Sprite background1;
+	public Sprite background2;
+
 	public Vector3 pageAnimationSpeed;
 	public Vector3 pageScrollSpeed;
 	public float dragSpeedModifier;
@@ -20,6 +23,10 @@ public class MainMenuManager : MonoBehaviour {
 
 	public int[] fontSizes;
 	public Vector3[] textMeshOffsets;
+
+	private GameObject sub1Background;
+	private GameObject mainBackground;
+	private GameObject sub2Background;
 
 	private GameObject subPage1Nodes;
 	private GameObject mainPageNodes;
@@ -57,13 +64,13 @@ public class MainMenuManager : MonoBehaviour {
 		float scaleX = screenSizeManager.scaleX;
 		float scaleY = screenSizeManager.scaleY;
 
-		GameObject mainBackground = mainMenu.transform.FindChild ("Background").gameObject;
+		mainBackground = mainMenu.transform.FindChild ("Background").gameObject;
 		mainButtons = mainMenu.transform.FindChild ("Buttons").gameObject;
 
-		GameObject sub1Background = subPage1.transform.FindChild ("Background").gameObject;
+		sub1Background = subPage1.transform.FindChild ("Background").gameObject;
 		subButtons1 = subPage1.transform.FindChild ("Buttons").gameObject;
 
-		GameObject sub2Background = subPage2.transform.FindChild ("Background").gameObject;
+		sub2Background = subPage2.transform.FindChild ("Background").gameObject;
 		subButtons2 = subPage2.transform.FindChild ("Buttons").gameObject;
 
 		Bounds spriteBounds = mainBackground.GetComponent<SpriteRenderer>().sprite.bounds;
@@ -166,11 +173,32 @@ public class MainMenuManager : MonoBehaviour {
 		// sub menu page 1
 		UpdatePageLevelNodes (subButtons1, 1);
 
+		if (mainMenuPage % 2 == 0) {
+			sub1Background.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(background2);
+		}
+		else {
+			sub1Background.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(background1);
+		}
+
 		// main menu page
 		UpdatePageLevelNodes (mainButtons, 0);
 
+		if (mainMenuPage % 2 == 0) {
+			mainBackground.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(background1);
+		}
+		else {
+			mainBackground.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(background2);
+		}
+
 		// sub menu page 2
 		UpdatePageLevelNodes (subButtons2, -1);
+
+		if (mainMenuPage % 2 == 0) {
+			sub2Background.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(background2);
+		}
+		else {
+			sub2Background.GetComponent<SpriteRenderer>().sprite = screenSizeManager.GetSpriteSize(background1);
+		}
 
 		UpdateNodeConnectorCurves ();
 	}
@@ -179,14 +207,14 @@ public class MainMenuManager : MonoBehaviour {
 		string curve8Name = "curveline_8_9";
 		
 		//GameObject curvesRoot = subPage1.transform.FindChild ("Curves").gameObject;
-		GameObject level8CurveSub1 = subButtons1.transform.FindChild (curve8Name).gameObject;
+		GameObject level8CurveSub1 = subButtons1.transform.FindChild("Curves").FindChild (curve8Name).gameObject;
 		
 		//curvesRoot = mainMenu.transform.FindChild ("Curves").gameObject;
-		GameObject level8CurveMain = mainButtons.transform.FindChild (curve8Name).gameObject;
+		GameObject level8CurveMain = mainButtons.transform.FindChild("Curves").FindChild (curve8Name).gameObject;
 
 		//curvesRoot = subPage2.transform.FindChild ("Curves").gameObject;
-		GameObject level8CurveSub2 = subButtons2.transform.FindChild (curve8Name).gameObject;
-		GameObject level8CurveSub2a = subButtons2.transform.FindChild (curve8Name + "a").gameObject;
+		GameObject level8CurveSub2 = subButtons2.transform.FindChild("Curves").FindChild (curve8Name).gameObject;
+		GameObject level8CurveSub2a = subButtons2.transform.FindChild("Curves").FindChild (curve8Name + "a").gameObject;
 		if (pageIndex <= 0) {
 			level8CurveSub2.SetActive(false);
 		}
