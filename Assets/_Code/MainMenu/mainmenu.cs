@@ -31,11 +31,10 @@ public class mainmenu : MonoBehaviour {
 
 	//Related to life time management
 	public GameObject newlifetimer;
-	public GameObject newlifetimer2;
 	public static bool timerstarted;
-	public static int totaltimefornewlife=1800;
+	public static int totaltimefornewlife=10;
 	public int totaltimrfornewlife_onresume;
-	public static float cachetotaltimefornewlife=1800;
+	public static float cachetotaltimefornewlife=10;
 	public static TimeSpan ts;
 	public static int totallives;
 
@@ -115,6 +114,11 @@ public class mainmenu : MonoBehaviour {
 	private Vector3 powerUpsStartPosition;
 
 	private TutorialManager tutorialManager;
+
+	private int bombCacheStartCount;
+	private int doubleRadiusCacheStartCount;
+	private int reverseTimeCacheCount;
+	private int changeCategoryCacheCount;
 	
 	void Awake()
 	{
@@ -167,7 +171,9 @@ public class mainmenu : MonoBehaviour {
 		fromwhere=0;
 		levelselected=0;
 		gamestate=state.mainmenu;
-		totalgold=PlayerPrefs.GetInt("totalgold",2500);
+
+		totalgold=PlayerPrefs.GetInt("totalgold", 0);
+
 		totallives=PlayerPrefs.GetInt("totallives",5);
 
 		bombpowerupcount=PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey,0);
@@ -175,6 +181,11 @@ public class mainmenu : MonoBehaviour {
 		reversetimepowerupcount=PlayerPrefs.GetInt(PlayerData.ReverseTimePowerUpsKey,0);
 		changequestioncategorypowerupcount=PlayerPrefs.GetInt(PlayerData.ChageQuestionCategoryPowerUpsKey,0);
 		lives_textmesh.GetComponent<TextMesh>().text=totallives.ToString();
+
+		bombCacheStartCount = bombpowerupcount;
+		doubleRadiusCacheStartCount = doublebastradiuspowerupcount;
+		reverseTimeCacheCount = reversetimepowerupcount;
+		changeCategoryCacheCount = changequestioncategorypowerupcount;
 		
 		bombpowerup_count_cachevalue=0;
 		doubleblastradiuspowerupcount_cachevalue=0;
@@ -289,7 +300,6 @@ public class mainmenu : MonoBehaviour {
 			cachetotaltimefornewlife -=Time.deltaTime;
 			ts=TimeSpan.FromSeconds(cachetotaltimefornewlife);
 			newlifetimer.GetComponent<TextMesh>().text=ts.ToString().Substring(3,5);
-			newlifetimer2.GetComponent<TextMesh>().text=ts.ToString().Substring(3,5);
 			Invoke("calculateminutesandseconds",0.2f);
 		}
 			
@@ -310,8 +320,7 @@ public class mainmenu : MonoBehaviour {
 				else
 				{
 					managetimerfornewlife(false);
-					newlifetimer.GetComponent<MeshRenderer>().enabled=false;
-					newlifetimer2.GetComponent<MeshRenderer>().enabled=false;
+					newlifetimer.GetComponent<TextMesh>().text = "Full";
 				}
 			}
 			resettimerfornewlife();
@@ -345,13 +354,15 @@ public class mainmenu : MonoBehaviour {
 								powerUpsStartPosition = powerups.transform.position;
 
 								int playedLevel4 = PlayerPrefs.GetInt ("playedLevel4", 0);
-								if (levelNode.level == 4 && playedLevel4 == 0) {
-									bombpowerupcount = 2;
-									doublebastradiuspowerupcount = 2;
-									reversetimepowerupcount = 2;
-									changequestioncategorypowerupcount = 2;
 
-									PlayerPrefs.SetInt("playedlevel4", 1);
+								if (levelNode.level == 4) {
+									if (playedLevel4 == 0) {
+										tutorialManager.StartTutorial(4);
+										bombpowerupcount = 2;
+										doublebastradiuspowerupcount = 2;
+										reversetimepowerupcount = 2;
+										changequestioncategorypowerupcount = 2;
+									}
 								}
 
 								StartCoroutine(showpowerupswindow());
@@ -406,7 +417,7 @@ public class mainmenu : MonoBehaviour {
 				        else if(hit.collider.gameObject.name=="coins_bar_empty")
 				        {
 					       fadebg.renderer.enabled=false;
-					       StartCoroutine("showcoinstore");
+					       StartCoroutine(showcoinstore());
 					       buttonclickeffect();
 				        }
 						else if(hit.collider.gameObject.name=="lives_bar_empty")
@@ -508,6 +519,13 @@ public class mainmenu : MonoBehaviour {
 							updatetotalgoldmesh();
 							fadebg.renderer.enabled=false;
 
+							if (selectedLevelNode.level == 4) {
+								TutorialLevel4 tutorialLevel4 = GameObject.FindObjectOfType<TutorialLevel4>();
+								if (tutorialLevel4 != null) {
+									tutorialLevel4.End();
+								}
+							}
+
 							selectedLevelNode = null;
 						}
 						else if(hit.collider.gameObject.name=="button_play")
@@ -515,18 +533,16 @@ public class mainmenu : MonoBehaviour {
 							buttonclickeffect();
 							if(totallives != 0)
 							{
-								gamestate=state.mainmenu;
-								bombpowerupcount += bombpowerup_count_cachevalue;
-								doublebastradiuspowerupcount += doubleblastradiuspowerupcount_cachevalue;
-								reversetimepowerupcount +=reversetimepowerupcount_cachevalue;
-								changequestioncategorypowerupcount +=changequestioncategorypowercount_cachevalue;
-								PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, bombpowerupcount);
-								PlayerPrefs.SetInt(PlayerData.DoubleBlastRadiusPowerUpsKey, doublebastradiuspowerupcount);
-								PlayerPrefs.SetInt(PlayerData.ReverseTimePowerUpsKey, reversetimepowerupcount);
-								PlayerPrefs.SetInt(PlayerData.ChageQuestionCategoryPowerUpsKey, changequestioncategorypowerupcount);
-								PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
-								
-								StartGameLevel();
+								if (selectedLevelNode.level == 4) {
+									TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();
+									if (tutorial4 != null && !tutorial4.isRunning) {
+										PlayerPrefs.SetInt("playedLevel4", 1);
+										StartGameLevel();
+									}
+								}
+								else {
+									StartGameLevel();
+								}
 							}
 							else
 							{
@@ -534,16 +550,18 @@ public class mainmenu : MonoBehaviour {
 							fromwhere=2;
 							StartCoroutine("buymorelives");
 							}
-					}
+						}
 						else if(hit.collider.gameObject.name=="button_plus_bomb")
 						{
-								if(totalgold>=250)
+								if(totalgold >= 250)
 								{
-								bombpowerup_count_cachevalue++;
-								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().text=bombpowerup_count_cachevalue.ToString();
-								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().color = Color.green;
-								totalgold -=250;
-								updatetotalgoldmesh();
+									bombpowerup_count_cachevalue++;
+									int totalPowerUps = bombpowerupcount + bombpowerup_count_cachevalue;
+									GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().text=totalPowerUps.ToString();
+									GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().color = Color.green;			
+
+									totalgold -= 250;
+									updatetotalgoldmesh();
 								}
 								else
 								{
@@ -554,13 +572,15 @@ public class mainmenu : MonoBehaviour {
 						else if(hit.collider.gameObject.name=="button_plus_doubleblast")
 						{
 							buttonclickeffect();
-							if(totalgold>=250)
+							if(totalgold >= 250)
 							{
-							doubleblastradiuspowerupcount_cachevalue++;
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().text=doubleblastradiuspowerupcount_cachevalue.ToString();
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().color = Color.green;
-							totalgold -=250;
-							updatetotalgoldmesh();
+								doubleblastradiuspowerupcount_cachevalue++;
+								int totalPowerUps = doublebastradiuspowerupcount + doubleblastradiuspowerupcount_cachevalue;
+
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().text=totalPowerUps.ToString();
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().color = Color.green;
+								totalgold -= 250;
+								updatetotalgoldmesh();
 							}
 							else
 							{
@@ -570,13 +590,15 @@ public class mainmenu : MonoBehaviour {
 						}
 						else if(hit.collider.gameObject.name=="button_plus_reversetime")
 						{
-							if(totalgold>=250)
+							if(totalgold >= 250)
 							{
-							reversetimepowerupcount_cachevalue++;
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().text=reversetimepowerupcount_cachevalue.ToString();
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().color = Color.green;
-							totalgold -=250;
-							updatetotalgoldmesh();
+								reversetimepowerupcount_cachevalue++;
+								int totalPowerUps = reversetimepowerupcount + reversetimepowerupcount_cachevalue;
+
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().text=totalPowerUps.ToString();
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().color = Color.green;
+								totalgold -= 250;
+								updatetotalgoldmesh();
 							}
 							else
 							{
@@ -586,13 +608,15 @@ public class mainmenu : MonoBehaviour {
 						}
 						else if(hit.collider.gameObject.name=="button_plus_changequestioncategory")
 						{
-							if(totalgold>=250)
+							if(totalgold >= 250)
 							{
-							changequestioncategorypowercount_cachevalue++;
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().text=changequestioncategorypowercount_cachevalue.ToString();
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().color = Color.green;
-							totalgold -=250;
-							updatetotalgoldmesh();
+								changequestioncategorypowercount_cachevalue++;
+								int totalPowerUps = changequestioncategorypowerupcount + changequestioncategorypowercount_cachevalue;
+								
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().text=totalPowerUps.ToString();
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().color = Color.green;
+								totalgold -= 250;
+								updatetotalgoldmesh();
 							}
 							else
 							{	
@@ -604,52 +628,81 @@ public class mainmenu : MonoBehaviour {
 						//Minus values
 						else if(hit.collider.gameObject.name=="button_minus_bomb")
 						{
-							if(bombpowerup_count_cachevalue!=0)
+							if(bombpowerup_count_cachevalue != 0)
 							{
-							bombpowerup_count_cachevalue--;
-							totalgold+=250;
-							updatetotalgoldmesh();
-							}
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().text=bombpowerup_count_cachevalue.ToString();
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().color = Color.white;
+								bombpowerup_count_cachevalue--;
+								totalgold += 250;
+								updatetotalgoldmesh();
+
+								int totalPowerUps = bombpowerupcount + bombpowerup_count_cachevalue;
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().text=totalPowerUps.ToString();
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().color = Color.green;
+
+								if (bombpowerup_count_cachevalue == 0) {
+									GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[0].GetComponent<TextMesh>().color = Color.white;
+								}
+							}	
+
 							buttonclickeffect();
 						}
 						else if(hit.collider.gameObject.name=="button_minus_doubleblast")
 						{
 							if(doubleblastradiuspowerupcount_cachevalue!=0)
 							{
-							doubleblastradiuspowerupcount_cachevalue--;
-							totalgold+=250;
-							updatetotalgoldmesh();
+								doubleblastradiuspowerupcount_cachevalue--;
+								totalgold += 250;
+								updatetotalgoldmesh();
+
+								int totalPowerUps = doublebastradiuspowerupcount + doubleblastradiuspowerupcount_cachevalue;
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().text=totalPowerUps.ToString();
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().color = Color.green;
+								
+								if (doubleblastradiuspowerupcount_cachevalue == 0) {
+									GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().color = Color.white;
+								}
 							}
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().text=doubleblastradiuspowerupcount_cachevalue.ToString();
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[1].GetComponent<TextMesh>().color = Color.white;
+				
 							buttonclickeffect();
 						}
 
 						else if(hit.collider.gameObject.name=="button_minus_reversetime")
 						{
-							if(reversetimepowerupcount_cachevalue!=0)
+							if(reversetimepowerupcount_cachevalue != 0)
 							{
-							reversetimepowerupcount_cachevalue--;
-							totalgold+=250;
-							updatetotalgoldmesh();
+								reversetimepowerupcount_cachevalue--;
+								totalgold += 250;
+								updatetotalgoldmesh();
+
+								int totalPowerUps = reversetimepowerupcount + reversetimepowerupcount_cachevalue;
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().text=totalPowerUps.ToString();
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().color = Color.green;
+
+								if (reversetimepowerupcount_cachevalue == 0) {
+									GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().color = Color.white;
+								}
 							}
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().text=reversetimepowerupcount_cachevalue.ToString();
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[2].GetComponent<TextMesh>().color = Color.white;
+
 							buttonclickeffect();		
 						}
 
 						else if(hit.collider.gameObject.name=="button_minus_changequestioncategory")
 						{
-							if(changequestioncategorypowercount_cachevalue!=0)
-							{
-							changequestioncategorypowercount_cachevalue--;
-							totalgold+=250;
-							updatetotalgoldmesh();
-							}
-							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().text=changequestioncategorypowercount_cachevalue.ToString();
 							GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().color = Color.white;
+							if(changequestioncategorypowercount_cachevalue != 0)
+							{
+								changequestioncategorypowercount_cachevalue--;
+								totalgold += 250;
+								updatetotalgoldmesh();
+
+								int totalPowerUps = changequestioncategorypowerupcount + changequestioncategorypowercount_cachevalue;
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().text = totalPowerUps.ToString();
+								GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().color = Color.green;
+
+								if (changequestioncategorypowercount_cachevalue == 0) {
+									GameObject.Find("Main Camera").GetComponent<sortlayerforpoweruptextmesh>().textmeshes[3].GetComponent<TextMesh>().color = Color.white;
+								}
+							}
+							
 							buttonclickeffect();
 						}
 					}
@@ -865,7 +918,7 @@ public class mainmenu : MonoBehaviour {
 				{
 					Vector3 oldposition=coinstore.transform.position;
 					float newposition=Mathf.Lerp(oldposition.x, 0.0f, 0.25f);
-					coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,0f);
+					coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,-8f);
 					yield return null;
 				}
 
@@ -879,7 +932,7 @@ public class mainmenu : MonoBehaviour {
 				{
 				Vector3 oldposition=coinstore.transform.position;
 				float newposition=Mathf.Lerp(oldposition.x,coinsMenuStartPosition.x, 0.25f);
-				coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,0f);
+				coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,-8f);
 				yield return null;
 				}
 			yield return new WaitForEndOfFrame();
@@ -1298,6 +1351,17 @@ public class mainmenu : MonoBehaviour {
 
 	private void StartGameLevel() {
 		if (selectedLevelNode != null) {
+
+			gamestate=state.mainmenu;
+			bombpowerupcount += bombpowerup_count_cachevalue;
+			doublebastradiuspowerupcount += doubleblastradiuspowerupcount_cachevalue;
+			reversetimepowerupcount +=reversetimepowerupcount_cachevalue;
+			changequestioncategorypowerupcount +=changequestioncategorypowercount_cachevalue;
+			PlayerPrefs.SetInt(PlayerData.BombPowerUpsKey, bombpowerupcount);
+			PlayerPrefs.SetInt(PlayerData.DoubleBlastRadiusPowerUpsKey, doublebastradiuspowerupcount);
+			PlayerPrefs.SetInt(PlayerData.ReverseTimePowerUpsKey, reversetimepowerupcount);
+			PlayerPrefs.SetInt(PlayerData.ChageQuestionCategoryPowerUpsKey, changequestioncategorypowerupcount);
+			PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
 			LevelInfo levelInfo = levelNodeInfoManager.gameObject.AddComponent<LevelInfo>();
 			
 			LevelNodeInfoCollection.NodeInfo nodeInfo = levelNodeInfos.GetLevelNodeInfo(

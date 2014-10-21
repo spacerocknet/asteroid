@@ -3,6 +3,7 @@ using System.Collections;
 
 public class XPBarManager : MonoBehaviour {
 
+	public GameObject xpLevelText;
 	public GameObject xpProgressBar;
 
 	private float maxScaleX;
@@ -18,6 +19,8 @@ public class XPBarManager : MonoBehaviour {
 
 		XPLevelInfo currentLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (totalXP);
 		XPLevelInfo nextXPLevelInfo = xpLevelInfoCollection.GetNextLevelInfo (totalXP);
+
+		xpLevelText.GetComponent<TextMesh> ().text = currentLevelInfo.level.ToString();
 
 		maxScaleX = xpProgressBar.transform.localScale.x;
 

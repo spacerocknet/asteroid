@@ -16,8 +16,8 @@ public class ScreenSizeManager : MonoBehaviour {
 	private Vector2 closestScreenSize;
 
 	void Awake() {
-		ScreenWidth = Screen.width;
-		ScreenHeight = Screen.height;
+		ScreenWidth = 720;
+		ScreenHeight = 1280;
 
 		Vector2 screenSize = new Vector2 (ScreenWidth, ScreenHeight);
 

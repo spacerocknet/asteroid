@@ -199,11 +199,12 @@ public class ButtonManager : MonoBehaviour {
 				//resettimer();
 				if(mainmenu.totallives<5)
 				{
-					//mainmenu.managetimerfornewlife(true);
+					mainmenu.managetimerfornewlife(true);
 				}
 				else
 				{
 					mainmenu.managetimerfornewlife(false);
+					//mainmenu.newlifetimer.GetComponent<TextMesh>().text = "Full";
 				}
 			}
 		}

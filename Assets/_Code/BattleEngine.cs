@@ -213,12 +213,9 @@ public class BattleEngine : MonoBehaviour {
 		StartCoroutine(categorySelect.HideCategories());
 		StartCoroutine(ShowEndBattleText("YOU WIN!",true));
 
-		int currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey, 1);
-		currentLevel += 1;
-
 		LevelCompleteInfo levelCompleteInfo = GameObject.FindObjectOfType<LevelCompleteInfo> ();
 		if (levelCompleteInfo != null) {
-			levelCompleteInfo.levelUnlocked = currentLevel;
+			levelCompleteInfo.levelUnlocked = levelInfo.selectedNodeInfo.level + 1;
 		}
 	}
 

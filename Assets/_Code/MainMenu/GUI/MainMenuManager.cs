@@ -133,6 +133,10 @@ public class MainMenuManager : MonoBehaviour {
 						pageScrollSpeed += Time.deltaTime * deceleration;
 					}
 				}
+
+				if (pageScrollSpeed.magnitude <= 0.99f) {
+					pageScrollSpeed = Vector3.zero;
+				}
 			}
 
 			if (pageIndex <= 0 && pageScrollSpeed.y > 0) {
