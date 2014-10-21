@@ -317,22 +317,20 @@ public class ButtonManager : MonoBehaviour {
 								attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
 								}
 								soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();	
-								character.GetComponent<SpriteRenderer>().enabled=false;
-								character.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled=false;
+								//character.GetComponent<SpriteRenderer>().enabled=false;
+								//character.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled=false;
 								MAIN.GetComponent<BattleEngine>().categorySelect.disablequestioncollidersandtriggers();
 								powerupselected="change_question_category";
 
-								TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();
-								if (tutorial4 == null || !tutorial4.isRunning) {
-									fadebg.GetComponent<BoxCollider2D>().enabled=true;
-									fadebgcolor=fadebg.GetComponent<SpriteRenderer>().color;
-									fadebgcolor.a=1;
-									fadebg.GetComponent<SpriteRenderer>().color=fadebgcolor;
-									//state=gamestate.changequestioncategory;
-									double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-									double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-									hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
-								}
+								fadebg.GetComponent<BoxCollider2D>().enabled=true;
+								fadebgcolor=fadebg.GetComponent<SpriteRenderer>().color;
+								fadebgcolor.a=1;
+								fadebg.GetComponent<SpriteRenderer>().color=fadebgcolor;
+								double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+								double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+								hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+
+								StartCoroutine(showquestionchangecatwindow());
 							}
 							else
 							{

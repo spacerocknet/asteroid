@@ -264,7 +264,7 @@ public class TutorialLevel4 : TutorialBase {
 		
 		GameObject instruction = (GameObject)GameObject.Instantiate (instructionTextPrefab);
 		GameObject text = instruction.transform.FindChild ("Instruction Text").gameObject;
-		text.GetComponent<TextMesh> ().text = ResolveTextSize ("Use this one to send asteroids back two steps.", 40);
+		text.GetComponent<TextMesh> ().text = ResolveTextSize ("This one will change category colors.", 40);
 
 		instruction.transform.position = textboxPosition;
 		instruction.transform.parent = stage5.transform;

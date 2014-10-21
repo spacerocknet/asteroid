@@ -60,6 +60,8 @@ public class CategorySelect : MonoBehaviour {
 			this.colorsprite = categorySprite;
 			obj.GetComponent<SpriteRenderer>().sprite=this.colorsprite;
 
+
+
 			DefineLabel(scaleX, scaleY);
 			//DefineSize();
 			DefinePosition();
@@ -144,7 +146,7 @@ public class CategorySelect : MonoBehaviour {
 		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
 	}
 
-	public void PlaceCategories(int diff, bool start)
+	public IEnumerator PlaceCategories(int diff, bool start)
 	{
 		foreach (Category category in currentCategories) {
 			GameObject.Destroy(category.obj);
@@ -178,6 +180,9 @@ public class CategorySelect : MonoBehaviour {
 				currentCategories.Add(new Category(index,(CategoryTypes)i, sprite, screenSizeManager.scaleX, 
 				                                   screenSizeManager.scaleY, colorType, newCatObj));
 				screenSizeManager.UpdateSpriteRenderer(newCatObj.GetComponent<SpriteRenderer>());
+
+				yield return new WaitForFixedUpdate();
+				newCatObj.GetComponent<BoxCollider2D>().size += new Vector2(0.3f, 0.5f);
 
 				canSelect = true;
 				//StartCoroutine(PlaceCategoryToPlace(index,newCatObj));

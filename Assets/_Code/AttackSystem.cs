@@ -81,7 +81,7 @@ public class AttackSystem : MonoBehaviour {
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
 	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)
-			asteroidDamage = Mathf.Clamp(asteroidDamage, asteroidDamage, currentAsteroids[destroyIndex[i]].life);
+			asteroidDamage = Mathf.Clamp(asteroidDamage, 2.0f, currentAsteroids[destroyIndex[i]].life);
 			BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone += asteroidDamage;
 			progressBarManager.UpdateProgressBar(BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone);
 

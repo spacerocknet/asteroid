@@ -78,14 +78,14 @@ public class BattleEngine : MonoBehaviour {
 
 	private IEnumerator Start()
 	{	
-		int spawnCount = Random.Range (2, 4);
+		int spawnCount = Random.Range (1, 4);
 		yield return StartCoroutine(asteroids.SpawnAsteroids(spawnCount));
 		
 
 		progressBarManager.StartTimer ();
 
 		//yield return StartCoroutine(asteroids.SpawnAsteroids(levels.GetSpawnCountAutoINC()));
-		categorySelect.PlaceCategories(0, true);
+		StartCoroutine(categorySelect.PlaceCategories(0, true));
 		canTarget = true;
 		yield return 0; 
 	}
@@ -139,7 +139,7 @@ public class BattleEngine : MonoBehaviour {
 		Vector3 target = AtkTarget.transform.position;
 		categorySelect.targetSelect = false;
 		AtkTarget.transform.position = new Vector3(-100,0,0);
-		categorySelect.PlaceCategories(0, false);
+		StartCoroutine(categorySelect.PlaceCategories(0, false));
 		canTarget = true;
 		isMouseDown = false;
 
@@ -175,7 +175,7 @@ public class BattleEngine : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.1f);
 
-			int spawnCount = Random.Range(2, 4);
+			int spawnCount = asteroids.currentAsteroids.Count > 0 ? Random.Range(0, 2) : Random.Range(1, 4);
 			StartCoroutine(asteroids.SpawnAsteroids(spawnCount));
 
 //			int spawnINC = levels.GetSpawnCountAutoINC();
@@ -210,7 +210,6 @@ public class BattleEngine : MonoBehaviour {
 		isgamewon=true;
 		ButtonManager.gameover=true;
 		StartCoroutine(soundmanager.GetComponent<SoundManager>().winbattle_soundplay());
-		StartCoroutine(categorySelect.HideCategories());
 		StartCoroutine(ShowEndBattleText("YOU WIN!",true));
 
 		LevelCompleteInfo levelCompleteInfo = GameObject.FindObjectOfType<LevelCompleteInfo> ();
@@ -227,7 +226,7 @@ public class BattleEngine : MonoBehaviour {
 			mainmenu.totallives--;
 		}
 
-		StartCoroutine(categorySelect.HideCategories());
+		//StartCoroutine(categorySelect.HideCategories());
 
 		soundmanager.GetComponent<SoundManager>().mutemaintheme_sound();
 

@@ -144,6 +144,7 @@
      <Compile Include="Assets\_Code\PlayerData.cs" />
      <Compile Include="Assets\_Code\Questions.cs" />
      <Compile Include="Assets\_Code\RestClient.cs" />
+     <Compile Include="Assets\_Code\ScreenSizes\CategorySboxColliderScale.cs" />
      <Compile Include="Assets\_Code\ScreenSizes\ScreenSizeManager.cs" />
      <Compile Include="Assets\_Code\ScreenSizes\ScreenTextSizeManager.cs" />
      <Compile Include="Assets\_Code\Settings.cs" />

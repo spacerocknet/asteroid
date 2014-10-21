@@ -12,7 +12,7 @@ public class TutorialManager : MonoBehaviour {
 	private LevelInfo levelInfo;
 
 	// Use this for initialization
-	void StartLevelTutorial () {
+	void Start () {
 		if (allTutorials != null) {
 			levelInfo = GameObject.FindObjectOfType<LevelInfo>();
 			if (levelInfo != null) {

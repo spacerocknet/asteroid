@@ -50,7 +50,7 @@ public class Questions : MonoBehaviour {
 	private static float TIME_FOR_ANSWER = 10.0f;
 	private bool cancelIndicator;
 	private bool testMode = false; //should use isDebugBuild()?
-	private int maxWordsPerLine = 35;
+	private int maxWordsPerLine = 27;
 	private CategorySelect.ColorTypes currentColorType;
 
 	private Vector3 questionStartScale;
@@ -301,7 +301,7 @@ public class Questions : MonoBehaviour {
 
 			float scaleY = screenSizeManager.scaleY;
 			float scaleX = screenSizeManager.scaleX;
-			float offsetY = questionBoxRef.transform.position.y + questionBoxBounds.extents.y * 0.65f / scaleY;
+			float offsetY = questionBoxRef.transform.position.y + questionBoxBounds.extents.y * 0.60f / scaleY;
 			TextMesh tm = (TextMesh) questionBoxRef.GetComponentInChildren<TextMesh>();
 			tm.transform.localPosition = new Vector3(tm.transform.localPosition.x, offsetY, tm.transform.localPosition.z);
 			int fontSize = scaleY < 1 ? startQuestionFontSize * (int) (1 / scaleY) : startQuestionFontSize;	
