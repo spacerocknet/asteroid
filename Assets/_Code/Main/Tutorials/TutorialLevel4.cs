@@ -46,73 +46,60 @@ public class TutorialLevel4 : TutorialBase {
 
 			if (stage2 == null && doneStage1 && !doneStage2) {
 				StartStage2();
+				return;
 			}
 
 			Vector3 touchposition = Input.mousePosition;
 
 			if (stage2 != null) {
 				if (Input.GetMouseButtonDown(0)) {
-					RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero);
-					if(hit.collider != null) {
-						if (hit.collider.gameObject == bombPowerUps) {
-							GameObject.DestroyObject(stage2);
+					GameObject.DestroyObject(stage2);
 
-							doneStage2 = true;
-						}
-					}
+					doneStage2 = true;
 				}
 			}
 
 			if (stage3 == null && doneStage2 && !doneStage3) {
 				StartStage3();
+
+				return;
 			}
 
 			if (stage3 != null) {
 				if (Input.GetMouseButtonDown(0)) {
-					RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero);
-					if(hit.collider != null) {
-						if (hit.collider.gameObject == doubleBlastRadiusPowerUps) {
-							GameObject.Destroy(stage3);
+					GameObject.Destroy(stage3);
 
-							doneStage3 = true;
-						}
-					}
+					doneStage3 = true;
 				}
 			}
 
 			if (stage4 == null && doneStage3 && !doneStage4) {
 				StartStage4();
+
+				return;
 			}
 
 			if (stage4 != null) {
 				if (Input.GetMouseButtonDown(0)) {
-					RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero);
-					if(hit.collider != null) {
-						if (hit.collider.gameObject == reverseTimePowerUps) {
-							GameObject.Destroy(stage4);
+					GameObject.Destroy(stage4);
 
-							doneStage4 = true;
-						}
-					}
+					doneStage4 = true;
 				}
 			}
 
 			if (stage5 == null && doneStage4 && !doneStage5) {
 				StartStage5();
+
+				return;
 			}
 
 			if (stage5 != null) {
 				if (Input.GetMouseButtonDown(0)) {
-					RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(new Vector3(touchposition.x,touchposition.y,0)),Vector2.zero);
-					if(hit.collider != null) {
-						if (hit.collider.gameObject == changeCategoryPowerUps) {
-							GameObject.Destroy(stage5);
+					GameObject.Destroy(stage5);
 
-							doneStage5 = true;
+					doneStage5 = true;
 
-							End();
-						}
-					}
+					End();
 				}
 			}
 		}

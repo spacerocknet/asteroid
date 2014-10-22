@@ -38,7 +38,6 @@ public class XPLevelInfoCollection : MonoBehaviour {
 		XPLevelInfo result = null;
 
 		if (xpLevelInfos != null) {
-			result = xpLevelInfos[0];
 			for (int index = 0; index < xpLevelInfos.Count; index++) {
 				if (index < xpLevelInfos.Count - 1) {
 					XPLevelInfo xpLevelInfo = xpLevelInfos[index];

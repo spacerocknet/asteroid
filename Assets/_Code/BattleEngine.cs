@@ -91,27 +91,26 @@ public class BattleEngine : MonoBehaviour {
 	}
 
 	void Update() {
-		DebugDamageAsteroid ();
-	}
-
-	private void DebugDamageAsteroid() {
 		if (Input.GetKeyDown(KeyCode.K)) {
 			Asteroids.Asteroid asteroid = asteroids.currentAsteroids[0];
-
-			CategorySelect.ColorTypes color = (CategorySelect.ColorTypes) asteroid.colorType;
-
-			StartCoroutine(AtkSystem.AttackTarget(asteroid.obj.transform.position,asteroids.currentAsteroids, 
-			                                      levels, color));
-
-			StartCoroutine(NextRound(true,color));
-
-			if(levelInfo.selectedNodeInfo.hitPointsDone >= progressBarManager.totalLevelAsteroidHitPoints)
-			{
-				progressBarManager.StopTimer();
-				WinBattle(progressBarManager.GetCompletionTimeSeconds());
+			if (asteroid != null) {
+				CategorySelect.ColorTypes color = (CategorySelect.ColorTypes) asteroid.colorType;
 				
-				UpdateXPLevel();
+				StartCoroutine(AtkSystem.AttackTarget(asteroid.obj.transform.position,asteroids.currentAsteroids, 
+				                                      levels, color));
+				
+				StartCoroutine(NextRound(true,color));
+				
+				if(levelInfo.selectedNodeInfo.hitPointsDone >= progressBarManager.totalLevelAsteroidHitPoints)
+				{
+					progressBarManager.StopTimer();
+					WinBattle(progressBarManager.GetCompletionTimeSeconds());
+				}
 			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.G)) {
+			LoseBattle();
 		}
 	}
 
@@ -165,8 +164,6 @@ public class BattleEngine : MonoBehaviour {
 		{
 			progressBarManager.StopTimer();
 			WinBattle(progressBarManager.GetCompletionTimeSeconds());
-
-			UpdateXPLevel ();
 		}
 		//
 		else
@@ -250,20 +247,6 @@ public class BattleEngine : MonoBehaviour {
 			mainmenu.resettimerfornewlife();
 			mainmenu.managetimerfornewlife(true);
 			}
-		}
-	}
-
-	void UpdateXPLevel ()
-	{
-		ulong totalXP = ulong.Parse (PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
-		XPLevelInfo currentXPLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (totalXP);
-		if (currentXPLevelInfo != null) {
-			int oldXPLevel = PlayerPrefs.GetInt(PlayerData.CurrentXPLevel, 1);
-			if (currentXPLevelInfo.level > oldXPLevel) {
-				PlayerPrefs.SetInt("totallives", 5);
-			}
-
-			PlayerPrefs.SetInt (PlayerData.CurrentXPLevel, currentXPLevelInfo.level);
 		}
 	}
 

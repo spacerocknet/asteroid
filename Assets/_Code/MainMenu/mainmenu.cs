@@ -32,9 +32,9 @@ public class mainmenu : MonoBehaviour {
 	//Related to life time management
 	public GameObject newlifetimer;
 	public static bool timerstarted;
-	public static int totaltimefornewlife=10;
+	public static int totaltimefornewlife=1800;
 	public int totaltimrfornewlife_onresume;
-	public static float cachetotaltimefornewlife=10;
+	public static float cachetotaltimefornewlife=1800;
 	public static TimeSpan ts;
 	public static int totallives;
 
@@ -173,7 +173,6 @@ public class mainmenu : MonoBehaviour {
 		gamestate=state.mainmenu;
 
 		totalgold=PlayerPrefs.GetInt("totalgold", 0);
-
 		totallives=PlayerPrefs.GetInt("totallives",5);
 
 		bombpowerupcount=PlayerPrefs.GetInt(PlayerData.BombPowerUpsKey,0);
@@ -353,10 +352,9 @@ public class mainmenu : MonoBehaviour {
 							if (levelNode.level >= tutorialManager.powerUpsLevelStart) {
 								powerUpsStartPosition = powerups.transform.position;
 
-								int playedLevel4 = PlayerPrefs.GetInt ("playedLevel4", 0);
-
+								int currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey, 1);
 								if (levelNode.level == 4) {
-									if (playedLevel4 == 0) {
+									if (currentLevel == 4) {
 										tutorialManager.StartTutorial(4);
 										bombpowerupcount = 2;
 										doublebastradiuspowerupcount = 2;
@@ -854,11 +852,15 @@ public class mainmenu : MonoBehaviour {
 						{
 							Debug.Log("Works");
 							buttonclickeffect();
+							
+							Application.OpenURL("http://spacerock.net/#about");
 						}
 						else if(hit.collider.gameObject.name=="button_service")
 						{
 							Debug.Log("Works");
 							buttonclickeffect();
+
+							Application.OpenURL("http://spacerock.net/terms-of-use/");
 						}
 					}
 						
@@ -928,15 +930,16 @@ public class mainmenu : MonoBehaviour {
 
 			IEnumerator hidecoinstore()
 			{
-				for(int i=0;i<20;i++)
+				while (coinstore.transform.position.x > coinsMenuStartPosition.x + 0.1f)
 				{
-				Vector3 oldposition=coinstore.transform.position;
-				float newposition=Mathf.Lerp(oldposition.x,coinsMenuStartPosition.x, 0.25f);
-				coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,-8f);
-				yield return null;
+					Vector3 oldposition=coinstore.transform.position;
+					float newposition=Mathf.Lerp(oldposition.x,coinsMenuStartPosition.x, 0.25f);
+					coinstore.transform.position=new Vector3(newposition,coinstore.transform.position.y,-8f);
+					yield return null;
 				}
-			yield return new WaitForEndOfFrame();
-			gamestate=state.mainmenu;
+
+				yield return new WaitForEndOfFrame();
+				gamestate=state.mainmenu;
 			}
 		
 			IEnumerator showsettings()

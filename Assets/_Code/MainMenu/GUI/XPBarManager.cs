@@ -12,19 +12,19 @@ public class XPBarManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		UpdateBarPosition ();
+		maxScaleX = xpProgressBar.transform.localScale.x;
 
 		xpLevelInfoCollection = GameObject.FindObjectOfType<XPLevelInfoCollection> ();
 		ulong totalXP = ulong.Parse(PlayerPrefs.GetString(PlayerData.TotalXPKey, "0"));
 
+		UpdateBarPosition ();
+
 		XPLevelInfo currentLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (totalXP);
 		XPLevelInfo nextXPLevelInfo = xpLevelInfoCollection.GetNextLevelInfo (totalXP);
 
-		xpLevelText.GetComponent<TextMesh> ().text = currentLevelInfo.level.ToString();
+		ulong currentXPLevel = currentLevelInfo != null ? currentLevelInfo.xpNextLevel : 0;
+		float cumulativeXPDelta = nextXPLevelInfo.xpNextLevel - currentXPLevel;
 
-		maxScaleX = xpProgressBar.transform.localScale.x;
-
-		float cumulativeXPDelta = nextXPLevelInfo.xpNextLevel - currentLevelInfo.xpNextLevel;
 		if (cumulativeXPDelta == 0) {
 			cumulativeXPDelta = nextXPLevelInfo.xpNextLevel;
 		}
@@ -33,6 +33,8 @@ public class XPBarManager : MonoBehaviour {
 		Vector3 scale = xpProgressBar.transform.localScale;
 		scale.x = scaleX;
 		xpProgressBar.transform.localScale = scale;
+
+		xpLevelText.GetComponent<TextMesh> ().text = currentLevelInfo != null ? currentLevelInfo.level.ToString() : "0";
 	}
 	
 	// Update is called once per frame

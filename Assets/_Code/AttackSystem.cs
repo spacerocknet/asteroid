@@ -61,7 +61,7 @@ public class AttackSystem : MonoBehaviour {
 				{
 					ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
 					soundmanager.audio.Play();
-					ButtonManager.attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
+					ButtonManager.attack_target.transform.localScale=new Vector3(1f,1f,1f);
 					GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
 					Destroy(exp,0.67f);
 					destroyIndex.Add(i);
@@ -81,7 +81,11 @@ public class AttackSystem : MonoBehaviour {
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
 	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)
-			asteroidDamage = Mathf.Clamp(asteroidDamage, 2.0f, currentAsteroids[destroyIndex[i]].life);
+			asteroidDamage = 2.0f;
+			if (asteroidDamage > currentAsteroids[destroyIndex[i]].life) {
+				asteroidDamage = currentAsteroids[destroyIndex[i]].life;
+			}
+
 			BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone += asteroidDamage;
 			progressBarManager.UpdateProgressBar(BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone);
 

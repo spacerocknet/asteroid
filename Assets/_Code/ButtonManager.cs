@@ -230,7 +230,7 @@ public class ButtonManager : MonoBehaviour {
 							{
 								if(powerupselected=="double_blast_radius")
 								{
-									attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
+									attack_target.transform.localScale=new Vector3(1f,1f,1f);
 									double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 								}
 									powerupselected="bomb";
@@ -260,14 +260,11 @@ public class ButtonManager : MonoBehaviour {
 							if(PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey)>0)
 								{
 									powerupselected="double_blast_radius";
-									TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();
-									if (tutorial4 == null || !tutorial4.isRunning) {
-										attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
-										//ToggleHere
-										hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
-										double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
-										soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();
-									}
+									attack_target.transform.localScale=new Vector3(2f,2f,2f);
+									//ToggleHere
+									hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
+									double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
+									soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();
 								}
 							else
 								{
@@ -279,7 +276,7 @@ public class ButtonManager : MonoBehaviour {
 							//This will toggle if already selected
 							double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							powerupselected=string.Empty;
-							attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
+							attack_target.transform.localScale=new Vector3(1f,1f,1f);
 						}
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_04")
@@ -288,18 +285,15 @@ public class ButtonManager : MonoBehaviour {
 						{
 							if(powerupselected=="double_blast_radius")
 							{
-							attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
+							attack_target.transform.localScale=new Vector3(1f,1f,0f);
 							double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							}
 							double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							powerupselected="reverse_time";
 
-							TutorialLevel4 tutorial4 = GameObject.FindObjectOfType<TutorialLevel4>();	
-							if (tutorial4 == null || !tutorial4.isRunning) {
-								soundmanager.audio.Play();
-								MAIN.GetComponent<BattleEngine>().asteroids.StartCoroutine("ReverseTimePowerUp");
-								reducepowerupcount(powerupselected);
-							}
+							soundmanager.audio.Play();
+							MAIN.GetComponent<BattleEngine>().asteroids.StartCoroutine("ReverseTimePowerUp");
+							reducepowerupcount(powerupselected);
 						}
 						else
 						{
@@ -314,7 +308,7 @@ public class ButtonManager : MonoBehaviour {
 							{
 								if(powerupselected=="double_blast_radius")
 								{
-								attack_target.transform.localScale=new Vector3(1.2f,1.2f,0f);
+								attack_target.transform.localScale=new Vector3(1f,1f,1f);
 								}
 								soundmanager1.GetComponent<SoundManager>().powerupcategory_select_soundplay();	
 								//character.GetComponent<SpriteRenderer>().enabled=false;
@@ -506,7 +500,7 @@ public class ButtonManager : MonoBehaviour {
 			}
 			else if(powerup=="double_blast_radius")
 			{
-			attack_target.transform.localScale=new Vector3(0.6f,0.6f,0f);
+			attack_target.transform.localScale=new Vector3(1f,1f,1f);
 
 			int doubleBlastPowerUpCount = PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey);
 
@@ -595,22 +589,12 @@ public class ButtonManager : MonoBehaviour {
 	{
 		GameObject goldRewardText = rewardscreen.transform.FindChild ("gold_reward_text").gameObject;
 		goldRewardText.GetComponent<TextMesh> ().text = levelInfo.selectedNodeRewardInfo.goldPayout.ToString ();
-
+		
 		int currentTotalGold = PlayerPrefs.GetInt (PlayerData.TotalGoldKey, 0);
 		PlayerPrefs.SetInt(PlayerData.TotalGoldKey, currentTotalGold + levelInfo.selectedNodeRewardInfo.goldPayout);
 		
 		GameObject xpRewardText = rewardscreen.transform.FindChild ("xp_reward_text").gameObject;
 		xpRewardText.GetComponent<TextMesh> ().text = levelInfo.selectedNodeRewardInfo.xpPayout.ToString ();
-
-		ulong currentTotalXP = ulong.Parse(PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
-		ulong cumulativeXP = currentTotalXP + (ulong) levelInfo.selectedNodeRewardInfo.xpPayout;
-		PlayerPrefs.SetString (PlayerData.TotalXPKey, cumulativeXP.ToString());
-
-		GameObject scoreText = rewardscreen.transform.FindChild ("score_text").gameObject;
-		scoreText.GetComponent<TextMesh> ().text = score.ToString();
-
-		int currentTotalScore = PlayerPrefs.GetInt (PlayerData.TotalScoreKey, 0);
-		PlayerPrefs.SetInt (PlayerData.TotalScoreKey, currentTotalScore + score);
 
 		for(int i=0;i<20;i++)
 		{
@@ -620,7 +604,35 @@ public class ButtonManager : MonoBehaviour {
 			//rewardscreen.transform.position=new Vector3(0f,0f,0f);
 			yield return null;
 		}
-		yield return new WaitForEndOfFrame();
+
+		ulong currentTotalXP = ulong.Parse(PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
+		ulong cumulativeXP = currentTotalXP + (ulong) levelInfo.selectedNodeRewardInfo.xpPayout;
+
+		XPLevelInfoCollection xpLevelInfoCollection = GameObject.FindObjectOfType<XPLevelInfoCollection> ();
+		XPLevelInfo currentXPLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (currentTotalXP);
+		XPLevelInfo nextXPLevelInfo = xpLevelInfoCollection.GetNextLevelInfo (currentTotalXP);
+
+		if (currentXPLevelInfo == null && cumulativeXP >= nextXPLevelInfo.xpNextLevel) {
+			PlayerPrefs.SetInt("totallives", 5);
+
+			mainmenu.resettimerfornewlife();
+			mainmenu.managetimerfornewlife(false);
+		}
+		
+		if (currentXPLevelInfo != null && cumulativeXP >= currentXPLevelInfo.xpNextLevel) {
+			PlayerPrefs.SetInt("totallives", 5);
+
+			mainmenu.resettimerfornewlife();
+			mainmenu.managetimerfornewlife(false);
+		}
+
+		PlayerPrefs.SetString (PlayerData.TotalXPKey, cumulativeXP.ToString());
+		
+		GameObject scoreText = rewardscreen.transform.FindChild ("score_text").gameObject;
+		scoreText.GetComponent<TextMesh> ().text = score.ToString();
+		
+		int currentTotalScore = PlayerPrefs.GetInt (PlayerData.TotalScoreKey, 0);
+		PlayerPrefs.SetInt (PlayerData.TotalScoreKey, currentTotalScore + score);
 	}
 
 	public IEnumerator showlosescreen()
