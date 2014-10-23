@@ -36,6 +36,8 @@ public class TutorialLevel16 : TutorialBase {
 
 					if (bigRedAsteroid != null) {
 						StartStage1A(bigRedAsteroid);
+
+						return;
 					}
 				}
 			}
@@ -46,27 +48,33 @@ public class TutorialLevel16 : TutorialBase {
 				}
 			}
 
-			Vector3 asteroidPostion = bigRedAsteroid.obj.transform.position;
-			Bounds asteroidBounds = bigRedAsteroid.obj.GetComponent<SpriteRenderer>().bounds;
-			
-			Rect asteroidRect = new Rect(asteroidPostion.x - asteroidBounds.extents.x, asteroidPostion.y - asteroidBounds.extents.y,
-			                             asteroidBounds.extents.x * 2, asteroidBounds.extents.y * 2);
+			if (bigRedAsteroid != null) {
+				Vector3 asteroidPostion = bigRedAsteroid.obj.transform.position;
+				Bounds asteroidBounds = bigRedAsteroid.obj.GetComponent<SpriteRenderer>().bounds;
+				
+				Rect asteroidRect = new Rect(asteroidPostion.x - asteroidBounds.extents.x, asteroidPostion.y - asteroidBounds.extents.y,
+				                             asteroidBounds.extents.x * 2, asteroidBounds.extents.y * 2);
 
-			GameObject attackTarget = battleEngine.AtkTarget;
+				GameObject attackTarget = battleEngine.AtkTarget;
 
-			if (targetAsteroid == null && stage2 == null) {
-				Sprite asteroidSprite = bigRedAsteroid.obj.GetComponent<SpriteRenderer>().sprite;
-				if (asteroidRect.Contains(attackTarget.transform.position)) {
-					targetAsteroid = bigRedAsteroid;
+				if (targetAsteroid == null && stage2 == null) {
+					Sprite asteroidSprite = bigRedAsteroid.obj.GetComponent<SpriteRenderer>().sprite;
+					if (asteroidRect.Contains(attackTarget.transform.position)) {
+						targetAsteroid = bigRedAsteroid;
+					}
 				}
 			}
 
 			if (stage2 == null && targetAsteroid == bigRedAsteroid) {
 				StartStage2();
+
+				return;
 			}
 
 			if (stage2 != null && battleEngine.FinishedRound) {
 				GameObject.Destroy(stage2);
+
+				End();
 			}
 		}
 	}

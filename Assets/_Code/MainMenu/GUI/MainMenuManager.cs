@@ -58,8 +58,11 @@ public class MainMenuManager : MonoBehaviour {
 	private int currentLevel;
 
 	private ScreenSizeManager screenSizeManager;
+	private mainmenu main;
 
 	void Start () {
+		main = GameObject.FindObjectOfType<mainmenu> ();
+
 		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
 		float scaleX = screenSizeManager.scaleX;
 		float scaleY = screenSizeManager.scaleY;
@@ -118,7 +121,7 @@ public class MainMenuManager : MonoBehaviour {
 			draggingPage = false;
 		}
 
-		if (!animatingPage && !performingUnlock) {
+		if (!animatingPage && !performingUnlock && main.gamestate == mainmenu.state.mainmenu) {
 			if (draggingPage) {
 				Vector3 deltaPosition = Vector3.zero;
 				deltaPosition.y = Input.mousePosition.y - startDragPosition.y;

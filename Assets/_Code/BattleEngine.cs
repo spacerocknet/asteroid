@@ -100,12 +100,6 @@ public class BattleEngine : MonoBehaviour {
 				                                      levels, color));
 				
 				StartCoroutine(NextRound(true,color));
-				
-				if(levelInfo.selectedNodeInfo.hitPointsDone >= progressBarManager.totalLevelAsteroidHitPoints)
-				{
-					progressBarManager.StopTimer();
-					WinBattle(progressBarManager.GetCompletionTimeSeconds());
-				}
 			}
 		}
 
@@ -200,6 +194,31 @@ public class BattleEngine : MonoBehaviour {
 
 	private void WinBattle(int score)
 	{
+		ulong currentTotalXP = ulong.Parse(PlayerPrefs.GetString (PlayerData.TotalXPKey, "0"));
+		ulong cumulativeXP = currentTotalXP + (ulong) levelInfo.selectedNodeRewardInfo.xpPayout;
+		
+		XPLevelInfoCollection xpLevelInfoCollection = GameObject.FindObjectOfType<XPLevelInfoCollection> ();
+		XPLevelInfo currentXPLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (currentTotalXP);
+		XPLevelInfo nextXPLevelInfo = xpLevelInfoCollection.GetNextLevelInfo (currentTotalXP);
+		
+		if (currentXPLevelInfo == null && cumulativeXP >= nextXPLevelInfo.xpNextLevel) {
+			PlayerPrefs.SetInt("totallives", 5);
+			
+			mainmenu.resettimerfornewlife();
+			mainmenu.managetimerfornewlife(false);
+		}
+		
+		if (currentXPLevelInfo != null && cumulativeXP >= currentXPLevelInfo.xpNextLevel) {
+			PlayerPrefs.SetInt("totallives", 5);
+			
+			mainmenu.resettimerfornewlife();
+			mainmenu.managetimerfornewlife(false);
+		}
+		
+		PlayerPrefs.SetString (PlayerData.TotalXPKey, cumulativeXP.ToString());
+		
+
+
 		isEndGame = true;
 		soundmanager.GetComponent<SoundManager>().mutemaintheme_sound();
 		StartCoroutine(buttonmanager.GetComponent<ButtonManager>().showrewardsscreen(score));
@@ -238,16 +257,16 @@ public class BattleEngine : MonoBehaviour {
 		StartCoroutine(ShowEndBattleText("YOU LOSE!",false));
 
 
-		if(mainmenu.totallives<5)
-		{
-			Debug.Log("true");
-			if(mainmenu.timerstarted==false)
-			{
-			Debug.Log("going here");
-			mainmenu.resettimerfornewlife();
-			mainmenu.managetimerfornewlife(true);
-			}
-		}
+//		if(mainmenu.totallives<5)
+//		{
+//			Debug.Log("true");
+//			if(mainmenu.timerstarted==false)
+//			{
+//			Debug.Log("going here");
+//			mainmenu.resettimerfornewlife();
+//			mainmenu.managetimerfornewlife(true);
+//			}
+//		}
 	}
 
 	private IEnumerator ShowEndBattleText(string str, bool isItWin)

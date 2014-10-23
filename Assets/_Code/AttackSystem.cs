@@ -46,7 +46,7 @@ public class AttackSystem : MonoBehaviour {
 		for(int i=0;i<currentAsteroids.Count;i++)
 		{
 			//Normal Distance without powerup
-			float normalpowerupdistance=0.7f;
+			float normalpowerupdistance=1.0f;
 
 			//Double up the distance
 			float powerupdoubleblast=normalpowerupdistance*2.0f;
@@ -61,7 +61,7 @@ public class AttackSystem : MonoBehaviour {
 				{
 					ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
 					soundmanager.audio.Play();
-					ButtonManager.attack_target.transform.localScale=new Vector3(1f,1f,1f);
+					ButtonManager.attack_target.transform.localScale=ButtonManager.targetStartScale;
 					GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
 					Destroy(exp,0.67f);
 					destroyIndex.Add(i);
@@ -82,15 +82,22 @@ public class AttackSystem : MonoBehaviour {
 		{
 	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)
 			asteroidDamage = 2.0f;
+
+			if ((int) currentCategoryColorType == (int) currentAsteroids[destroyIndex[i]].colorType) {
+				//asteroidDamage += 0.5f * asteroidDamage;
+			}
+
+			asteroidDamage += DamageCalcByColor(currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType);
+
 			if (asteroidDamage > currentAsteroids[destroyIndex[i]].life) {
 				asteroidDamage = currentAsteroids[destroyIndex[i]].life;
 			}
 
-			BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone += asteroidDamage;
-			progressBarManager.UpdateProgressBar(BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone);
-
 			StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(asteroidDamage));
-			//StartCoroutine(currentAsteroids[destroyIndex[i]].DoDamage(DamageCalcByColor(currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType)));
+
+			BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone += asteroidDamage;
+
+			progressBarManager.UpdateProgressBar(BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone);
 
 			if(currentAsteroids[destroyIndex[i]].isDead)
 			{
@@ -107,7 +114,7 @@ public class AttackSystem : MonoBehaviour {
 
 
 
-	private int DamageCalcByColor(CategorySelect.ColorTypes c1, Asteroids.AsteroidColorTypes c2)
+	private float DamageCalcByColor(CategorySelect.ColorTypes c1, Asteroids.AsteroidColorTypes c2)
 	{
 		int cDistance = ColorDistance((int)c1,(int)c2);
 		if(cDistance==0)
@@ -121,7 +128,7 @@ public class AttackSystem : MonoBehaviour {
 			}
 			else
 			{
-				return 2;
+				return 2 + 1;
 			}
 		}
 
@@ -135,7 +142,7 @@ public class AttackSystem : MonoBehaviour {
 			}
 			else
 			{
-				return 3;
+				return 3 + 1.5f;
 			}
 		}
 
@@ -149,7 +156,7 @@ public class AttackSystem : MonoBehaviour {
 			}
 			else
 			{
-				return 1;
+				return 1 + 0.5f;
 			}
 		}
 

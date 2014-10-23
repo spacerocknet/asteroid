@@ -31,6 +31,7 @@ public class mainmenu : MonoBehaviour {
 
 	//Related to life time management
 	public GameObject newlifetimer;
+	public GameObject newtifetimer2;
 	public static bool timerstarted;
 	public static int totaltimefornewlife=1800;
 	public int totaltimrfornewlife_onresume;
@@ -112,6 +113,7 @@ public class mainmenu : MonoBehaviour {
 	private Vector3 settingsMenuStartPosition;
 	private Vector3 coinsMenuStartPosition;
 	private Vector3 powerUpsStartPosition;
+	private Vector3 buyMoreLivesStartPosition;
 
 	private TutorialManager tutorialManager;
 
@@ -190,6 +192,8 @@ public class mainmenu : MonoBehaviour {
 		doubleblastradiuspowerupcount_cachevalue=0;
 		reversetimepowerupcount_cachevalue=0;
 		changequestioncategorypowercount_cachevalue=0;
+
+		buyMoreLivesStartPosition = buymorelivesgameobject.transform.position;
 
 		if(launchcount==0 && totallives<5)
 		{
@@ -299,6 +303,7 @@ public class mainmenu : MonoBehaviour {
 			cachetotaltimefornewlife -=Time.deltaTime;
 			ts=TimeSpan.FromSeconds(cachetotaltimefornewlife);
 			newlifetimer.GetComponent<TextMesh>().text=ts.ToString().Substring(3,5);
+			newtifetimer2.GetComponent<TextMesh>().text=ts.ToString().Substring(3,5);
 			Invoke("calculateminutesandseconds",0.2f);
 		}
 			
@@ -366,7 +371,13 @@ public class mainmenu : MonoBehaviour {
 								StartCoroutine(showpowerupswindow());
 							}
 							else {
-								StartGameLevel();
+								if (totallives > 0) {
+									StartGameLevel();
+								}
+								else {
+									fromwhere=2;
+									StartCoroutine("buymorelives");
+								}
 							}
 
 							buttonclickeffect();
@@ -1060,6 +1071,7 @@ public class mainmenu : MonoBehaviour {
 		IEnumerator buymorelives()
 		{
 			gamestate=state.buylives;
+			
 			for(int i=0;i<20;i++)
 			{
 				Vector3 oldposition=buymorelivesgameobject.transform.position;
@@ -1077,7 +1089,7 @@ public class mainmenu : MonoBehaviour {
 			for(int i=0;i<20;i++)
 			{
 				Vector3 oldposition=buymorelivesgameobject.transform.position;
-				float newposition=Mathf.Lerp(oldposition.x,7f,0.25f);
+				float newposition=Mathf.Lerp(oldposition.x, buyMoreLivesStartPosition.x, 0.25f);
 				buymorelivesgameobject.transform.position=new Vector3(newposition,buymorelivesgameobject.transform.position.y,buymorelivesgameobject.transform.position.z);
 				//rewardscreen.transform.position=new Vector3(0f,0f,0f);
 				yield return null;

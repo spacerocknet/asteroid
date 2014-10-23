@@ -23,13 +23,8 @@ public class XPBarManager : MonoBehaviour {
 		XPLevelInfo nextXPLevelInfo = xpLevelInfoCollection.GetNextLevelInfo (totalXP);
 
 		ulong currentXPLevel = currentLevelInfo != null ? currentLevelInfo.xpNextLevel : 0;
-		float cumulativeXPDelta = nextXPLevelInfo.xpNextLevel - currentXPLevel;
 
-		if (cumulativeXPDelta == 0) {
-			cumulativeXPDelta = nextXPLevelInfo.xpNextLevel;
-		}
-
-		float scaleX = 1 - maxScaleX * ((float)nextXPLevelInfo.xpNextLevel - (float)totalXP) / cumulativeXPDelta;
+		float scaleX = maxScaleX * (float) totalXP / (float) nextXPLevelInfo.cumulativeXP;
 		Vector3 scale = xpProgressBar.transform.localScale;
 		scale.x = scaleX;
 		xpProgressBar.transform.localScale = scale;

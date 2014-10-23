@@ -111,7 +111,7 @@ public class TutorialLevel1 : TutorialBase {
 			Categories categories = GameObject.FindObjectOfType<Categories>();
 			GameObject middleCat = categories.transform.Find("1").gameObject;
 
-			Vector3 pointerOffset = new Vector3 (0, -middleCat.renderer.bounds.extents.y * 2f, 0);
+			Vector3 pointerOffset = new Vector3 (0, -middleCat.renderer.bounds.extents.y * 2f, 1);
 			Vector3 pointerPostition = middleCat.transform.position - pointerOffset;
 			pointer = (GameObject)GameObject.Instantiate (pointerPrefab, pointerPostition, Quaternion.identity);
 			pointer.transform.RotateAround(pointerPostition, Vector3.forward, 180);
