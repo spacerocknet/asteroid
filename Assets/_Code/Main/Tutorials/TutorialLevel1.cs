@@ -25,43 +25,32 @@ public class TutorialLevel1 : TutorialBase {
 			if (asteroid != null) {
 				Vector3 asteroidPostion = asteroid.obj.transform.position;
 				Bounds asteroidBounds = asteroid.obj.GetComponent<SpriteRenderer>().bounds;
-				
-				Rect asteroidRect = new Rect(asteroidPostion.x - asteroidBounds.extents.x, asteroidPostion.y - asteroidBounds.extents.y,
-				                             asteroidBounds.extents.x * 2, asteroidBounds.extents.y * 2);
 
 				GameObject attackTarget = battleEngine.AtkTarget;
 
-				if (targetAsteroid == null) {
-					if (stage1 == null || !lastStage) {
-						ShowStage1(asteroid);
+				if (stage1 == null && stage2 == null) {
+					ShowStage1(asteroid);
+
+					return;
+				}
+
+				if (stage1 != null) {
+					if (targetAsteroid == null) {
+						Rect asteroidRect = new Rect(asteroidPostion.x - asteroidBounds.extents.x, asteroidPostion.y - asteroidBounds.extents.y,
+						                             asteroidBounds.extents.x * 2, asteroidBounds.extents.y * 2);
+						if (asteroidRect.Contains(attackTarget.transform.position)) {
+							targetAsteroid = asteroid;
+							CategoriesSetActive(true);
+
+							GameObject.Destroy(stage1);
+							ShowStage2();
+
+							return;
+						}
 					}
 				}
 
-				if (targetAsteroid == null && stage2 == null) {
-					Sprite asteroidSprite = asteroid.obj.GetComponent<SpriteRenderer>().sprite;
-					if (asteroidRect.Contains(attackTarget.transform.position)) {
-						targetAsteroid = asteroid;
-						CategoriesSetActive(true);
-
-						lastStage = true;
-
-						GameObject.Destroy (stage1);
-						ShowStage2();
-					}
-				}
-
-				if (targetAsteroid != null && stage2 != null) {
-					if (!asteroidRect.Contains(attackTarget.transform.position)) {
-						targetAsteroid = null;
-						CategoriesSetActive(false);
-
-						GameObject.Destroy(stage2);
-
-						lastStage = false;
-					}
-				}
-
-				if (stage2 != null && battleEngine.FinishedRound) {
+				if (stage2 != null && !battleEngine.canTarget) {
 					End();
 				}
 			}
