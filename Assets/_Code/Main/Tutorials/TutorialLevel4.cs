@@ -16,6 +16,9 @@ public class TutorialLevel4 : TutorialBase {
 	public GameObject reverseTimePowerUps;
 	public GameObject changeCategoryPowerUps;
 
+	public string sortingLayerName;
+	public int sortingOrder;
+
 	private bool started;
 
 	private bool doneStage1;
@@ -166,6 +169,9 @@ public class TutorialLevel4 : TutorialBase {
 		stage1 = new GameObject();
 
 		GameObject instruction = (GameObject)GameObject.Instantiate (instructionTextPrefab);
+		//instruction.renderer.sortingLayerName = sortingLayerName;
+		//instruction.renderer.sortingOrder = sortingOrder;
+
 		GameObject text = instruction.transform.FindChild ("Instruction Text").gameObject;
 		text.GetComponent<TextMesh> ().text = ResolveTextSize ("You can use a power up if you get stuck. We've started you off with 2 of each kind. Tap the screen to continue.", 40);
 

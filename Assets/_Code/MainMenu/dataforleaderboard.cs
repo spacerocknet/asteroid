@@ -38,10 +38,10 @@ public class dataforleaderboard : MonoBehaviour {
 		values_Strings_global=new string[]{"200000","140000","65031","31000","9585"};
 
 
-		foreach(Transform child in this.transform)
-		{
-			child.gameObject.renderer.sortingOrder=6;
-		}
+//		foreach(Transform child in this.transform)
+//		{
+//			child.gameObject.renderer.sortingOrder=6;
+//		}
 
 		header1.GetComponent<TextMesh>().text="1";
 		header2.GetComponent<TextMesh>().text="2";
