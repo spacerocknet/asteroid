@@ -228,13 +228,9 @@ public class mainmenu : MonoBehaviour {
 		fbPreLogin = GameObject.Find("button_facebook");
 
 		if (FB.IsLoggedIn) {
-			fbPreLogin.transform.Translate(7, 0, 0);
-			fbPreLogin.renderer.enabled = false;
-			fbPostLogin.transform.Translate (-7, 0, 0);
-			fbPostLogin.renderer.enabled = true;
+			StartCoroutine(showFacebookPostLogin(true));
 		} else {
-			fbPreLogin.renderer.enabled = true;
-			fbPostLogin.renderer.enabled = false;
+			StartCoroutine(showFacebookPostLogin(false));
 		}
 
 		coinsMenuStartPosition = coinstore.transform.position;
@@ -788,12 +784,18 @@ public class mainmenu : MonoBehaviour {
 									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_on;
 									PlayerPrefs.SetInt("facebook",1);
 									facebook=PlayerPrefs.GetInt("facebook",1);
+
+									if (FB.IsLoggedIn) {
+										StartCoroutine(showFacebookPostLogin(true));
+									}
 								}
 								else
 						        {
 									hit.collider.gameObject.GetComponent<SpriteRenderer>().sprite = button_off;
 									PlayerPrefs.SetInt("facebook",0);
 									facebook=PlayerPrefs.GetInt("facebook",1);
+
+									StartCoroutine(showFacebookPostLogin(false));
 								}
 
 								onOffbutton.ToggleButtonState();
@@ -1329,16 +1331,20 @@ public class mainmenu : MonoBehaviour {
 		Debug.Log("Facebook " + profile["first_name"]);
 		//friends = Util.DeserializeJSONFriends(result.Text);
 		StartCoroutine(showleaderboardui());
-		StartCoroutine ("flipFacebookButtons");
+		StartCoroutine (showFacebookPostLogin(true));
 	}
 
 	
-	IEnumerator flipFacebookButtons()
+	IEnumerator showFacebookPostLogin(bool showPostLogin)
 	{
-		fbPreLogin.transform.Translate(7, 0, 0);
-		fbPreLogin.renderer.enabled = false;
-		fbPostLogin.transform.Translate (-7, 0, 0);
-		fbPostLogin.renderer.enabled = true;
+//		fbPreLogin.transform.Translate(7, 0, 0);
+//		fbPreLogin.renderer.enabled = false;
+//		fbPostLogin.transform.Translate (-7, 0, 0);
+//		fbPostLogin.renderer.enabled = true;
+
+		fbPreLogin.SetActive (!showPostLogin);
+		fbPostLogin.SetActive (showPostLogin);
+
 		yield return new WaitForEndOfFrame();
 	}
 
