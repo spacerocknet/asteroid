@@ -81,7 +81,7 @@ public class MainMenuManager : MonoBehaviour {
 		menuBoundsUpper = menuBounds;
 		menuBoundsLower = mainMenu.transform.position - menuBounds;
 
-		PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 4);
+		//PlayerPrefs.SetInt (PlayerData.CurrentLevelKey, 16);
 		currentLevel = PlayerPrefs.GetInt (PlayerData.CurrentLevelKey, 1);
 
 		maxPages = (int) ((float) maxLevels / (float) levelNodesPerPage);

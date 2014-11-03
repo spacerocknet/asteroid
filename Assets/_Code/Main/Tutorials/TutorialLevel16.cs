@@ -71,7 +71,7 @@ public class TutorialLevel16 : TutorialBase {
 				return;
 			}
 
-			if (stage2 != null && battleEngine.FinishedRound) {
+			if (stage2 != null && !battleEngine.canTarget) {
 				GameObject.Destroy(stage2);
 
 				End();
