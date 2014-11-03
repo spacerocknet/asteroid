@@ -216,8 +216,6 @@ public class BattleEngine : MonoBehaviour {
 		}
 		
 		PlayerPrefs.SetString (PlayerData.TotalXPKey, cumulativeXP.ToString());
-		
-
 
 		isEndGame = true;
 		soundmanager.GetComponent<SoundManager>().mutemaintheme_sound();

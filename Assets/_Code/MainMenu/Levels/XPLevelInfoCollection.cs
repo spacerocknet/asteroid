@@ -43,12 +43,12 @@ public class XPLevelInfoCollection : MonoBehaviour {
 				if (index < xpLevelInfos.Count - 1) {
 					XPLevelInfo xpLevelInfo = xpLevelInfos[index];
 					XPLevelInfo nextxpLevelInfo = xpLevelInfos[index + 1];
-					if (totalXP == xpLevelInfo.xpNextLevel) {
+					if (totalXP == xpLevelInfo.cumulativeXP) {
 						result = nextxpLevelInfo;
 						break;
 					}
 
-					if (totalXP > xpLevelInfo.xpNextLevel && totalXP < nextxpLevelInfo.xpNextLevel) {
+					if (totalXP >= xpLevelInfo.cumulativeXP && totalXP < nextxpLevelInfo.cumulativeXP) {
 						result = xpLevelInfo;						
 						break;
 					}
@@ -76,7 +76,7 @@ public class XPLevelInfoCollection : MonoBehaviour {
 					XPLevelInfo xpLevelInfo = xpLevelInfos[index];
 					XPLevelInfo nextxpLevelInfo = xpLevelInfos[index + 1];
 
-					if (totalXP >= xpLevelInfo.xpNextLevel && totalXP < nextxpLevelInfo.xpNextLevel) {
+					if (totalXP >= xpLevelInfo.cumulativeXP && totalXP < nextxpLevelInfo.cumulativeXP) {
 						result = nextxpLevelInfo;
 
 						break;
