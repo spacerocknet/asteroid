@@ -102,8 +102,8 @@ public class mainmenu : MonoBehaviour {
 	private String lastTouchedButtonName;
 
 	//For FB
-	private GameObject fbPreLogin;
-	private GameObject fbPostLogin;
+	public GameObject fbPreLogin;
+	public GameObject fbPostLogin;
 
 	private LevelNode selectedLevelNode;
 
@@ -224,16 +224,12 @@ public class mainmenu : MonoBehaviour {
 
 		//For Facebook
 		FB.Init(SetInit, OnHideUnity);
-		fbPostLogin = GameObject.Find("button_fb_post_login");
-		fbPreLogin = GameObject.Find("button_facebook");
 
 		if (FB.IsLoggedIn) {
 			StartCoroutine(showFacebookPostLogin(true));
 		} else {
 			StartCoroutine(showFacebookPostLogin(false));
 		}
-
-		coinsMenuStartPosition = coinstore.transform.position;
 	}
 	
 	void Update()
@@ -397,6 +393,8 @@ public class mainmenu : MonoBehaviour {
 						
 				else if(hit.collider.gameObject.name=="button_store")
 						{
+
+							coinsMenuStartPosition = coinstore.transform.position;
 							//fadebg.renderer.enabled=false;
 							StartCoroutine("showcoinstore");
 							buttonclickeffect();
@@ -421,6 +419,7 @@ public class mainmenu : MonoBehaviour {
 				        }
 				        else if(hit.collider.gameObject.name=="coins_bar_empty")
 				        {
+						   coinsMenuStartPosition = coinstore.transform.position;
 					       fadebg.renderer.enabled=false;
 					       StartCoroutine(showcoinstore());
 					       buttonclickeffect();
@@ -928,7 +927,6 @@ public class mainmenu : MonoBehaviour {
 
 			IEnumerator showcoinstore()
 			{
-
 				for(int i=0;i<20;i++)
 				{
 					Vector3 oldposition=coinstore.transform.position;
@@ -943,7 +941,7 @@ public class mainmenu : MonoBehaviour {
 
 			IEnumerator hidecoinstore()
 			{
-				while (coinstore.transform.position.x > coinsMenuStartPosition.x + 0.1f)
+				for(int i=0;i<20;i++)
 				{
 					Vector3 oldposition=coinstore.transform.position;
 					float newposition=Mathf.Lerp(oldposition.x,coinsMenuStartPosition.x, 0.25f);
@@ -1271,10 +1269,14 @@ public class mainmenu : MonoBehaviour {
 	{
 		Debug.Log("Facebook SetInit");
 		//enabled = true; // "enabled" is a property inherited from MonoBehaviour
-		if (FB.IsLoggedIn)
-		{
+		if (FB.IsLoggedIn) {
 			Debug.Log("Facebook Already logged in");
 			//OnLoggedIn();
+
+			StartCoroutine(showFacebookPostLogin(true));
+		}
+		else {
+			StartCoroutine(showFacebookPostLogin(false));
 		}
 	}
 	
