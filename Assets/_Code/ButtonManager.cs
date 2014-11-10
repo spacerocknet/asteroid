@@ -263,7 +263,7 @@ public class ButtonManager : MonoBehaviour {
 							if(PlayerPrefs.GetInt(PlayerData.DoubleBlastRadiusPowerUpsKey)>0)
 								{
 									powerupselected="double_blast_radius";
-							attack_target.transform.localScale=targetStartScale * 2;
+									attack_target.transform.localScale=targetStartScale * 2;
 									//ToggleHere
 									hit.collider.gameObject.GetComponent<SpriteRenderer>().color=powerupselectedcolor;
 									double_hitpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
@@ -279,7 +279,7 @@ public class ButtonManager : MonoBehaviour {
 							//This will toggle if already selected
 							double_blastpowerup_gameobject.GetComponent<SpriteRenderer>().color=powerupnormalcolor;
 							powerupselected=string.Empty;
-						attack_target.transform.localScale=targetStartScale;
+							attack_target.transform.localScale=targetStartScale;
 						}
 					}
 					else if(hit.collider.gameObject.name=="button_power_up_04")

@@ -32,7 +32,7 @@ public class AttackSystem : MonoBehaviour {
 		
 	}
 
-	public IEnumerator AttackTarget(Vector3 target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
+	public IEnumerator AttackTarget(GameObject target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
 	{		
 		BATTLE_ENGINE.LastHitMiss = false;
 		
@@ -40,43 +40,26 @@ public class AttackSystem : MonoBehaviour {
 
 		List<int> destroyIndex = new List<int>();
 
-		GameObject expT = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,target,Quaternion.identity);
+		GameObject expT = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,
+		                                           target.transform.position, Quaternion.identity);
 		Destroy(expT,0.67f);
 
 		for(int i=0;i<currentAsteroids.Count;i++)
 		{
-			//Normal Distance without powerup
-			float normalpowerupdistance=1.0f;
+			float asteroidExtent = target.transform.localScale.x;
 
-			//Double up the distance
-			float powerupdoubleblast=normalpowerupdistance*2.0f;
+			Vector3 asteroidPosition = currentAsteroids[i].obj.transform.position;
+			asteroidPosition.z = target.transform.position.z;
 
-			Vector3 p1 = target;
-			Vector3 p2 = new Vector3(currentAsteroids[i].obj.transform.position.x,currentAsteroids[i].obj.transform.position.y,p1.z);
-			float dist = Vector3.Distance(p1,p2);
+			float dist = Vector3.Distance(target.transform.position, asteroidPosition);
 
-			if(ButtonManager.powerupselected=="double_blast_radius")
+			if(dist < asteroidExtent)
 			{
-				if(dist<powerupdoubleblast)
-				{
-					ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
-					soundmanager.audio.Play();
-					ButtonManager.attack_target.transform.localScale=ButtonManager.targetStartScale;
-					GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
-					Destroy(exp,0.67f);
-					destroyIndex.Add(i);
-				}
+				GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj, asteroidPosition, Quaternion.identity);
+				Destroy(exp,0.67f);
+				destroyIndex.Add(i);
 			}
-			else
-				{
-				if(dist<normalpowerupdistance)
-					{
-						GameObject exp = (GameObject) Instantiate(weapons.AllWeapons[currentWeapon].obj,p2,Quaternion.identity);
-						Destroy(exp,0.67f);
-						destroyIndex.Add(i);
-					}
-				}
-			}
+		}
 		
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
@@ -109,6 +92,14 @@ public class AttackSystem : MonoBehaviour {
 				//
 			}
 		}
+
+		if (ButtonManager.powerupselected == "double_blast_radius") {
+			ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
+			soundmanager.audio.Play();
+			ButtonManager.attack_target.transform.localScale=ButtonManager.targetStartScale;
+
+		}
+
 		yield return 0;
 	}
 

@@ -112,8 +112,8 @@ public class MainMenuManager : MonoBehaviour {
 		if (hit.collider != null) {
 			if (hit.collider.name == "Background") {
 				if (Input.GetMouseButtonDown (0) && !draggingPage && !animatingPage && !performingUnlock) {
-						startDragPosition = Input.mousePosition;
-						draggingPage = true;
+					startDragPosition = Input.mousePosition;
+					draggingPage = true;
 				}
 			}
 		}
@@ -126,6 +126,10 @@ public class MainMenuManager : MonoBehaviour {
 			if (draggingPage) {
 				Vector3 deltaPosition = Vector3.zero;
 				deltaPosition.y = Input.mousePosition.y - startDragPosition.y;
+				if (deltaPosition.y > 0) {
+					Debug.Log("Drag up");
+				}
+
 				pageScrollSpeed = deltaPosition * Time.deltaTime * dragSpeedModifier;
 			}
 			else {
