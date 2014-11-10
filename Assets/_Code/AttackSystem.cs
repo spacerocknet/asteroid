@@ -32,7 +32,7 @@ public class AttackSystem : MonoBehaviour {
 		
 	}
 
-	public IEnumerator AttackTarget(GameObject target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
+	public IEnumerator AttackTarget(float damageMultiplier, GameObject target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
 	{		
 		BATTLE_ENGINE.LastHitMiss = false;
 		
@@ -63,14 +63,9 @@ public class AttackSystem : MonoBehaviour {
 		
 		for(int i=destroyIndex.Count-1;i>=0;i--)
 		{
-	//		Debug.Log(currentCategoryColorType+":"+currentAsteroids[destroyIndex[i]].colorType+":"+)
 			asteroidDamage = 2.0f;
-
-			if ((int) currentCategoryColorType == (int) currentAsteroids[destroyIndex[i]].colorType) {
-				//asteroidDamage += 0.5f * asteroidDamage;
-			}
-
-			asteroidDamage += DamageCalcByColor(currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType);
+			asteroidDamage *= damageMultiplier;
+			asteroidDamage = ApplyRockPaperScissorsDamage(asteroidDamage, currentCategoryColorType,currentAsteroids[destroyIndex[i]].colorType);
 
 			if (asteroidDamage > currentAsteroids[destroyIndex[i]].life) {
 				asteroidDamage = currentAsteroids[destroyIndex[i]].life;
@@ -105,50 +100,22 @@ public class AttackSystem : MonoBehaviour {
 
 
 
-	private float DamageCalcByColor(CategorySelect.ColorTypes c1, Asteroids.AsteroidColorTypes c2)
+	private float ApplyRockPaperScissorsDamage(float baseDamage, CategorySelect.ColorTypes c1, Asteroids.AsteroidColorTypes c2)
 	{
 		int cDistance = ColorDistance((int)c1,(int)c2);
 		if(cDistance==0)
 		{
-			if(ButtonManager.powerupselected=="bomb")
-			{
-				
-				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
-				soundmanager.audio.Play();
-				return 2+2;
-			}
-			else
-			{
-				return 2 + 1;
-			}
+			return baseDamage;
 		}
 
 		else if(cDistance==1)
 		{
-			if(ButtonManager.powerupselected=="bomb")
-			{
-				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
-				soundmanager.audio.Play();
-				return 3+3;
-			}
-			else
-			{
-				return 3 + 1.5f;
-			}
+			return baseDamage + baseDamage * 0.5f;
 		}
 
 		else if(cDistance==2)
 		{
-			if(ButtonManager.powerupselected=="bomb")
-			{
-				ButtonManager.reducepowerupcount(ButtonManager.powerupselected);
-				soundmanager.audio.Play();
-				return 1+1; 
-			}
-			else
-			{
-				return 1 + 0.5f;
-			}
+			return baseDamage - baseDamage * 0.5f;
 		}
 
 		return 0;

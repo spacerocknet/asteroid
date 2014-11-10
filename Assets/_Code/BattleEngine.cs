@@ -96,7 +96,7 @@ public class BattleEngine : MonoBehaviour {
 			if (asteroid != null) {
 				CategorySelect.ColorTypes color = (CategorySelect.ColorTypes) asteroid.colorType;
 				
-				StartCoroutine(AtkSystem.AttackTarget(AtkTarget,asteroids.currentAsteroids, 
+				StartCoroutine(AtkSystem.AttackTarget(1.0f, AtkTarget,asteroids.currentAsteroids, 
 				                                      levels, color));
 				
 				StartCoroutine(NextRound(true,color));
@@ -117,6 +117,8 @@ public class BattleEngine : MonoBehaviour {
 
 	public IEnumerator NextRound(bool isHitTarget, CategorySelect.ColorTypes currentColorType)
 	{
+		float damageMultiplier = 1.0f;
+
 		FinishedRound = true;
 		if(ButtonManager.powerupselected=="double_blast_radius")
 		{
@@ -125,13 +127,14 @@ public class BattleEngine : MonoBehaviour {
 		else if(ButtonManager.powerupselected=="bomb")
 		{
 			ButtonManager.reducepowerupcount("bomb");
+			damageMultiplier = 2f;
 		}
 	
 
 		categorySelect.animationIsPlaying = true;
 		Vector3 target = AtkTarget.transform.position;
 		categorySelect.targetSelect = false;
-		AtkTarget.transform.position = new Vector3(-100,0,0);
+		//AtkTarget.transform.position = new Vector3(-100,0,0);
 		StartCoroutine(categorySelect.PlaceCategories(0, false));
 		canTarget = true;
 		isMouseDown = false;
@@ -140,13 +143,15 @@ public class BattleEngine : MonoBehaviour {
 
 		if(isHitTarget)
 		{
-			yield return StartCoroutine(AtkSystem.AttackTarget(AtkTarget,asteroids.currentAsteroids,levels,currentColorType));
+			yield return StartCoroutine(AtkSystem.AttackTarget(damageMultiplier, AtkTarget,asteroids.currentAsteroids,levels,currentColorType));
 			soundmanager.GetComponent<SoundManager>().weapon_attack_soundplay();
 		}
 		else
 		{
 			yield return StartCoroutine(AtkSystem.MissTarget());
 		}
+
+		AtkTarget.transform.position = new Vector3(-100,0,0);
 
 //		bool isAnyLeft = asteroids.CheckIfAnyExists();
 //		bool isLevelProgressFull = levels.CheckIfProgressIfFull();
