@@ -205,15 +205,19 @@ public class BattleEngine : MonoBehaviour {
 		XPLevelInfoCollection xpLevelInfoCollection = GameObject.FindObjectOfType<XPLevelInfoCollection> ();
 		XPLevelInfo currentXPLevelInfo = xpLevelInfoCollection.GetCurrentLevelInfo (currentTotalXP);
 		XPLevelInfo nextXPLevelInfo = xpLevelInfoCollection.GetNextLevelInfo (currentTotalXP);
-		
-		if (currentXPLevelInfo == null && cumulativeXP >= nextXPLevelInfo.xpNextLevel) {
+
+		int xpLevel = PlayerPrefs.GetInt (PlayerData.CurrentXPLevel, 1);
+		if (currentXPLevelInfo == null && cumulativeXP >= nextXPLevelInfo.cumulativeXP && xpLevel < nextXPLevelInfo.level) {
+			PlayerPrefs.SetInt(PlayerData.CurrentXPLevel, nextXPLevelInfo.level);
 			PlayerPrefs.SetInt("totallives", 5);
 			
 			mainmenu.resettimerfornewlife();
 			mainmenu.managetimerfornewlife(false);
 		}
 		
-		if (currentXPLevelInfo != null && cumulativeXP >= currentXPLevelInfo.xpNextLevel) {
+		if (currentXPLevelInfo != null && cumulativeXP >= nextXPLevelInfo.cumulativeXP && xpLevel < nextXPLevelInfo.level) {
+			PlayerPrefs.SetInt(PlayerData.CurrentXPLevel, nextXPLevelInfo.level);
+
 			PlayerPrefs.SetInt("totallives", 5);
 			
 			mainmenu.resettimerfornewlife();

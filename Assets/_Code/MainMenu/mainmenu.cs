@@ -306,7 +306,7 @@ public class mainmenu : MonoBehaviour {
 				totallives++;
 				managetimerfornewlife(false);
 				lives_textmesh.GetComponent<TextMesh>().text=totallives.ToString();
-				PlayerPrefs.SetInt("totalives",totallives);
+				PlayerPrefs.SetInt("totallives",totallives);
 				Debug.Log("Calling this");
 				//resettimer();
 				if(totallives<5)

@@ -14,7 +14,8 @@ public class XPBarManager : MonoBehaviour {
 	void Start () {
 		maxScaleX = xpProgressBar.transform.localScale.x;
 
-		//PlayerPrefs.SetString (PlayerData.TotalXPKey, "0");
+//		PlayerPrefs.SetString (PlayerData.TotalXPKey, "0");
+//		PlayerPrefs.SetString (PlayerData.CurrentXPLevel, "1");
 
 		xpLevelInfoCollection = GameObject.FindObjectOfType<XPLevelInfoCollection> ();
 		ulong totalXP = ulong.Parse(PlayerPrefs.GetString(PlayerData.TotalXPKey, "0"));
