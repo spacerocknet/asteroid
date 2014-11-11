@@ -225,7 +225,7 @@ public class mainmenu : MonoBehaviour {
 		//For Facebook
 		FB.Init(SetInit, OnHideUnity);
 
-		if (FB.IsLoggedIn) {
+		if (facebook == 1) {
 			StartCoroutine(showFacebookPostLogin(true));
 		} else {
 			StartCoroutine(showFacebookPostLogin(false));
@@ -784,7 +784,7 @@ public class mainmenu : MonoBehaviour {
 									PlayerPrefs.SetInt("facebook",1);
 									facebook=PlayerPrefs.GetInt("facebook",1);
 
-									if (FB.IsLoggedIn) {
+									if (facebook == 1) {
 										StartCoroutine(showFacebookPostLogin(true));
 									}
 								}
@@ -1272,11 +1272,6 @@ public class mainmenu : MonoBehaviour {
 		if (FB.IsLoggedIn) {
 			Debug.Log("Facebook Already logged in");
 			//OnLoggedIn();
-
-			StartCoroutine(showFacebookPostLogin(true));
-		}
-		else {
-			StartCoroutine(showFacebookPostLogin(false));
 		}
 	}
 	
