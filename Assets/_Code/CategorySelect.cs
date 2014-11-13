@@ -73,8 +73,8 @@ public class CategorySelect : MonoBehaviour {
 			textM.font=BattleEngine.font1;
 			textM.renderer.material=BattleEngine.material1[0];
 			textM.text = categoryType.ToString();
-			textM.fontSize = 15;
-			textM.characterSize= 0.2f;
+			textM.fontSize = 26;
+			textM.characterSize= 0.1f;
 			textM.fontStyle=FontStyle.Normal;
 			textM.color=Color.white;
 			textM.transform.localScale = new Vector3 (1 / scaleX, 1 / scaleY, 1);
