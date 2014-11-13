@@ -105,6 +105,7 @@
      <Compile Include="Assets\GameAnalytics\Plugins\Playmaker\SendDesignEvent.cs" />
      <Compile Include="Assets\GameAnalytics\Plugins\Playmaker\SendQualityEvent.cs" />
      <Compile Include="Assets\GameAnalytics\Plugins\Playmaker\SendUserEvent.cs" />
+     <Compile Include="Assets\Scripts\NeatPlug\IAP\GoogleIAB\GoogleIABListener.cs" />
      <Compile Include="Assets\_Code\Actions\AsteroidIdle.cs" />
      <Compile Include="Assets\_Code\Actions\TargetIdle.cs" />
      <Compile Include="Assets\_Code\Asteroids.cs" />
@@ -172,12 +173,20 @@
      <None Include="Assets\Resources\xp_levels.txt" />
      <None Include="Assets\Resources\level_nodes.txt" />
      <None Include="Assets\Resources\rewards.txt" />
+     <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
  <Reference Include="Ionic.Zlib">
  <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/external/Ionic.Zlib.dll</HintPath>
  </Reference>
  <Reference Include="IFacebook">
  <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/Facebook/Scripts/IFacebook.dll</HintPath>
  </Reference>
+ <Reference Include="GoogleIABLib">
+ <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/Plugins/NeatPlug/IAP/GoogleIAB/GoogleIABLib.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass-vs.csproj">
+      <Project>{9CCF39B5-9267-2950-4114-9ECDC5172095}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -120,16 +120,10 @@ public class BattleEngine : MonoBehaviour {
 		float damageMultiplier = 1.0f;
 
 		FinishedRound = true;
-		if(ButtonManager.powerupselected=="double_blast_radius")
+		if(ButtonManager.powerupselected=="bomb")
 		{
-			ButtonManager.reducepowerupcount("double_blast_radius");
-		}
-		else if(ButtonManager.powerupselected=="bomb")
-		{
-			ButtonManager.reducepowerupcount("bomb");
 			damageMultiplier = 2f;
 		}
-	
 
 		categorySelect.animationIsPlaying = true;
 		Vector3 target = AtkTarget.transform.position;
@@ -149,6 +143,15 @@ public class BattleEngine : MonoBehaviour {
 		else
 		{
 			yield return StartCoroutine(AtkSystem.MissTarget());
+		}
+
+		if(ButtonManager.powerupselected=="double_blast_radius")
+		{
+			ButtonManager.reducepowerupcount("double_blast_radius");
+		}
+		else if(ButtonManager.powerupselected=="bomb")
+		{
+			ButtonManager.reducepowerupcount("bomb");
 		}
 
 		AtkTarget.transform.position = new Vector3(-100,0,0);

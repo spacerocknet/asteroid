@@ -97,17 +97,29 @@
      <None Include="Assets\Resources\xp_levels.txt" />
      <None Include="Assets\Resources\level_nodes.txt" />
      <None Include="Assets\Resources\rewards.txt" />
+     <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
+ <Reference Include="NeatPlugCommonEditor">
+ <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/Editor/NeatPlug/Common/NeatPlugCommonEditor.dll</HintPath>
+ </Reference>
+ <Reference Include="GoogleIABEditor">
+ <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/Editor/NeatPlug/IAP/GoogleIAB/GoogleIABEditor.dll</HintPath>
+ </Reference>
  <Reference Include="Ionic.Zlib">
  <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/external/Ionic.Zlib.dll</HintPath>
  </Reference>
  <Reference Include="IFacebook">
  <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/Facebook/Scripts/IFacebook.dll</HintPath>
  </Reference>
+ <Reference Include="GoogleIABLib">
+ <HintPath>C:/Users/USER/Documents/GitHub/asteroid/Assets/Plugins/NeatPlug/IAP/GoogleIAB/GoogleIABLib.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{9CCF39B5-9267-2950-4114-9ECDC5172095}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{58CDB2FF-9BEC-8213-1A3A-CA11D5EFBEF5}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
   </ItemGroup>

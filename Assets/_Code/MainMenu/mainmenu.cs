@@ -136,9 +136,7 @@ public class mainmenu : MonoBehaviour {
 
 	void Start()
 	{
-		
-		//facebook=PlayerPrefs.GetInt("facebook",0);
-		facebook=PlayerPrefs.GetInt("facebook",1);
+		facebook=PlayerPrefs.GetInt("facebook", 1);
 		sound=PlayerPrefs.GetInt("sound",1);
 
 		button_on = screenSizeManager.GetSpriteSize (button_on);
