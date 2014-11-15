@@ -17,3 +17,5 @@ sysinfo.txt
 *.csproj
 *.apk
 *.ps1
+keystore_passwords.txt
+homeworld_heroes.keystore

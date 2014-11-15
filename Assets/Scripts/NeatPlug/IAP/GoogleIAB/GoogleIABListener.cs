@@ -240,6 +240,57 @@ public class GoogleIABListener : MonoBehaviour {
 			);
 		
 		/// Your code here...
+
+
+
+		switch (receipt.sku) {
+		
+		case "pile_of_gold":
+		{
+			int totalgold = PlayerPrefs.GetInt(PlayerData.TotalGoldKey, 0);
+			totalgold += 200;
+			PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
+
+			break;
+		}
+		case "bag_of_gold":
+		{
+			int totalgold = PlayerPrefs.GetInt(PlayerData.TotalGoldKey, 0);
+			totalgold += 1050;
+			PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
+
+			break;
+		}
+		case "sack_of_gold":
+		{
+			int totalgold = PlayerPrefs.GetInt(PlayerData.TotalGoldKey, 0);
+			totalgold += 2200;
+			PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
+
+			break;
+		}
+		case "box_of_gold":
+		{
+			int totalgold = PlayerPrefs.GetInt(PlayerData.TotalGoldKey, 0);
+			totalgold += 11500;
+			PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
+
+			break;
+		}
+		case "chest_of_gold":
+		{
+			int totalgold = PlayerPrefs.GetInt(PlayerData.TotalGoldKey, 0);
+			totalgold += 24000;
+			PlayerPrefs.SetInt(PlayerData.TotalGoldKey, totalgold);
+
+			break;
+		}
+		default:
+			break;
+		}
+
+		mainmenu main = GameObject.FindObjectOfType<mainmenu> ();
+		main.RefreshGold ();
 	}	
 	
 	/**

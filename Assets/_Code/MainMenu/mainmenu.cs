@@ -713,42 +713,57 @@ public class mainmenu : MonoBehaviour {
 					{
 						if(hit.collider.gameObject.name=="button_buy_pileofgold")
 							{
-							Debug.Log("works");
-							totalgold +=200;
-							PlayerPrefs.SetInt("totalgold",totalgold);
-							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+//							Debug.Log("works");
+//							totalgold +=200;
+//							PlayerPrefs.SetInt("totalgold",totalgold);
+//							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+
+							GoogleIAB.Instance().Purchase("pile_of_gold");
+
 							buttonclickeffect();
 							}
 						else if(hit.collider.gameObject.name=="button_buy_boxofgold")
 							{
-							Debug.Log("works");
-							totalgold +=11500;
-							PlayerPrefs.SetInt("totalgold",totalgold);
-							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+//							Debug.Log("works");
+//							totalgold +=11500;
+//							PlayerPrefs.SetInt("totalgold",totalgold);
+//							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+
+							GoogleIAB.Instance().Purchase("box_of_gold");
+
 							buttonclickeffect();
 							}
 						else if(hit.collider.gameObject.name=="button_buy_chestofgold")
 							{
-							Debug.Log("works");
-							totalgold +=24000;
-							PlayerPrefs.SetInt("totalgold",totalgold);
-							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+//							Debug.Log("works");
+//							totalgold +=24000;
+//							PlayerPrefs.SetInt("totalgold",totalgold);
+//							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+
+							GoogleIAB.Instance().Purchase("chest_of_gold");
+
 							buttonclickeffect();
 							}
 						else if(hit.collider.gameObject.name=="button_buy_bagofgold")
 							{
-							Debug.Log("works");
-							totalgold +=1050;
-							PlayerPrefs.SetInt("totalgold",totalgold);
-							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+//							Debug.Log("works");
+//							totalgold +=1050;
+//							PlayerPrefs.SetInt("totalgold",totalgold);
+//							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+
+							GoogleIAB.Instance().Purchase("bag_of_gold");
+
 							buttonclickeffect();
 							}
 						else if(hit.collider.gameObject.name=="button_buy_sackofgold")
 							{
-							Debug.Log("works");
-							totalgold +=2200;
-							PlayerPrefs.SetInt("totalgold",totalgold);
-							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+//							Debug.Log("works");
+//							totalgold +=2200;
+//							PlayerPrefs.SetInt("totalgold",totalgold);
+//							totalgoldtextmesh.GetComponent<TextMesh>().text=totalgold.ToString();
+
+							GoogleIAB.Instance().Purchase("sack_of_gold");
+
 							buttonclickeffect();
 							}
 						else if(hit.collider.gameObject.name=="button_hidestore")
@@ -1022,6 +1037,11 @@ public class mainmenu : MonoBehaviour {
 		void loadnewlevel(int loadlevelindex)
 		{
 			Application.LoadLevel(loadlevelindex);
+		}
+
+		public void RefreshGold() {
+			totalgold = PlayerPrefs.GetInt(PlayerData.TotalGoldKey, 0);
+			totalgoldtextmesh.GetComponent<TextMesh>().text = totalgold.ToString();
 		}
 	
 		public static void managetimerfornewlife(bool start)
