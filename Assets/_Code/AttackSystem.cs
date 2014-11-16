@@ -46,7 +46,7 @@ public class AttackSystem : MonoBehaviour {
 
 		for(int i=0;i<currentAsteroids.Count;i++)
 		{
-			float asteroidExtent = target.transform.localScale.x / 2f;
+			float asteroidExtent = target.transform.localScale.x / 1.5f;
 
 			Vector3 asteroidPosition = currentAsteroids[i].obj.transform.position;
 			asteroidPosition.z = target.transform.position.z;
