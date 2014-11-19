@@ -20,6 +20,8 @@ public class Asteroids : MonoBehaviour {
 
 	private ScreenSizeManager screenSizeManager;
 
+	private int totalAsteroids;
+
 	public class Asteroid
 	{
 		public AsteroidColorTypes colorType;
@@ -96,6 +98,8 @@ public class Asteroids : MonoBehaviour {
 
 		levelInfo = GameObject.FindObjectOfType<LevelInfo> ();
 		screenSizeManager = GameObject.FindObjectOfType<ScreenSizeManager> ();
+
+		totalAsteroids = levelInfo.selectedNodeInfo.totalRocks;
 	}
 
 	public IEnumerator MoveAsteroids()
@@ -161,7 +165,7 @@ public class Asteroids : MonoBehaviour {
 	}
 
 	public IEnumerator SpawnAsteroids(int count) {
-		count = Mathf.Clamp (count, count, levelInfo.selectedNodeInfo.totalRocks);
+		count = Mathf.Clamp (count, count, totalAsteroids);
 
 		for (int index = 0; index < count; index++) {
 			int bigRocks = levelInfo.selectedNodeInfo.bigRocks;
@@ -176,7 +180,7 @@ public class Asteroids : MonoBehaviour {
 			float smallLifeHits = 0.75f * multiplier;
 
 			AsteroidColorTypes forcedColorType = AsteroidColorTypes.Unknown;
-			if (levelInfo.selectedNodeInfo.level == 16 && index == 0) {
+			if (levelInfo.selectedNodeInfo.level == 16 && totalAsteroids >= levelInfo.selectedNodeInfo.totalRocks) {
 				forcedColorType = AsteroidColorTypes.Red;
 				asteroid = 0;
 			}
@@ -195,6 +199,8 @@ public class Asteroids : MonoBehaviour {
 
 				SpawnAsteroid(lifeHits, smallAsteroidScale, asteroidColor, smallLifeHits);
 			}
+
+			totalAsteroids--;
 		}
 
 		yield return null;

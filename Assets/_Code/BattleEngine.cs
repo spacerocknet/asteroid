@@ -91,18 +91,6 @@ public class BattleEngine : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyUp(KeyCode.K)) {
-			Asteroids.Asteroid asteroid = asteroids.currentAsteroids[0];
-			if (asteroid != null) {
-				CategorySelect.ColorTypes color = (CategorySelect.ColorTypes) asteroid.colorType;
-				
-				StartCoroutine(AtkSystem.AttackTarget(1.0f, AtkTarget,asteroids.currentAsteroids, 
-				                                      levels, color));
-				
-				StartCoroutine(NextRound(true,color));
-			}
-		}
-
 		if (Input.GetKeyDown(KeyCode.G)) {
 			LoseBattle();
 		}
@@ -137,7 +125,7 @@ public class BattleEngine : MonoBehaviour {
 
 		if(isHitTarget)
 		{
-			yield return StartCoroutine(AtkSystem.AttackTarget(damageMultiplier, AtkTarget,asteroids.currentAsteroids,levels,currentColorType));
+			AtkSystem.AttackTarget(damageMultiplier, AtkTarget,asteroids.currentAsteroids,levels,currentColorType);
 			soundmanager.GetComponent<SoundManager>().weapon_attack_soundplay();
 		}
 		else

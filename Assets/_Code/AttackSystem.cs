@@ -28,11 +28,11 @@ public class AttackSystem : MonoBehaviour {
 	}
 
 	void Start() {
+		BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone = 0;
 		progressBarManager.UpdateProgressBar (BATTLE_ENGINE.levelInfo.selectedNodeInfo.hitPointsDone);
-		
 	}
 
-	public IEnumerator AttackTarget(float damageMultiplier, GameObject target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
+	public void AttackTarget(float damageMultiplier, GameObject target, List<Asteroids.Asteroid> currentAsteroids, LevelManager levelMRef, CategorySelect.ColorTypes currentCategoryColorType)
 	{		
 		BATTLE_ENGINE.LastHitMiss = false;
 		
@@ -46,7 +46,7 @@ public class AttackSystem : MonoBehaviour {
 
 		for(int i=0;i<currentAsteroids.Count;i++)
 		{
-			float asteroidExtent = target.transform.localScale.x / 1.5f;
+			float asteroidExtent = target.transform.localScale.x * 0.85f;
 
 			Vector3 asteroidPosition = currentAsteroids[i].obj.transform.position;
 			asteroidPosition.z = target.transform.position.z;
@@ -94,8 +94,6 @@ public class AttackSystem : MonoBehaviour {
 			ButtonManager.attack_target.transform.localScale=ButtonManager.targetStartScale;
 
 		}
-
-		yield return 0;
 	}
 
 
