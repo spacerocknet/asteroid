@@ -24,7 +24,15 @@ public class Questions : MonoBehaviour {
 			category = _category;
 			title = _title;
 			answers = _answers;
-			correctAnswerIndex = _correctAnswerIndex;
+			//correctAnswerIndex = _correctAnswerIndex;
+
+			correctAnswerIndex = Random.Range(1, 4);
+			if (correctAnswerIndex != _correctAnswerIndex) {
+				string tem = answers[_correctAnswerIndex-1];
+
+				answers[_correctAnswerIndex-1] = answers[correctAnswerIndex-1];
+				answers[correctAnswerIndex-1] = tem;
+			}
 		}
 
 		public bool CheckAnswer(int index)
